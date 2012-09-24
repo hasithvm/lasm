@@ -1,0 +1,17 @@
+p86asm54 format specification
+
+line #	identifier:fields
+
+	#separated by single spaces.
+0	params_line:	<number of params (fixed @ 3 dec)>
+			<number of lines(dec)>
+			<initial instruction pointer value (dec) Should be aligned with an instruction defined in the program code, i.e, it must match a line n where the mem addr is equal to this value>
+			<bytes of memory total (dec)>
+
+	#no separator, each param is wrapped by 0x31 chars.
+n	program code:	<hex mem addr>
+			<size in bytes (dec)>	
+			<memory block(hex)>
+			<label (ASCII)>
+			<source line (ASCII)>
+			<delay param (20 for pretty much every instruction.)>
