@@ -20,7 +20,7 @@ enum RegType{
 	REG_IP=2,					//special purpose register (SP, BP, SI, BI, IP)
 	};
 extern char chHexLUT[16];
-
+extern char *accessmodeLUT[3];
 std::string hex2str(uint8_t* bytes, int count);
 class Register{
 		public:

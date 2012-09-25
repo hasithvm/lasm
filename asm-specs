@@ -9,7 +9,7 @@ line #	identifier:fields
 			<bytes of memory total (dec)>
 
 	#no separator, each param is wrapped by 0x31 chars.
-n	program code:	<hex mem addr>
+1-n	program code:	<hex mem addr>
 			<size in bytes (dec)>	
 			<memory block(hex)>
 			<label (ASCII)>

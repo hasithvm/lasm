@@ -10,12 +10,6 @@
     using namespace std;
     
     
-    
-    void yyerror(const char *str)
-    {
-            fprintf(stderr,"error: %s\n",str);
-    }
-    
     extern "C"
 	{
 				extern int yylineno;
@@ -26,7 +20,13 @@
                 return 1;
         }
 
-	}
+	}    
+    void yyerror(const char *str)
+    {
+            cerr << yylineno << "\tparser error: %s\n" << str << endl;
+    }
+    
+
 
       
 
@@ -65,60 +65,64 @@ main(int argc, char **argv)
     							printf("<comment:%s>\n",$2);
     						}					
     						;
-		code_line:
-							OPCODE modifier params comment_line
-							{
-							printf("<%d:instruction:%s>\n",yylineno, $1);
-							}
-							;
-							
-		modifier:
-						|
-						WORDPTR
-						{printf("word access");}
-						|
-						BYTEPTR
-						{printf("byte access");}
-						;
-		params:
-					|
-					param COMMA param
-					{
-					}
-					|
-					param
-					;
+	code_line:
+			OPCODE modifier params comment_line
+			{
+				printf("<%d:instruction:%s>\n",yylineno, $1);
+			}
+			;
+
+	modifier:
+			|
+			WORDPTR
+			{printf("word access");}
+			|
+			BYTEPTR
+			{printf("byte access");}
+			;
+	params:
+			|
+			param COMMA param
+			{
+			}
+			|
+			param
+			;
+
+	param:			REG 
+				{
+					Register *reg = new Register($1, REG_DIRECT);
 					
-		param:REG 
-					{
-								Register reg($1,REG_DIRECT);
-								reg.repr();
-					}
-					|
-					LSQBR REG RSQBR
-					{
-					printf("address of reg:%s\n", $2);
-					}
-					|
-					HEX
-					|
-					BINARY
-					|
-					LITERAL
-					;
-					
+					reg->repr();
+					delete reg;
+				}
+				|
+				LSQBR REG RSQBR
+				{
+					Register *reg = new Register($2, REG_ADDR);
+					reg->repr();
+					delete reg;
+				}
+				|
+				HEX
+				|
+				BINARY
+				|
+				LITERAL
+				;
+
 		label_line:
-							|
-							LABEL COLON
-							{
-							printf("<label:%s>\n",$1);
-							}
-							;
+				|
+				LABEL COLON
+				{
+					printf("<label:%s>\n",$1);
+				}
+				;
 		endline:
-						END TEXT
-						{
-						printf("program end\n");
-					  }
-					  ;
-					  
+				END TEXT
+				{
+					printf("program end\n");
+				}
+				;
+ 
 		%%

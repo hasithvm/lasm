@@ -1,6 +1,7 @@
 #include "data.h"
 
 char chHexLUT[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
 
 Register::Register(): reg(0),am(UNINITIALIZED),regtype(0), m_regmap(), regname()
 {
@@ -29,6 +30,7 @@ void Register::repr(){
 clog << "<Register>" << endl;
 clog <<"\taddress:\t"<< hex2str(&reg,1) << endl;
 clog <<"\tname:\t" << regname <<  endl;
+clog << "\taccessmode:\t" << accessmodeLUT[am] << endl;
 clog << "</Register>" << endl;
 }
 
