@@ -3,7 +3,7 @@ start:
         mov BYTE PTR    al, 'H'             ; display 'H'
         out     [dx], al
 
-label2:        mov     al, 'i'             ; display 'i'
+label2:        mov     SP, 'i'             ; display 'i'
         out     [dx], al
 
         hlt                         ;  STOP!

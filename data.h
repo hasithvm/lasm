@@ -34,8 +34,8 @@ class Register{
 		private:
 						//uint8_t mask[4] = {0x00,0x03,0x01,0x02};
 						uint8_t reg;
-						int regtype;
-						std::string regname;
+						int m_regtype;
+						std::string m_regname;
 						AccessMode am;
 						uint8_t parseRegString(std::string& str);
 						std::map<std::string, uint8_t> m_regmap;

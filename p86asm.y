@@ -23,7 +23,7 @@
 	}    
     void yyerror(const char *str)
     {
-            cerr << yylineno << "\tparser error: %s\n" << str << endl;
+            cerr << yylineno << "\tparser error:\n" << str << endl;
     }
     
 
