@@ -68,48 +68,46 @@
 /* Line 268 of yacc.c  */
 #line 1 "p86asm.y"
 
-    #include <stdio.h>
-    #include <string.h>
-    #include <stdlib.h>
-    #include <vector>
-    #include "data.h"
-    #include "symtable.h"
-		#define YYSTYPE char *
+	#include <stdio.h>
+	#include <string.h>
+	#include <stdlib.h>
+	#include <vector>
+	#include "data.h"
+	#include "symtable.h"
+	#define YYSTYPE char *
 		
-    using namespace std;
-    
-    
+	using namespace std;
     extern "C"
 	{
-				extern int yylineno;
-        int yyparse(void);
-        int yylex(void);  
-        int yywrap()
-        {
-                return 1;
-        }
+		extern int yylineno;
+		int yyparse(void);
+		int yylex(void);
+		int yywrap()
+		{
+			return 1;
+		}
 
 	}    
-    void yyerror(const char *str)
-    {
-            cerr << yylineno << "\tparser error: %s\n" << str << endl;
-    }
-    
+	void yyerror(const char *str)
+	{
+		cerr << yylineno << "\tparser error:\n" << str << endl;
+	}
+	
 
 
-      
-
-main(int argc, char **argv)
-{
-    yyparse();
-    std::vector<char> a;
-}
 
 
-    
+	main(int argc, char **argv)
+	{
+		yyparse();
+		std::vector<char> a;
+	}
+
+
+
 
 /* Line 268 of yacc.c  */
-#line 113 "p86asm.tab.c"
+#line 111 "p86asm.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -170,7 +168,7 @@ typedef int YYSTYPE;
 
 
 /* Line 343 of yacc.c  */
-#line 174 "p86asm.tab.c"
+#line 172 "p86asm.tab.c"
 
 #ifdef short
 # undef short
@@ -464,9 +462,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    45,    45,    47,    51,    53,    55,    57,    59,    61,
-      63,    69,    75,    77,    80,    83,    85,    89,    92,   100,
-     107,   109,   111,   114,   116,   122
+       0,    43,    43,    45,    47,    49,    51,    53,    55,    57,
+      59,    65,    71,    73,    76,    80,    82,    86,    89,    96,
+     103,   105,   107,   110,   112,   119
 };
 #endif
 
@@ -478,7 +476,7 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "SEMICOLON", "COLON", "OPCODE", "REG",
   "HEX", "BINARY", "END", "CMTSTR", "COMMA", "NEWLN", "LABEL", "LITERAL",
   "WORDPTR", "BYTEPTR", "TEXT", "LSQBR", "RSQBR", "$accept", "statements",
-  "statement", "comment_line", "code_line", "modifier", "params", "param",
+  "statement", "comment", "code", "modifier", "params", "param",
   "label_line", "endline", 0
 };
 #endif
@@ -1411,50 +1409,49 @@ yyreduce:
         case 10:
 
 /* Line 1806 of yacc.c  */
-#line 64 "p86asm.y"
+#line 60 "p86asm.y"
     {
-    							printf("<comment:%s>\n",(yyvsp[(2) - (3)]));
-    						}
+					printf("<comment:%s>\n",(yyvsp[(2) - (3)]));
+				}
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 70 "p86asm.y"
+#line 66 "p86asm.y"
     {
-				printf("<%d:instruction:%s>\n",yylineno, (yyvsp[(1) - (4)]));
-			}
+					printf("<%d:instruction:%s>\n",yylineno, (yyvsp[(1) - (4)]));
+				}
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 78 "p86asm.y"
+#line 74 "p86asm.y"
     {printf("word access");}
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 81 "p86asm.y"
+#line 77 "p86asm.y"
     {printf("byte access");}
     break;
 
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 86 "p86asm.y"
+#line 83 "p86asm.y"
     {
-			}
+				}
     break;
 
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 93 "p86asm.y"
+#line 90 "p86asm.y"
     {
 					Register *reg = new Register((yyvsp[(1) - (1)]), REG_DIRECT);
-					
 					reg->repr();
 					delete reg;
 				}
@@ -1463,7 +1460,7 @@ yyreduce:
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 101 "p86asm.y"
+#line 97 "p86asm.y"
     {
 					Register *reg = new Register((yyvsp[(2) - (3)]), REG_ADDR);
 					reg->repr();
@@ -1474,7 +1471,7 @@ yyreduce:
   case 24:
 
 /* Line 1806 of yacc.c  */
-#line 117 "p86asm.y"
+#line 113 "p86asm.y"
     {
 					printf("<label:%s>\n",(yyvsp[(1) - (2)]));
 				}
@@ -1483,7 +1480,7 @@ yyreduce:
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 123 "p86asm.y"
+#line 120 "p86asm.y"
     {
 					printf("program end\n");
 				}
@@ -1492,7 +1489,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1496 "p86asm.tab.c"
+#line 1493 "p86asm.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1723,6 +1720,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 128 "p86asm.y"
+#line 124 "p86asm.y"
 
 

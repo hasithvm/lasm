@@ -12,17 +12,38 @@
 using namespace std;
 enum AccessMode{
 	UNINITIALIZED=0,
-	REG_DIRECT=1,			//use register as direct access.
-	REG_ADDR=2,				//register contains address of operand.
+	REG_DIRECT=1,				//use register as direct access.
+	REG_ADDR=2,					//register contains address of operand.
 };
+
 enum RegType{
 	REG_GP=1,					//general purpose register
 	REG_IP=2,					//special purpose register (SP, BP, SI, BI, IP)
 	};
-extern char chHexLUT[16];
+
 extern char *accessmodeLUT[3];
 std::string hex2str(uint8_t* bytes, int count);
-class Register{
+
+class Operand{
+	public:
+ 			virtual std::vector<uint8_t> getBinEncoding();
+ 			virtual uint8_t getBinEncoding() = 0;
+			virtual void repr(){};
+};
+
+class Immediate : public Operand{
+	public:
+			Immediate():m_val(0){}	;
+			Immediate(uint8_t* ptr, int len);
+			std::vector<uint8_t> getBinEncoding();
+			void repr();
+	private:
+			uint8_t m_val;
+			uint8_t parse(std::string val);
+			
+};
+
+class Register : public Operand{
 		public:
 					 Register();
 					 Register(char * pRegName, AccessMode accessmode);
@@ -32,7 +53,6 @@ class Register{
 					 void repr();
 					 
 		private:
-						//uint8_t mask[4] = {0x00,0x03,0x01,0x02};
 						uint8_t reg;
 						int m_regtype;
 						std::string m_regname;
