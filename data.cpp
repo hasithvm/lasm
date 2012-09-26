@@ -3,24 +3,26 @@
 char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
 
 //string lookup table for register types.
-char *regtypeLUT[2] = {"general purpose", "special"};
+char *regtypeLUT[3] = {"uninitialized","general purpose", "special"};
 
+Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
-Register::Register(): reg(0),am(UNINITIALIZED),m_regtype(0), m_regmap(), m_regname()
-{
-_populate();
+
+Register::Register(): reg(0),am(UNINITIALIZED),m_regtype(0), m_regname()
+{;
 }
+
+
 
 //extended constructor. Consumes a regname and an accessmode.
 Register::Register(char* pRegName, AccessMode	 accessmode): 
-reg(0), am(accessmode),m_regtype(0),m_regmap(),m_regname()
+reg(0), am(accessmode),m_regtype(0),m_regname()
 {
 //create the LUT for regtypes. Really should make this static.
-_populate();
-//create a tmp stl string for the regname.
 string tmp = std::string((const char *)pRegName,2);
 //call the parser function.
 reg = Register::parseRegString(tmp);
+m_regname = tmp.substr(0,2);
 }
 
 //sets the register name, ie "AX". 
@@ -29,13 +31,14 @@ reg = Register::parseRegString(regname);
 }
 
 //returns the binary representation of the register.
-uint8_t Register::getBinEncoding(){
-//TODO
+std::vector<uint8_t> Register::getByteArray(){
+vector<uint8_t> vec;
+return vec;
 }
 
 //returns the register accessmode.
 AccessMode Register::getAccessMode(){
-return this,am;
+return am;
 }
 
 //prints a representation of the register to clog.
@@ -54,49 +57,53 @@ uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
 for (int i=0;i<2;i++)
 		str[i] = std::toupper(str[i]);
-		
-//set the reg name.
-m_regname = str.substr(0,2);
-
+std::string tmp_regname = str.substr(0,2);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
-if (m_regmap.find(m_regname) == m_regmap.end())
+if (m_regmap.find(tmp_regname) == m_regmap.end())
 {
 	cerr << "Error! invalid register identifier specified!" << endl;
 	return 0;
 }
-//look up the binary value.
-uint8_t t_reg = m_regmap[m_regname];
-
-
 //set the register type
-if ((str.compare(1,1,"H") == 0) && 
-		(m_regmap[m_regname] <= 0x07) &&
-		(m_regmap[m_regname] >= 0x04))
-	m_regtype = REG_IP;
+clog << str.at(1);
+if ((str.at(1) != 'H') && 
+		RANGE(m_regmap[tmp_regname],0x04, 0x07))
+	m_regtype = REG_SP;
+else
+	m_regtype = REG_GP;
 		 
-return t_reg;
+return m_regmap[tmp_regname];
 }
 
-void Register::_populate(){
-	REGMAP("AX", 0x00);
+Register::RegLookupMap Register::_populate(){
+
+	RegLookupMap ret;
+	
+	REGMAP("AX",0x00);
 	REGMAP("CX",0x01);
 	REGMAP("DX",0x02);
-	REGMAP("BX", 0x03);
+	REGMAP("BX",0x03);
 
-	REGMAP("SP", 0x04);
+	REGMAP("SP",0x04);
 	REGMAP("BP",0x05);
-	REGMAP("SI", 0x06);
+	REGMAP("SI",0x06);
 	REGMAP("DI",0x07);
 
 	REGMAP("AL",0x00);
 	REGMAP("CL",0x01);
 	REGMAP("DL",0x02);
-	REGMAP("BL", 0x03);
+	REGMAP("BL",0x03);
 	REGMAP("AH",0x04);
 	REGMAP("CH",0x05);
 	REGMAP("DH",0x06);
 	REGMAP("BH",0x07);
+	
+	
+	return ret;
 }
+
+
+
 
 
 std::string hex2str(uint8_t* bytes, int count)
