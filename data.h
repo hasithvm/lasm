@@ -25,7 +25,7 @@ enum RegType{
 	};
 
 extern char *accessmodeLUT[3];
-static 	std::string hex2str(uint8_t* bytes, int count);
+std::string hex2str(uint8_t* bytes, int count);
 
 class Operand{
 	public:

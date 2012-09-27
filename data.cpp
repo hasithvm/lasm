@@ -65,7 +65,6 @@ if (m_regmap.find(tmp_regname) == m_regmap.end())
 	return 0;
 }
 //set the register type
-clog << str.at(1);
 if ((str.at(1) != 'H') && 
 		RANGE(m_regmap[tmp_regname],0x04, 0x07))
 	m_regtype = REG_SP;
