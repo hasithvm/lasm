@@ -8,8 +8,10 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 #define REGMAP(a,b)	ret[a] = b
 #define RANGE(x,a,b)	((a <= x) && (x <= b))
+
 using namespace std;
 enum AccessMode{
 	UNINITIALIZED=0,
@@ -25,8 +27,8 @@ enum RegType{
 	};
 
 extern char *accessmodeLUT[3];
-static 	std::string hex2str(uint8_t* bytes, int count);
-
+std::string hex2str(uint8_t* bytes, int count);
+char convlower(char in);
 class Operand{
 	public:
 			virtual AccessMode getAccessMode()=0;
@@ -36,15 +38,16 @@ class Operand{
 
 class Immediate : public Operand{
 	public:
-			Immediate():m_data(){}	;
-			Immediate(uint8_t* ptr, int len, AccessMode am);
+			Immediate();
+			Immediate(std::string a,int base, AccessMode am);
 			AccessMode getAccessMode();
 			std::vector<uint8_t> getByteArray();
 			void repr();
 	private:
-
+			AccessMode m_am;
 			std::vector<uint8_t> m_data;
-			uint8_t parse(std::string val);
+			static std::vector<uint8_t> parse(std::string val, int base);
+			void init();
 			
 };
 
@@ -62,10 +65,19 @@ class Register : public Operand{
 						uint8_t reg;
 						int m_regtype;
 						std::string m_regname;
-						AccessMode am;
+						AccessMode m_am;
 						uint8_t parseRegString(std::string& str);
  						static RegLookupMap m_regmap;
 						static RegLookupMap _populate();
 };
-
+class BasicParameterNode{
+		public:
+					BasicParameterNode();
+					void setType(int type);
+					void setPtr(Operand* ptr);
+					Operand* getPtr();
+		private:
+					int type;
+					Operand* ptr;
+};
 #endif

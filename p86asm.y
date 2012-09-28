@@ -101,6 +101,11 @@
 				}
 				|
 				HEX
+				{
+					Immediate *i = new Immediate(std::string($1),16,IMMEDIATE);
+					i->repr();
+					delete i;
+				}
 				|
 				BINARY
 				|

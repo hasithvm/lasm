@@ -1,5 +1,5 @@
 TARGET=p86asm
-SRC=symtable.cpp data.cpp lex.yy.c
+SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp
 OBJ=$(SRC:.cpp=.o)
 all:$(TARGET)
 

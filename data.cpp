@@ -1,22 +1,19 @@
 #include "data.h"
-//string lookup table for register access modes. 
-char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
-
 //string lookup table for register types.
 char *regtypeLUT[3] = {"uninitialized","general purpose", "special"};
-
+char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0),am(UNINITIALIZED),m_regtype(0), m_regname()
-{;
+Register::Register(): reg(0),m_am(UNINITIALIZED),m_regtype(0), m_regname()
+{
 }
 
 
 
 //extended constructor. Consumes a regname and an accessmode.
 Register::Register(char* pRegName, AccessMode	 accessmode): 
-reg(0), am(accessmode),m_regtype(0),m_regname()
+reg(0), m_am(accessmode),m_regtype(0),m_regname()
 {
 //create the LUT for regtypes. Really should make this static.
 string tmp = std::string((const char *)pRegName,2);
@@ -38,7 +35,7 @@ return vec;
 
 //returns the register accessmode.
 AccessMode Register::getAccessMode(){
-return am;
+return m_am;
 }
 
 //prints a representation of the register to clog.
@@ -46,7 +43,7 @@ void Register::repr(){
 clog << "<Register>" << endl;
 clog <<"\taddress:\t"<< hex2str(&reg,1) << endl;
 clog <<"\tname:\t" << m_regname <<  endl;
-clog << "\taccessmode:\t" << accessmodeLUT[am] << endl;
+clog << "\taccessmode:\t" << accessmodeLUT[m_am] << endl;
 clog << "\ttype:\t" << regtypeLUT[m_regtype] << endl;
 clog << "</Register>" << endl;
 }

@@ -958,6 +958,9 @@ YY_RULE_SETUP
 yylval=strdup(yytext);			return HEX;				/*printf("hex");*/
 	YY_BREAK
 case 10:
+*yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
+(yy_c_buf_p) = yy_cp -= 1;
+YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 #line 34 "p86asm.l"
 yylval=strdup(yytext);			return HEX;				/*printf("hex");*/
@@ -965,7 +968,7 @@ yylval=strdup(yytext);			return HEX;				/*printf("hex");*/
 case 11:
 YY_RULE_SETUP
 #line 35 "p86asm.l"
-yylval=strdup(yytext);			return BINARY;			/*printf("binary");*/
+yylval=strdup(yytext);			return BINARY;				/*printf("binary");*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
@@ -978,7 +981,7 @@ case 13:
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 #line 37 "p86asm.l"
-yylval=strdup(yytext); 			return LABEL;			/*printf("text");*/
+yylval=strdup(yytext); 			return LABEL;				/*printf("text");*/
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
@@ -996,7 +999,7 @@ case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
 #line 40 "p86asm.l"
-;														/*prinf("endl");*/
+;															/*prinf("endl");*/
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
@@ -1028,7 +1031,7 @@ YY_RULE_SETUP
 #line 46 "p86asm.l"
 ECHO;
 	YY_BREAK
-#line 1032 "lex.yy.c"
+#line 1035 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CMT):
 case YY_STATE_EOF(ENDCOND):
