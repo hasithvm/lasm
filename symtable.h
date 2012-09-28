@@ -6,7 +6,7 @@
 #include <iostream>
 #include "data.h"
 using namespace std;
-#define OPCODE(op,bin)	m_opmap[std::string(op)] = bin
+#define OPCODE(op,bin)	ret[std::string(op)] = bin
 
 
 
@@ -17,8 +17,9 @@ class SymTable{
 						uint8_t get(std::string opcode);
 						void repr();
 		private:
-						map<std::string, uint8_t> m_opmap;
-						
+					typedef map<std::string, uint8_t> SymMap;
+						static SymMap m_opmap;
+						static SymMap generate();
 };
 
 #endif
