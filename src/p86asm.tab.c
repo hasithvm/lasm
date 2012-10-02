@@ -1473,7 +1473,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 104 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)])),16,IMMEDIATE);
+					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)])),BASE_HEX,IMMEDIATE);
 					i->repr();
 					delete i;
 				}

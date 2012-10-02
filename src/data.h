@@ -26,27 +26,34 @@ enum RegType{
 	REG_SP=2,					//special purpose register (SP, BP, SI, BI, IP)
 	};
 
+enum ImmediateEncoding{
+	UNDEFINED=0,
+	BASE_BIN=2,
+	BASE_HEX=16,
+	BASE_ASC=32,
+};
 extern char *accessmodeLUT[3];
 std::string hex2str(uint8_t* bytes, int count);
 char convlower(char in);
 class Operand{
 	public:
 			virtual AccessMode getAccessMode()=0;
- 			virtual std::vector<uint8_t> getByteArray() = 0;
+			
+ 			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(){};
 };
 
 class Immediate : public Operand{
 	public:
 			Immediate();
-			Immediate(std::string a,int base, AccessMode am);
+			Immediate(std::string a,ImmediateEncoding base, AccessMode am);
 			AccessMode getAccessMode();
-			std::vector<uint8_t> getByteArray();
+			vector<uint8_t> getBinEncoding();
 			void repr();
 	private:
 			AccessMode m_am;
-			std::vector<uint8_t> m_data;
-			static std::vector<uint8_t> parse(std::string val, int base);
+			vector<uint8_t> m_data;
+			static vector<uint8_t> parse(std::string val, ImmediateEncoding base);
 			void init();
 			
 };
@@ -56,7 +63,7 @@ class Register : public Operand{
 					Register();
 					Register(char * pRegName, AccessMode accessmode);
 					void setName(std::string& regname);
-					std::vector<uint8_t> getByteArray();
+					uint8_t getBinEncoding();
 					AccessMode getAccessMode();
 					void repr();
 					

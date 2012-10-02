@@ -22,11 +22,11 @@
 %x ENDCOND
 %option yylineno
 %%
-;							BEGIN CMT;						return SEMICOLON;		/*printf("semicolon");*/
+;							BEGIN CMT;						return SEMICOLON;			/*printf("semicolon");*/
 <CMT>(.*[^\n])\s*			yylval=strdup(yytext);			return CMTSTR;
 <CMT>\n						BEGIN 0;						return NEWLN;
-:															return COLON;			/*printf("colon");*/
-[A-Za-z][A-Za-z]{2,4}		yylval=strdup(yytext);			return OPCODE;			/*printf("opcode");*/
+:															return COLON;				/*printf("colon");*/
+[A-Za-z][A-Za-z]{2,4}		yylval=strdup(yytext);			return OPCODE;				/*printf("opcode");*/
 "WORD PTR"													return WORDPTR;
 "BYTE PTR"													return BYTEPTR;
 [A-Da-dsS][xXHhLlIiPp]{1}	yylval=strdup(yytext);			return REG;				/*printf("reg");*/

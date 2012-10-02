@@ -102,7 +102,7 @@
 				|
 				HEX
 				{
-					Immediate *i = new Immediate(std::string($1),16,IMMEDIATE);
+					Immediate *i = new Immediate(std::string($1),BASE_HEX,IMMEDIATE);
 					i->repr();
 					delete i;
 				}

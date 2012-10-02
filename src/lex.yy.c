@@ -914,7 +914,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 25 "p86asm.l"
-BEGIN CMT;						return SEMICOLON;		/*printf("semicolon");*/
+BEGIN CMT;						return SEMICOLON;			/*printf("semicolon");*/
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
@@ -930,12 +930,12 @@ BEGIN 0;						return NEWLN;
 case 4:
 YY_RULE_SETUP
 #line 28 "p86asm.l"
-return COLON;			/*printf("colon");*/
+return COLON;				/*printf("colon");*/
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 29 "p86asm.l"
-yylval=strdup(yytext);			return OPCODE;			/*printf("opcode");*/
+yylval=strdup(yytext);			return OPCODE;				/*printf("opcode");*/
 	YY_BREAK
 case 6:
 YY_RULE_SETUP

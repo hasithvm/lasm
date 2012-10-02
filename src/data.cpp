@@ -5,15 +5,15 @@ char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0),m_am(UNINITIALIZED),m_regtype(0), m_regname()
+Register::Register(): reg(0xFF),m_am(UNINITIALIZED),m_regtype(0), m_regname()
 {
 }
 
 
 
 //extended constructor. Consumes a regname and an accessmode.
-Register::Register(char* pRegName, AccessMode	 accessmode): 
-reg(0), m_am(accessmode),m_regtype(0),m_regname()
+Register::Register(char* pRegName, AccessMode accessmode): 
+reg(0xFF), m_am(accessmode),m_regtype(0),m_regname()
 {
 //create the LUT for regtypes. Really should make this static.
 string tmp = std::string((const char *)pRegName,2);
@@ -28,9 +28,10 @@ reg = Register::parseRegString(regname);
 }
 
 //returns the binary representation of the register.
-std::vector<uint8_t> Register::getByteArray(){
-vector<uint8_t> vec;
-return vec;
+uint8_t Register::getBinEncoding(){
+
+return reg;
+
 }
 
 //returns the register accessmode.
@@ -59,7 +60,7 @@ std::string tmp_regname = str.substr(0,2);
 if (m_regmap.find(tmp_regname) == m_regmap.end())
 {
 	cerr << "Error! invalid register identifier specified!" << endl;
-	return 0;
+	return 0xFF;
 }
 //set the register type
 if ((str.at(1) != 'H') && 
