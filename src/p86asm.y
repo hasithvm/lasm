@@ -108,8 +108,14 @@
 				}
 				|
 				BINARY
+				{
+					Immediate *i = new Immediate(std::string($1).substr(2,-1),BASE_BIN,IMMEDIATE);
+					i->repr();
+					delete i;
+				}
 				|
 				LITERAL
+				
 				;
 
 	label_line:

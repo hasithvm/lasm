@@ -32,33 +32,45 @@ vector<uint8_t> Immediate::parse(std::string in, ImmediateEncoding base)
 {
 string::reverse_iterator it;
 vector<uint8_t> out;
+int padding = 0;
 int bytes_written=0;
 unsigned int tmp = 0;
 std::transform(in.begin(),in.end(), in.begin(), convlower);
 
 //pad with zero if not an even mult
-if (in.length() % 2 != 0)
-	in.insert(0,1,'0');
+
 switch(base)
 {
 	case BASE_HEX:
+	if (in.length() % 2 != 0)
+		in.insert(0,1,'0');
+	
 	out.resize(in.length() / 2);	
 	//in.resize(4);
 	for (it = in.rbegin();it!=in.rend();++it)
 {
-	printf("%s\n",&*it);
-	sscanf((const char *)&*it,"%x",&tmp);
-	it++;
 	
-out[bytes_written] = tmp;
-		printf("%s\n",&*it);
-	sscanf((const char *)&*it,"%x",&tmp);
+	out[bytes_written] = parseDigit(*it) | parseDigit(*++it) << 4 ;
+	bytes_written++;	
 
-	out[bytes_written] = tmp << 4;
-	bytes_written++;
-	tmp = 0;
 }
 
+	break;
+	case BASE_BIN:
+	padding =  8 - (in.length() % 8);
+	if (padding != 8)
+		in.insert(0, padding, (char)in[0]);
+	out.resize(in.length() / 8);
+	for (it = in.rbegin();it < in.rend();it++)
+	{
+	
+		for (int i = 0; i < 8;i++)
+		{
+					out[bytes_written] |= parseDigit(*it) << i;
+					it++;
+			}
+		clog << out[bytes_written];
+	}
 	break;
 	default:
 	break;

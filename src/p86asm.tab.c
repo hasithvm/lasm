@@ -464,7 +464,7 @@ static const yytype_uint8 yyrline[] =
 {
        0,    43,    43,    45,    47,    49,    51,    53,    55,    57,
       59,    65,    71,    73,    76,    80,    82,    86,    89,    96,
-     103,   110,   112,   115,   117,   124
+     103,   110,   117,   121,   123,   130
 };
 #endif
 
@@ -1479,10 +1479,21 @@ yyreduce:
 				}
     break;
 
+  case 21:
+
+/* Line 1806 of yacc.c  */
+#line 111 "p86asm.y"
+    {
+					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)])).substr(2,-1),BASE_BIN,IMMEDIATE);
+					i->repr();
+					delete i;
+				}
+    break;
+
   case 24:
 
 /* Line 1806 of yacc.c  */
-#line 118 "p86asm.y"
+#line 124 "p86asm.y"
     {
 					printf("<label:%s>\n",(yyvsp[(1) - (2)]));
 				}
@@ -1491,7 +1502,7 @@ yyreduce:
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 125 "p86asm.y"
+#line 131 "p86asm.y"
     {
 					printf("program end\n");
 				}
@@ -1500,7 +1511,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1504 "p86asm.tab.c"
+#line 1515 "p86asm.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1731,6 +1742,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 129 "p86asm.y"
+#line 135 "p86asm.y"
 
 

@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include "common.h"
 #define REGMAP(a,b)	ret[a] = b
 #define RANGE(x,a,b)	((a <= x) && (x <= b))
 
