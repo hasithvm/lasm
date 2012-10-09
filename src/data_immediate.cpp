@@ -6,7 +6,6 @@ Immediate::Immediate(): m_am(UNINITIALIZED),m_data(){
 Immediate::Immediate(std::string a,ImmediateEncoding base, AccessMode am):
 m_am(am)
 {
-	cerr << a << endl;
 	m_data = Immediate::parse(a,base);
 }
 
@@ -15,7 +14,9 @@ void Immediate::repr(){
 	clog << "<Immediate>" << endl;
 	if (m_data.size() == 0)
 		clog << "\tvalue:\tuninitialized"<<endl;	
-	clog << "\tvalue:\t" << hex2str(&m_data[0], m_data.size()) << endl;
+	else
+		clog << "\tvalue:\t" << hex2str(&m_data[0], m_data.size()) << endl;
+
 	clog << "</Immediate>" << endl;
 }
 
@@ -69,7 +70,6 @@ switch(base)
 					out[bytes_written] |= parseDigit(*it) << i;
 					it++;
 			}
-		clog << out[bytes_written];
 	}
 	break;
 	default:
