@@ -3,8 +3,31 @@
 SymTable::SymMap SymTable::m_opmap(SymTable::generate());
 
 SymTable::SymMap SymTable::generate(){
-	SymTable::SymMap ret;
-	OPCODE("ADD", )
+	SymTable::SymMap ret ={
+	{"add",
+			{{OP_DIR | OP_WORD ,0xC0,REG8|REG16, REG8|REG16},
+			{,0x00,}} 
+	 },
+	 {"and",
+	 		{{0x00,0x00,REG8|REG16, IMM8|IMM16}}
+	 
+	 }
+	 {"call",
+	 		{
+	 		{0x00,0xE8,IMM16}
+	 		}
+	 
+	 }
+	{"cmp",
+			{
+			{0x00}
+			}
+	
+	
+	}
+	
+	};
+	//	OPCODE("ADD", )
 //	OPCODE("ADD",0x00);
 //	OPCODE("AND",0xF1);
 //	OPCODE("CALL",0x00);
@@ -61,7 +84,7 @@ void SymTable::repr(){
 clog << "p86asm supported opcodes:" << endl;
 for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
 {
-clog << "\t opcode: " <<it->first <<" encoding:  " << hex2str(&it->second,1)<<  endl;
+//clog << "\t opcode: " <<it->first <<" encoding:  " << hex2str(&it->second,1)<<  endl;
 }
 clog << endl;
 

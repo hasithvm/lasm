@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <iostream>
 #include "data.h"
+#include <initializer_list>
 using namespace std;
 
 #define OPCODE(op,bin)	ret[std::string(op)] = bin
@@ -26,14 +27,12 @@ using namespace std;
 
 #define SINGLE_OP 0x00
 
+#define OP_DIR 1
 
-typedef std::vector<uint8_t> 	opvariant_t;
-typedef std::vector<OpType> 	opvariants_t;
 
-typedef struct OpVar{
-	opvariant_t opvar;
-	OpVar(uint8_t opt, uint8_t opcode, uint8_t modRM, uint8_t operand1, uint8_t operand2):
-};
+typedef std::vector<uint8_t> 	OpType;
+typedef std::vector< OpType > 	OpVars;
+
 
 
 //single byte opcodes supported only!
@@ -46,7 +45,7 @@ class SymTable{
 						uint8_t get(std::string opcode);
 						void repr();
 		private:
-					typedef map<std::string, OpVar<OpType>> SymMap;
+					typedef map<std::string, OpVars > SymMap;
 						static SymMap m_opmap;
 						static SymMap generate();
 };
