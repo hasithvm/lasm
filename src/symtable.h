@@ -35,7 +35,17 @@ using namespace std;
 
 #define OP_WORD 2
 //bitmask for operand count {0,1,2,3?}
-#define OP_OPERAND_COUNT 12
+#define OP_OPERAND_COUNT_MASK 12
+
+#define OP_NO_OPERANDS 0
+#define OP_SINGLE_OPERAND 4
+#define OP_TWO_OPERANDS 8
+
+// single operand that is the src to a fixed dest register
+#define OP_TO_FIXED_REG 36
+
+#define OP_FIXED_SRC_DEST 
+
 //mod is fixed
 #define OP_MOD_FIXED 16
 //reg is fixed
@@ -44,6 +54,7 @@ using namespace std;
 #define OP_RM_FIXED 64
 //next byte has the prefixes necessary.
 #define OP_PREFIX_BYTE 128
+
 
 
 typedef std::vector<uint8_t> 	OpType;

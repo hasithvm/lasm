@@ -6,7 +6,7 @@ SymTable::SymMap SymTable::generate(){
 	SymTable::SymMap ret ={
 	{"add",
 			{
-			{OP_DIR | OP_WORD | ,0xC0,REG8|REG16, REG8|REG16},
+			{OP_DIR | OP_WORD | OP_TWO_OPERANDS ,0xC0,REG8|REG16, REG8|REG16},
 			{OP_SIGN | OP_WORD |	,0x00,}
 			} 
 	 },
