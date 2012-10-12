@@ -27,7 +27,23 @@ using namespace std;
 
 #define SINGLE_OP 0x00
 
-#define OP_DIR 1
+
+
+#define OP_DIR 0
+
+#define OP_SIGN 1
+
+#define OP_WORD 2
+//bitmask for operand count {0,1,2,3?}
+#define OP_OPERAND_COUNT 12
+//mod is fixed
+#define OP_MOD_FIXED 16
+//reg is fixed
+#define OP_REG_FIXED 32
+//rm is fixed
+#define OP_RM_FIXED 64
+//next byte has the prefixes necessary.
+#define OP_PREFIX_BYTE 128
 
 
 typedef std::vector<uint8_t> 	OpType;

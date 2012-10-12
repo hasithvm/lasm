@@ -5,8 +5,10 @@ SymTable::SymMap SymTable::m_opmap(SymTable::generate());
 SymTable::SymMap SymTable::generate(){
 	SymTable::SymMap ret ={
 	{"add",
-			{{OP_DIR | OP_WORD ,0xC0,REG8|REG16, REG8|REG16},
-			{,0x00,}} 
+			{
+			{OP_DIR | OP_WORD | ,0xC0,REG8|REG16, REG8|REG16},
+			{OP_SIGN | OP_WORD |	,0x00,}
+			} 
 	 },
 	 {"and",
 	 		{{0x00,0x00,REG8|REG16, IMM8|IMM16}}
