@@ -2,6 +2,7 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
+	#include <cstddef>
 	#include <vector>
 	#include "data.h"
 	#include "symtable.h"
@@ -21,7 +22,7 @@
 	}    
 	void yyerror(const char *str)
 	{
-		cerr << yylineno << "\tparser error:\n" << str << endl;
+		cerr << endl << yylineno << "\n\tparser error:\n" << str << endl;
 	}
 	
 
@@ -39,7 +40,7 @@
 
 %error-verbose
 %token SEMICOLON COLON OPCODE REG HEX BINARY END CMTSTR COMMA NEWLN LABEL LITERAL WORDPTR BYTEPTR TEXT LSQBR RSQBR
-%% 
+%% 		
 	statements:
 				|
 				statements statement;
@@ -54,7 +55,7 @@
 				|
 				label_line;
 
-	comment:
+	comment:			
 				|
 				SEMICOLON CMTSTR NEWLN
 				{
@@ -62,9 +63,9 @@
 				};
 
 	code:
-				OPCODE modifier params comment
+				label_line OPCODE modifier params comment
 				{
-					printf("<%d:instruction:%s>\n",yylineno, $1);
+					printf("<%d:instruction:%s>\n",yylineno, $2);
 				}
 				;
 
@@ -77,10 +78,15 @@
 				{printf("byte access");}
 				;
 
-	params:
+	params:		
+				{
+					
+					//$$ =  new std::vector<Operand*>();
+				}
 				|
 				param COMMA param
 				{
+				
 				}
 				|
 				param
@@ -118,9 +124,7 @@
 				
 				;
 
-	label_line:
-				|
-				LABEL COLON
+	label_line:	LABEL COLON
 				{
 					printf("<label:%s>\n",$1);
 				}

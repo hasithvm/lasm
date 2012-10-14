@@ -78,14 +78,5 @@ class Register : public Operand{
  						static RegLookupMap m_regmap;
 						static RegLookupMap _populate();
 };
-class BasicParameterNode{
-		public:
-					BasicParameterNode();
-					void setType(int type);
-					void setPtr(Operand* ptr);
-					Operand* getPtr();
-		private:
-					int type;
-					Operand* ptr;
-};
+
 #endif

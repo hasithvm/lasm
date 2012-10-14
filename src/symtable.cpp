@@ -7,19 +7,19 @@ SymTable::SymMap SymTable::generate(){
 	{"add",
 			{
 			{OP_DIR | OP_WORD | OP_TWO_OPERANDS ,0xC0,REG8|REG16, REG8|REG16},
-			{OP_SIGN | OP_WORD |	,0x00,}
+			{OP_SIGN | OP_WORD 	,0x00}
 			} 
 	 },
 	 {"and",
 	 		{{0x00,0x00,REG8|REG16, IMM8|IMM16}}
 	 
-	 }
+	 },
 	 {"call",
 	 		{
 	 		{0x00,0xE8,IMM16}
 	 		}
 	 
-	 }
+	 },
 	{"cmp",
 			{
 			{0x00}

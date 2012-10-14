@@ -55,6 +55,7 @@ using namespace std;
 //next byte has the prefixes necessary.
 #define OP_PREFIX_BYTE 128
 
+#
 
 
 typedef std::vector<uint8_t> 	OpType;
