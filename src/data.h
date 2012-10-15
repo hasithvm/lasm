@@ -8,7 +8,6 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include <algorithm>
 #include "common.h"
 #define REGMAP(a,b)	ret[a] = b
 #define RANGE(x,a,b)	((a <= x) && (x <= b))
@@ -41,7 +40,7 @@ class Operand{
 			virtual AccessMode getAccessMode()=0;
 			
  			//virtual std::vector<uint8_t> getByteArray() = 0;
-			virtual void repr(){};
+			virtual void repr(int indentlevel)=0;
 };
 
 class Immediate : public Operand{
@@ -50,7 +49,7 @@ class Immediate : public Operand{
 			Immediate(std::string a,ImmediateEncoding base, AccessMode am);
 			AccessMode getAccessMode();
 			vector<uint8_t> getBinEncoding();
-			void repr();
+			void repr(int indentlevel);
 	private:
 			AccessMode m_am;
 			vector<uint8_t> m_data;
@@ -66,7 +65,7 @@ class Register : public Operand{
 					void setName(std::string& regname);
 					uint8_t getBinEncoding();
 					AccessMode getAccessMode();
-					void repr();
+					void repr(int indentlevel);
 					
 		private:
 						typedef std::map<string, uint8_t>  RegLookupMap;

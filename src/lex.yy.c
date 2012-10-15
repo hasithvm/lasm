@@ -609,7 +609,10 @@ char *yytext;
 #line 2 "p86asm.l"
 
 #include <stdio.h>
-
+	#include <vector>
+	#include "data.h"
+	#include "symtable.h"
+	#include "Nodes.h"
 
     extern "C"
     {
@@ -618,7 +621,6 @@ char *yytext;
 
     }
 
-		#define YYSTYPE char *
 
 
 #include "p86asm.tab.h"
@@ -627,7 +629,7 @@ char *yytext;
 
 
 
-#line 631 "lex.yy.c"
+#line 633 "lex.yy.c"
 
 #define INITIAL 0
 #define CMT 1
@@ -816,9 +818,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 24 "p86asm.l"
+#line 26 "p86asm.l"
 
-#line 822 "lex.yy.c"
+#line 824 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -913,66 +915,66 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "p86asm.l"
+#line 27 "p86asm.l"
 BEGIN CMT;						return SEMICOLON;			/*printf("semicolon");*/
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "p86asm.l"
-yylval=strdup(yytext);			return CMTSTR;
+#line 28 "p86asm.l"
+yylval.pStr=strdup(yytext);			return CMTSTR;
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 27 "p86asm.l"
+#line 29 "p86asm.l"
 BEGIN 0;						return NEWLN;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "p86asm.l"
+#line 30 "p86asm.l"
 return COLON;				/*printf("colon");*/
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "p86asm.l"
-yylval=strdup(yytext);			return OPCODE;				/*printf("opcode");*/
+#line 31 "p86asm.l"
+yylval.pStr=strdup(yytext);			return OPCODE;				/*printf("opcode");*/
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "p86asm.l"
+#line 32 "p86asm.l"
 return WORDPTR;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "p86asm.l"
+#line 33 "p86asm.l"
 return BYTEPTR;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "p86asm.l"
-yylval=strdup(yytext);			return REG;				/*printf("reg");*/
+#line 34 "p86asm.l"
+yylval.pStr=strdup(yytext);			return REG;				/*printf("reg");*/
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "p86asm.l"
-yylval=strdup(yytext);			return HEX;				/*printf("hex");*/
+#line 35 "p86asm.l"
+yylval.pStr=strdup(yytext);			return HEX;				/*printf("hex");*/
 	YY_BREAK
 case 10:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 34 "p86asm.l"
-yylval=strdup(yytext);			return HEX;				/*printf("hex");*/
+#line 36 "p86asm.l"
+yylval.pStr=strdup(yytext);			return HEX;				/*printf("hex");*/
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 35 "p86asm.l"
-yylval=strdup(yytext);			return BINARY;				/*printf("binary");*/
+#line 37 "p86asm.l"
+yylval.pStr=strdup(yytext);			return BINARY;				/*printf("binary");*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "p86asm.l"
+#line 38 "p86asm.l"
 BEGIN ENDCOND;					return END;				/*printf("end token");*/
 	YY_BREAK
 case 13:
@@ -980,58 +982,58 @@ case 13:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 37 "p86asm.l"
-yylval=strdup(yytext); 			return LABEL;				/*printf("text");*/
+#line 39 "p86asm.l"
+yylval.pStr=strdup(yytext); 			return LABEL;				/*printf("text");*/
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 38 "p86asm.l"
-yylval=strdup(yytext);			return LITERAL;
+#line 40 "p86asm.l"
+yylval.pStr=strdup(yytext);			return LITERAL;
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 39 "p86asm.l"
-yylval=strdup(yytext);			return LITERAL; 
+#line 41 "p86asm.l"
+yylval.pStr=strdup(yytext);			return LITERAL; 
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 40 "p86asm.l"
+#line 42 "p86asm.l"
 ;															/*prinf("endl");*/
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 41 "p86asm.l"
+#line 43 "p86asm.l"
 return COMMA;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 42 "p86asm.l"
-BEGIN 0;yylval=strdup(yytext);	return TEXT;
+#line 44 "p86asm.l"
+BEGIN 0;yylval.pStr=strdup(yytext);	return TEXT;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 43 "p86asm.l"
+#line 45 "p86asm.l"
 return LSQBR;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 44 "p86asm.l"
+#line 46 "p86asm.l"
 return RSQBR;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 45 "p86asm.l"
+#line 47 "p86asm.l"
 ;														/*ignores whitespace*/
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 46 "p86asm.l"
+#line 48 "p86asm.l"
 ECHO;
 	YY_BREAK
-#line 1035 "lex.yy.c"
+#line 1037 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CMT):
 case YY_STATE_EOF(ENDCOND):
@@ -2043,7 +2045,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 46 "p86asm.l"
+#line 48 "p86asm.l"
 
 
 

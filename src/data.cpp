@@ -40,13 +40,14 @@ return m_am;
 }
 
 //prints a representation of the register to clog.
-void Register::repr(){
-clog << "<Register>" << endl;
-clog <<"\taddress:\t"<< hex2str(&reg,1) << endl;
-clog <<"\tname:\t" << m_regname <<  endl;
-clog << "\taccessmode:\t" << accessmodeLUT[m_am] << endl;
-clog << "\ttype:\t" << regtypeLUT[m_regtype] << endl;
-clog << "</Register>" << endl;
+void Register::repr(int indentlevel){
+	std::string indenter(indentlevel, '\t');
+	clog << indenter << "<Register>" << endl;
+	clog << indenter << "\t<address>"<< hex2str(&reg,1) << "</address>" << endl;
+	clog << indenter << "\t<name>" << m_regname << "</name>" <<  endl;
+	clog << indenter << "\t<accessmode>" << accessmodeLUT[m_am] << "</accessmode>" << endl;
+	clog << indenter << "\t<type>" << regtypeLUT[m_regtype] <<  "</type>"<< endl;
+	clog << indenter << "</Register>" << endl;
 }
 
 

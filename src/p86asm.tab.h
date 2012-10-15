@@ -39,28 +39,42 @@
    enum yytokentype {
      SEMICOLON = 258,
      COLON = 259,
-     OPCODE = 260,
-     REG = 261,
-     HEX = 262,
-     BINARY = 263,
-     END = 264,
-     CMTSTR = 265,
-     COMMA = 266,
-     NEWLN = 267,
-     LABEL = 268,
-     LITERAL = 269,
-     WORDPTR = 270,
-     BYTEPTR = 271,
-     TEXT = 272,
-     LSQBR = 273,
-     RSQBR = 274
+     END = 260,
+     COMMA = 261,
+     NEWLN = 262,
+     WORDPTR = 263,
+     BYTEPTR = 264,
+     LSQBR = 265,
+     RSQBR = 266,
+     OPCODE = 267,
+     REG = 268,
+     HEX = 269,
+     BINARY = 270,
+     CMTSTR = 271,
+     LABEL = 272,
+     LITERAL = 273,
+     TEXT = 274
    };
 #endif
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+
+/* Line 2068 of yacc.c  */
+#line 41 "p86asm.y"
+
+	char* pStr;
+	std::vector<Operand*>* pListOperands;
+	BaseExpressionNode* expr;
+
+
+
+/* Line 2068 of yacc.c  */
+#line 77 "p86asm.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

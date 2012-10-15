@@ -1,5 +1,5 @@
 TARGET=p86asm
-SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp
+SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp
 OBJ=$(SRC:.cpp=.o)
 CXXFLAGS=-std=c++0x
 all:$(TARGET)

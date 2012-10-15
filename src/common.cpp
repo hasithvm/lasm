@@ -8,3 +8,22 @@ if (digit >= 'a' && digit <= 'f')
 
 
 }
+
+void strToLowerCase(std::string& in)
+{
+	std::transform(in.begin(),in.end(), in.begin(), convlower);
+}
+void trim(std::string& in, char toTrim){
+		 
+		in.erase(
+   		 remove( in.begin(), in.end(), toTrim ),
+   		 in.end()
+   		 );
+}
+char convlower(char in)
+{
+	if ( in >= 'A'&& in <='Z')
+		return in-('A' -'a');
+
+	return in;
+}

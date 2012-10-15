@@ -9,15 +9,15 @@ m_am(am)
 	m_data = Immediate::parse(a,base);
 }
 
-void Immediate::repr(){
-
-	clog << "<Immediate>" << endl;
+void Immediate::repr(int indentlevel){
+	std::string indenter(indentlevel, '\t');
+	clog << indenter << "<Immediate>" << endl;
 	if (m_data.size() == 0)
-		clog << "\tvalue:\tuninitialized"<<endl;	
+		clog << indenter << "\t<value>uninitialized</value>"<<endl;	
 	else
-		clog << "\tvalue:\t" << hex2str(&m_data[0], m_data.size()) << endl;
+		clog << indenter << "\t<value>" << hex2str(&m_data[0], m_data.size()) << "</value>"<< endl;
 
-	clog << "</Immediate>" << endl;
+	clog << indenter << "</Immediate>" << endl;
 }
 
 AccessMode Immediate::getAccessMode(){
@@ -31,18 +31,20 @@ return m_data;
 
 vector<uint8_t> Immediate::parse(std::string in, ImmediateEncoding base)
 {
+		string::iterator it_fwd;
 string::reverse_iterator it;
 vector<uint8_t> out;
 int padding = 0;
 int bytes_written=0;
 unsigned int tmp = 0;
-std::transform(in.begin(),in.end(), in.begin(), convlower);
+
 
 //pad with zero if not an even mult
 
 switch(base)
 {
 	case BASE_HEX:
+	strToLowerCase(in);
 	if (in.length() % 2 != 0)
 		in.insert(0,1,'0');
 	
@@ -58,6 +60,7 @@ switch(base)
 
 	break;
 	case BASE_BIN:
+	strToLowerCase(in);
 	padding =  8 - (in.length() % 8);
 	if (padding != 8)
 		in.insert(0, padding, (char)in[0]);
@@ -72,6 +75,13 @@ switch(base)
 			}
 	}
 	break;
+	case BASE_ASC:
+		out.resize(in.length());
+		trim(in, '\'');
+		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
+			{
+			out[bytes_written] = (uint8_t)*it_fwd;
+			}	
 	default:
 	break;
 
@@ -80,10 +90,4 @@ switch(base)
 	return out;
 }
 
-char convlower(char in)
-{
-	if ( in >= 'A'&& in <='Z')
-		return in-('A' -'a');
 
-	return in;
-}
