@@ -1,0 +1,2 @@
+g++ -g -std=c++0x symtable.o data.o lex.yy.c data_immediate.o p86asm.tab.c common.o Nodes.o -ll -o p86asm 
+g++ -g -std=c++0x symtable.o data.o lex.yy.c data_immediate.o p86asm.tab.c common.o Nodes.o -ll -o p86asm 

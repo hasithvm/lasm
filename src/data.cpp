@@ -100,8 +100,9 @@ Register::RegLookupMap Register::_populate(){
 	return ret;
 }
 
-
-
+void Register::setAccessMode(AccessMode am){
+	m_am = am;	
+}
 
 
 std::string hex2str(uint8_t* bytes, int count)

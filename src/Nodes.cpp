@@ -8,7 +8,7 @@ OpNode::OpNode(std::string opName, Operands* op)
 }
 
 ExpressionType OpNode::getType(){
-	return Opcode;
+	return ExpressionType::EXPR_OP;
 }
 
 void OpNode::setContent(std::string a)
@@ -43,4 +43,26 @@ void OpNode::repr(int indentlevel){
 	clog << indenter << "</statement>" << endl;
 	
 
+}
+
+CommentNode::CommentNode(std::string a){
+ cmt = a;
+}
+
+ExpressionType CommentNode::getType(){
+	return ExpressionType::EXPR_COMMENT;
+}
+
+void CommentNode::setContent(std::string a){
+cmt = a;
+}
+std::string CommentNode::getContent(){
+	return cmt;
+}
+
+void CommentNode::repr(int indentlevel){
+	std::string indenter(indentlevel, '\t');	
+	clog << indenter << "<comment>" << endl;
+	clog << indenter << "\t<content>" << cmt << "</content>" << endl;
+	clog << indenter << "<comment>" << endl;
 }

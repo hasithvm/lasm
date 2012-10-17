@@ -402,16 +402,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   30
+#define YYLAST   32
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  20
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  26
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  33
+#define YYNSTATES  32
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -459,28 +459,27 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     4,     7,     9,    11,    13,    15,    16,
-      20,    25,    26,    28,    30,    31,    35,    37,    38,    40,
-      44,    46,    50,    52,    54,    55,    58
+      20,    25,    26,    28,    30,    31,    35,    37,    39,    43,
+      44,    46,    48,    50,    52,    53,    56
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      21,     0,    -1,    -1,    21,    22,    -1,    29,    -1,    24,
-      -1,    23,    -1,    28,    -1,    -1,     3,    16,     7,    -1,
+      21,     0,    -1,    -1,    21,    22,    -1,    30,    -1,    24,
+      -1,    23,    -1,    29,    -1,    -1,     3,    16,     7,    -1,
       12,    25,    26,    23,    -1,    -1,     8,    -1,     9,    -1,
-      -1,    27,     6,    27,    -1,    27,    -1,    -1,    13,    -1,
-      10,    13,    11,    -1,    14,    -1,    10,    14,    11,    -1,
-      15,    -1,    18,    -1,    -1,    17,     4,    -1,     5,    19,
-      -1
+      -1,    27,     6,    27,    -1,    27,    -1,    28,    -1,    10,
+      28,    11,    -1,    -1,    13,    -1,    14,    -1,    15,    -1,
+      18,    -1,    -1,    17,     4,    -1,     5,    19,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
        0,    60,    60,    62,    64,    66,    68,    70,    72,    73,
-      79,    87,    89,    92,    97,   102,   111,   118,   122,   132,
-     142,   152,   161,   170,   180,   182,   188
+      79,    87,    89,    92,    97,   102,   111,   117,   122,   133,
+     137,   147,   157,   166,   176,   178,   184
 };
 #endif
 
@@ -492,8 +491,8 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "SEMICOLON", "COLON", "END", "COMMA",
   "NEWLN", "WORDPTR", "BYTEPTR", "LSQBR", "RSQBR", "OPCODE", "REG", "HEX",
   "BINARY", "CMTSTR", "LABEL", "LITERAL", "TEXT", "$accept", "statements",
-  "statement", "comment", "code", "modifier", "params", "param", "label",
-  "endline", 0
+  "statement", "comment", "code", "modifier", "params", "param", "operand",
+  "label", "endline", 0
 };
 #endif
 
@@ -511,16 +510,16 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    20,    21,    21,    22,    22,    22,    22,    23,    23,
-      24,    25,    25,    25,    26,    26,    26,    27,    27,    27,
-      27,    27,    27,    27,    28,    28,    29
+      24,    25,    25,    25,    26,    26,    26,    27,    27,    28,
+      28,    28,    28,    28,    29,    29,    30
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     0,     2,     1,     1,     1,     1,     0,     3,
-       4,     0,     1,     1,     0,     3,     1,     0,     1,     3,
-       1,     3,     1,     1,     0,     2,     2
+       4,     0,     1,     1,     0,     3,     1,     1,     3,     0,
+       1,     1,     1,     1,     0,     2,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
@@ -529,15 +528,16 @@ static const yytype_uint8 yyr2[] =
 static const yytype_uint8 yydefact[] =
 {
        2,     0,     1,     0,     0,    11,     0,     3,     6,     5,
-       7,     4,     0,    26,    12,    13,    14,    25,     9,     0,
-      18,    20,    22,    23,     8,    16,     0,     0,    10,    17,
-      19,    21,    15
+       7,     4,     0,    26,    12,    13,    14,    25,     9,    19,
+      20,    21,    22,    23,     8,    16,    17,     0,    10,    19,
+      18,    15
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     7,     8,     9,    16,    24,    25,    10,    11
+      -1,     1,     7,     8,     9,    16,    24,    25,    26,    10,
+      11
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
@@ -546,27 +546,28 @@ static const yytype_int8 yydefgoto[] =
 static const yytype_int8 yypact[] =
 {
      -16,     0,   -16,   -15,    -6,    -1,    12,   -16,   -16,   -16,
-     -16,   -16,    -3,   -16,   -16,   -16,    -4,   -16,   -16,     8,
-     -16,   -16,   -16,   -16,    21,    19,    15,    16,   -16,     5,
-     -16,   -16,   -16
+     -16,   -16,    -3,   -16,   -16,   -16,    -4,   -16,   -16,    11,
+     -16,   -16,   -16,   -16,    18,    16,   -16,    17,   -16,     5,
+     -16,   -16
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,   -16,     4,   -16,   -16,   -16,     1,   -16,   -16
+     -16,   -16,   -16,     3,   -16,   -16,   -16,     1,    13,   -16,
+     -16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -18
+#define YYTABLE_NINF -20
 static const yytype_int8 yytable[] =
 {
-       2,    12,   -17,     3,    18,     4,    19,    14,    15,    20,
+       2,    12,   -19,     3,    18,     4,    19,    14,    15,    20,
       21,    22,     5,    13,    23,    19,    17,     6,    20,    21,
-      22,    26,    27,    23,     3,    29,    30,    31,    28,     0,
-      32
+      22,     3,    29,    23,    20,    21,    22,    28,    30,    23,
+      31,     0,    27
 };
 
 #define yypact_value_is_default(yystate) \
@@ -579,8 +580,8 @@ static const yytype_int8 yycheck[] =
 {
        0,    16,     6,     3,     7,     5,    10,     8,     9,    13,
       14,    15,    12,    19,    18,    10,     4,    17,    13,    14,
-      15,    13,    14,    18,     3,     6,    11,    11,    24,    -1,
-      29
+      15,     3,     6,    18,    13,    14,    15,    24,    11,    18,
+      29,    -1,    19
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -588,9 +589,9 @@ static const yytype_int8 yycheck[] =
 static const yytype_uint8 yystos[] =
 {
        0,    21,     0,     3,     5,    12,    17,    22,    23,    24,
-      28,    29,    16,    19,     8,     9,    25,     4,     7,    10,
-      13,    14,    15,    18,    26,    27,    13,    14,    23,     6,
-      11,    11,    27
+      29,    30,    16,    19,     8,     9,    25,     4,     7,    10,
+      13,    14,    15,    18,    26,    27,    28,    28,    23,     6,
+      11,    27
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1495,7 +1496,7 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 118 "p86asm.y"
     {
-					(yyval.pListOperands)= new Operands();
+					(yyval.pListOperands)  = (yyvsp[(1) - (1)].pListOperands);
 				}
     break;
 
@@ -1504,12 +1505,13 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 123 "p86asm.y"
     {
-					Register *reg = new Register((yyvsp[(1) - (1)].pStr), REG_DIRECT);
-					free ((yyvsp[(1) - (1)].pStr));
-					Operands* ptr = new std::vector<Operand*>;
-					ptr->push_back(reg);
-					(yyval.pListOperands) = ptr;
+					if ((yyvsp[(2) - (3)].pListOperands)->size() != 0)
+					{
 					
+					Operand* op = (yyvsp[(2) - (3)].pListOperands)->at(0);
+					op->setAccessMode(op->getAccessMode() << 1);
+					}
+					(yyval.pListOperands) = (yyvsp[(2) - (3)].pListOperands);
 				}
     break;
 
@@ -1518,24 +1520,19 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 133 "p86asm.y"
     {
-					Register *reg = new Register((yyvsp[(2) - (3)].pStr), REG_ADDR);
-					free ((yyvsp[(2) - (3)].pStr));
-					Operands* ptr = new std::vector<Operand*>;
-					ptr->push_back(reg);
-					(yyval.pListOperands) = ptr;
-					
+					(yyval.pListOperands)= new Operands();
 				}
     break;
 
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 143 "p86asm.y"
+#line 138 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_HEX,IMMEDIATE);
-					free((yyvsp[(1) - (1)].pStr));
+					Register *reg = new Register((yyvsp[(1) - (1)].pStr), AccessMode::REG_DIRECT);
+					free ((yyvsp[(1) - (1)].pStr));
 					Operands* ptr = new std::vector<Operand*>;
-					ptr->push_back(i);
+					ptr->push_back(reg);
 					(yyval.pListOperands) = ptr;
 					
 				}
@@ -1544,22 +1541,23 @@ yyreduce:
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 153 "p86asm.y"
+#line 148 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((yyvsp[(2) - (3)].pStr)),BASE_HEX,IMMEDIATE_ADDR);
-					free((yyvsp[(2) - (3)].pStr));
+					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_HEX,AccessMode::IMMEDIATE);
+					free((yyvsp[(1) - (1)].pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
 					(yyval.pListOperands) = ptr;
+					
 				}
     break;
 
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 162 "p86asm.y"
+#line 158 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)).substr(2,-1),BASE_BIN,IMMEDIATE);
+					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)).substr(2,-1),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1570,9 +1568,9 @@ yyreduce:
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 171 "p86asm.y"
+#line 167 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_ASC,IMMEDIATE);
+					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_ASC,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1583,7 +1581,7 @@ yyreduce:
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 183 "p86asm.y"
+#line 179 "p86asm.y"
     {
 					printf("<label:%s>\n",(yyvsp[(1) - (2)].pStr));
 				}
@@ -1592,7 +1590,7 @@ yyreduce:
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 189 "p86asm.y"
+#line 185 "p86asm.y"
     {
 					printf("program end\n");
 				}
@@ -1601,7 +1599,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1605 "p86asm.tab.c"
+#line 1603 "p86asm.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1832,6 +1830,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 193 "p86asm.y"
+#line 189 "p86asm.y"
 
 

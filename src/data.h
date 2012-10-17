@@ -13,7 +13,7 @@
 #define RANGE(x,a,b)	((a <= x) && (x <= b))
 
 using namespace std;
-enum AccessMode{
+enum class AccessMode : std::uint8_t{
 	UNINITIALIZED=0,
 	REG_DIRECT=1,				//use register as direct access.
 	REG_ADDR=2,					//register contains address of operand.
@@ -38,7 +38,7 @@ char convlower(char in);
 class Operand{
 	public:
 			virtual AccessMode getAccessMode()=0;
-			
+			virtual void setAccessMode(AccessMode am)=0;
  			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(int indentlevel)=0;
 };
@@ -48,6 +48,7 @@ class Immediate : public Operand{
 			Immediate();
 			Immediate(std::string a,ImmediateEncoding base, AccessMode am);
 			AccessMode getAccessMode();
+			void setAccessMode(AccessMode am);
 			vector<uint8_t> getBinEncoding();
 			void repr(int indentlevel);
 	private:
@@ -65,6 +66,7 @@ class Register : public Operand{
 					void setName(std::string& regname);
 					uint8_t getBinEncoding();
 					AccessMode getAccessMode();
+					void setAccessMode(AccessMode am);
 					void repr(int indentlevel);
 					
 		private:

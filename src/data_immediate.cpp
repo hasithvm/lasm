@@ -24,6 +24,9 @@ AccessMode Immediate::getAccessMode(){
 return m_am;
 }
 
+void Immediate::setAccessMode(AccessMode am){
+	m_am = am;			
+}
 vector<uint8_t> Immediate::getBinEncoding(){
 return m_data;
 }

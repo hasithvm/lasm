@@ -114,30 +114,25 @@
 				}
 				;
 
-	param:		operand
+	param:		
 				{
-					$<pListOperands>$  = $<pListOperands>1;
-				}
-				|	
-				LSQBR operand RSQBR
-				{
-					if ($<pListOperands>2->size() != 0)
-					{
-					
-					Operand* op = $<pListOperands>2->at(0);
-					op->setAccessMode(op->getAccessMode() << 1);
-					}
-					$<pListOperands>$ = $<pListOperands>2;
-				}
-	
-	operand:	{
 					$<pListOperands>$= new Operands();
 				}
 				|
 				REG 
 				{
-					Register *reg = new Register($1, AccessMode::REG_DIRECT);
+					Register *reg = new Register($1, REG_DIRECT);
 					free ($<pStr>1);
+					Operands* ptr = new std::vector<Operand*>;
+					ptr->push_back(reg);
+					$<pListOperands>$ = ptr;
+					
+				}
+				|
+				LSQBR REG RSQBR
+				{
+					Register *reg = new Register($2, REG_ADDR);
+					free ($<pStr>2);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(reg);
 					$<pListOperands>$ = ptr;
@@ -146,7 +141,7 @@
 				|
 				HEX
 				{
-					Immediate *i = new Immediate(std::string($1),BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate(std::string($1),BASE_HEX,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -154,9 +149,18 @@
 					
 				}
 				|
+				LSQBR HEX RSQBR
+				{
+					Immediate *i = new Immediate(std::string($2),BASE_HEX,IMMEDIATE_ADDR);
+					free($<pStr>2);
+					Operands* ptr = new std::vector<Operand*>;
+					ptr->push_back(i);
+					$<pListOperands>$ = ptr;
+				}
+				|
 				BINARY
 				{
-					Immediate *i = new Immediate(std::string($1).substr(2,-1),BASE_BIN,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate(std::string($1).substr(2,-1),BASE_BIN,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -165,7 +169,7 @@
 				|
 				LITERAL
 				{
-					Immediate *i = new Immediate(std::string($1),BASE_ASC,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate(std::string($1),BASE_ASC,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
