@@ -1,5 +1,5 @@
 #include "data.h"
-Immediate::Immediate(): m_am(UNINITIALIZED),m_data(){
+Immediate::Immediate(): m_am(AccessMode::UNINITIALIZED),m_data(){
 
 }
 
@@ -16,7 +16,7 @@ void Immediate::repr(int indentlevel){
 		clog << indenter << "\t<value>uninitialized</value>"<<endl;	
 	else
 		clog << indenter << "\t<value>" << hex2str(&m_data[0], m_data.size()) << "</value>"<< endl;
-
+		clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am >> 2] << "</accessmode>" <<  endl;
 	clog << indenter << "</Immediate>" << endl;
 }
 

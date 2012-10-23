@@ -12,6 +12,12 @@ EXPR_CONTROL=4,
 EXPR_COMMENT=5,
 };
 
+enum AccessWidth : std::uint8_t{
+AW_UNSPECIFIED=0,
+AW_8BIT=1,
+AW_16BIT=2,
+};
+//Base class for the AST Nodes.
 class BaseExpressionNode{
 		public:
 					virtual ExpressionType getType()=0;
@@ -20,24 +26,30 @@ class BaseExpressionNode{
 					virtual void repr(int indentlevel)=0;
 };
 typedef vector<Operand*> Operands;
+
+//AST node representing an assembly instruction.
 class OpNode : public BaseExpressionNode{
 		public:
+					//constructor
 					OpNode(std::string opName, Operands* op);
 					ExpressionType getType();
 					void setContent(std::string a);
 					std::string getContent();
 					int getOperandCount();
 					Operands& getOperands();
+					void setExplicitAccessModifier(AccessWidth aw);
+					AccessWidth getExplicitAccessModifier();
 					void repr(int indentlevel);
 
 		private:
 					Operands ops;
 					std::string opstr;
+					AccessWidth m_aw;	
 };
 
 class ControlNode : public BaseExpressionNode{
 		public:
-				ControlNode(std::string controlname, Immediate i);
+				ControlNode(char* e, Immediate* i);
 				ExpressionType getType();
 				typedef enum ControlType_t{
 				CONTROL_ORG,
@@ -48,11 +60,15 @@ class ControlNode : public BaseExpressionNode{
 				ControlNodeType getControlType();
 				void setContent(std::string a);
 				std::string getContent();
+				void setImmediate(Immediate* im);
+				void setLabel(std::string lbl);
 				Immediate* getImmediate();
 				void repr(int indentlevel);
 		private:
 				Immediate* imm;
 				ControlNode::ControlNodeType ctrltype;
+				ControlNode::ControlNodeType decodeText(std::string& text);
+				std::string label;
 };
 class CommentNode : public BaseExpressionNode{
 		public:
@@ -65,4 +81,15 @@ class CommentNode : public BaseExpressionNode{
 				std::string cmt;	
 };	
 
+class LabelNode : public BaseExpressionNode{
+		public:
+				LabelNode(char* a);
+				ExpressionType getType();
+				void setContent(std::string a);
+				std::string getContent();
+				void repr(int indentlevel);
+		private:
+				std::string m_label;
+
+};	
 #endif

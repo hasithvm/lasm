@@ -101,14 +101,13 @@
 	main(int argc, char **argv)
 	{
 		yyparse();
-		std::vector<char> a;
 	}
 
 
 
 
 /* Line 268 of yacc.c  */
-#line 112 "p86asm.tab.c"
+#line 111 "p86asm.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -162,11 +161,12 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 41 "p86asm.y"
+#line 40 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* expr;
+	uint8_t* pAccessWidth;
 
 
 
@@ -478,8 +478,8 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    60,    60,    62,    64,    66,    68,    70,    72,    73,
-      79,    87,    89,    92,    97,   102,   111,   117,   122,   133,
-     137,   147,   157,   166,   176,   178,   184
+      81,    97,   101,   108,   118,   123,   132,   138,   143,   159,
+     163,   173,   183,   192,   202,   204,   211
 };
 #endif
 
@@ -1430,39 +1430,66 @@ yyreduce:
 /* Line 1806 of yacc.c  */
 #line 74 "p86asm.y"
     {
-					printf("<comment:%s>\n",(yyvsp[(2) - (3)].pStr));
+					BaseExpressionNode* pComment = new CommentNode(std::string((yyvsp[(2) - (3)].pStr)));
+					pComment->repr(1);
+					
 				}
     break;
 
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 80 "p86asm.y"
+#line 82 "p86asm.y"
     {
 					OpNode* pCode = new OpNode(std::string((yyvsp[(1) - (4)].pStr)), (yyvsp[(3) - (4)].pListOperands));
-					free((yyvsp[(1) - (4)].pStr));
-					pCode->repr(1);
+					if ((yyvsp[(2) - (4)].pAccessWidth))
+					{
+						pCode->setExplicitAccessModifier((AccessWidth)*(yyvsp[(2) - (4)].pAccessWidth));
+						free((yyvsp[(2) - (4)].pAccessWidth));					
+
 					}
+						free((yyvsp[(1) - (4)].pStr));
+						pCode->repr(1);
+						
+				}
+    break;
+
+  case 11:
+
+/* Line 1806 of yacc.c  */
+#line 97 "p86asm.y"
+    {
+					(yyval.pAccessWidth) = nullptr;			
+				}
     break;
 
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 90 "p86asm.y"
-    {printf("word access");}
+#line 102 "p86asm.y"
+    {
+					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
+					*p = (uint8_t)AccessWidth::AW_16BIT;
+					(yyval.pAccessWidth) = p;
+				}
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 93 "p86asm.y"
-    {printf("byte access");}
+#line 109 "p86asm.y"
+    {
+					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
+					*p = (uint8_t)AccessWidth::AW_8BIT;
+					(yyval.pAccessWidth) = p;
+				
+				}
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 97 "p86asm.y"
+#line 118 "p86asm.y"
     {
 					
 					(yyval.pListOperands) = new Operands();
@@ -1472,7 +1499,7 @@ yyreduce:
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 103 "p86asm.y"
+#line 124 "p86asm.y"
     {
 					Operands* p1 =(yyvsp[(1) - (3)].pListOperands);
 					Operands* p2 =(yyvsp[(3) - (3)].pListOperands);
@@ -1485,7 +1512,7 @@ yyreduce:
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 112 "p86asm.y"
+#line 133 "p86asm.y"
     {
 					(yyval.pListOperands) = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1494,7 +1521,7 @@ yyreduce:
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 118 "p86asm.y"
+#line 139 "p86asm.y"
     {
 					(yyval.pListOperands)  = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1503,13 +1530,17 @@ yyreduce:
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 123 "p86asm.y"
+#line 144 "p86asm.y"
     {
 					if ((yyvsp[(2) - (3)].pListOperands)->size() != 0)
 					{
 					
 					Operand* op = (yyvsp[(2) - (3)].pListOperands)->at(0);
-					op->setAccessMode(op->getAccessMode() << 1);
+					if (op->getAccessMode() == AccessMode::REG_DIRECT)
+						op->setAccessMode(AccessMode::REG_ADDR);
+					
+					if (op->getAccessMode() == AccessMode::IMMEDIATE)
+						op->setAccessMode(AccessMode::IMMEDIATE_ADDR);
 					}
 					(yyval.pListOperands) = (yyvsp[(2) - (3)].pListOperands);
 				}
@@ -1518,7 +1549,7 @@ yyreduce:
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 133 "p86asm.y"
+#line 159 "p86asm.y"
     {
 					(yyval.pListOperands)= new Operands();
 				}
@@ -1527,7 +1558,7 @@ yyreduce:
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 138 "p86asm.y"
+#line 164 "p86asm.y"
     {
 					Register *reg = new Register((yyvsp[(1) - (1)].pStr), AccessMode::REG_DIRECT);
 					free ((yyvsp[(1) - (1)].pStr));
@@ -1541,7 +1572,7 @@ yyreduce:
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 148 "p86asm.y"
+#line 174 "p86asm.y"
     {
 					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_HEX,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1555,7 +1586,7 @@ yyreduce:
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 158 "p86asm.y"
+#line 184 "p86asm.y"
     {
 					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)).substr(2,-1),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1568,7 +1599,7 @@ yyreduce:
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 167 "p86asm.y"
+#line 193 "p86asm.y"
     {
 					Immediate *i = new Immediate(std::string((yyvsp[(1) - (1)].pStr)),BASE_ASC,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1581,16 +1612,17 @@ yyreduce:
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 179 "p86asm.y"
+#line 205 "p86asm.y"
     {
-					printf("<label:%s>\n",(yyvsp[(1) - (2)].pStr));
+					LabelNode* pLabel = new LabelNode((yyvsp[(1) - (2)].pStr));
+					pLabel->repr(1);
 				}
     break;
 
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 185 "p86asm.y"
+#line 212 "p86asm.y"
     {
 					printf("program end\n");
 				}
@@ -1599,7 +1631,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1603 "p86asm.tab.c"
+#line 1635 "p86asm.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1830,6 +1862,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 189 "p86asm.y"
+#line 216 "p86asm.y"
 
 

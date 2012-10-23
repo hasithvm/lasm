@@ -32,6 +32,7 @@ enum ImmediateEncoding{
 	BASE_HEX=16,
 	BASE_ASC=32,
 };
+
 extern char *accessmodeLUT[3];
 std::string hex2str(uint8_t* bytes, int count);
 char convlower(char in);

@@ -5,7 +5,7 @@ char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0xFF),m_am(UNINITIALIZED),m_regtype(0), m_regname()
+Register::Register(): reg(0xFF),m_am(AccessMode::UNINITIALIZED),m_regtype(0), m_regname()
 {
 }
 
@@ -45,7 +45,7 @@ void Register::repr(int indentlevel){
 	clog << indenter << "<Register>" << endl;
 	clog << indenter << "\t<address>"<< hex2str(&reg,1) << "</address>" << endl;
 	clog << indenter << "\t<name>" << m_regname << "</name>" <<  endl;
-	clog << indenter << "\t<accessmode>" << accessmodeLUT[m_am] << "</accessmode>" << endl;
+	clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am] << "</accessmode>" << endl;
 	clog << indenter << "\t<type>" << regtypeLUT[m_regtype] <<  "</type>"<< endl;
 	clog << indenter << "</Register>" << endl;
 }

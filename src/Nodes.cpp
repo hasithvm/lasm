@@ -5,6 +5,7 @@ OpNode::OpNode(std::string opName, Operands* op)
 	ops = *op;
 	opstr = opName;
 	strToLowerCase(opstr);
+	m_aw = AccessWidth::AW_UNSPECIFIED;
 }
 
 ExpressionType OpNode::getType(){
@@ -44,6 +45,30 @@ void OpNode::repr(int indentlevel){
 	
 
 }
+AccessWidth OpNode::getExplicitAccessModifier(){
+	return m_aw;
+}
+void OpNode::setExplicitAccessModifier(AccessWidth aw){
+	m_aw = aw;
+}
+
+
+ControlNode::ControlNode(char* pText, Immediate* i){
+std::string a = std::string(pText);
+
+decodeText(a);
+
+}
+
+
+ControlNode::ControlNodeType ControlNode::decodeText(std::string& text){
+	strToLowerCase(text);
+	
+}
+
+
+
+
 
 CommentNode::CommentNode(std::string a){
  cmt = a;
@@ -66,3 +91,27 @@ void CommentNode::repr(int indentlevel){
 	clog << indenter << "\t<content>" << cmt << "</content>" << endl;
 	clog << indenter << "<comment>" << endl;
 }
+
+LabelNode::LabelNode(char* a){
+	m_label = std::string(a);
+}
+
+std::string LabelNode::getContent(){
+	return m_label;
+}
+
+void LabelNode::setContent(std::string a){
+	m_label = a;
+}
+
+void LabelNode::repr(int indentlevel){
+	std::string indenter(indentlevel, '\t');	
+	clog << indenter << "<label>" << endl;
+	clog << indenter << "\t<name>" << m_label << "</name>" << endl;
+	clog << indenter << "<label>" << endl;
+}
+
+ExpressionType LabelNode::getType(){
+	return ExpressionType::EXPR_LABEL;
+}
+

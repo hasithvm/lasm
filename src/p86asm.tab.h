@@ -64,16 +64,17 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 41 "p86asm.y"
+#line 40 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* expr;
+	uint8_t* pAccessWidth;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 77 "p86asm.tab.h"
+#line 78 "p86asm.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

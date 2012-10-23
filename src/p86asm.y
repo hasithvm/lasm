@@ -32,7 +32,6 @@
 	main(int argc, char **argv)
 	{
 		yyparse();
-		std::vector<char> a;
 	}
 
 
@@ -42,6 +41,7 @@
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* expr;
+	uint8_t* pAccessWidth;
 }
 
 %error-verbose
@@ -72,25 +72,46 @@
 	comment:	|
 				SEMICOLON CMTSTR NEWLN
 				{
-					printf("<comment:%s>\n",$2);
+					BaseExpressionNode* pComment = new CommentNode(std::string($<pStr>2));
+					pComment->repr(1);
+					
 				};
 
 	code:
 				OPCODE modifier params comment
 				{
 					OpNode* pCode = new OpNode(std::string($<pStr>1), $<pListOperands>3);
-					free($<pStr>1);
-					pCode->repr(1);
+					if ($<pAccessWidth>2)
+					{
+						pCode->setExplicitAccessModifier((AccessWidth)*$<pAccessWidth>2);
+						free($<pAccessWidth>2);					
+
 					}
+						free($<pStr>1);
+						pCode->repr(1);
+						
+				}
 				;
 
-	modifier:
+	modifier:	
+				{
+					$<pAccessWidth>$ = nullptr;			
+				}
 				|
 				WORDPTR
-				{printf("word access");}
+				{
+					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
+					*p = (uint8_t)AccessWidth::AW_16BIT;
+					$<pAccessWidth>$ = p;
+				}
 				|
 				BYTEPTR
-				{printf("byte access");}
+				{
+					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
+					*p = (uint8_t)AccessWidth::AW_8BIT;
+					$<pAccessWidth>$ = p;
+				
+				}
 				;
 
 	params:		
@@ -125,11 +146,16 @@
 					{
 					
 					Operand* op = $<pListOperands>2->at(0);
-					op->setAccessMode(op->getAccessMode() << 1);
+					if (op->getAccessMode() == AccessMode::REG_DIRECT)
+						op->setAccessMode(AccessMode::REG_ADDR);
+					
+					if (op->getAccessMode() == AccessMode::IMMEDIATE)
+						op->setAccessMode(AccessMode::IMMEDIATE_ADDR);
 					}
 					$<pListOperands>$ = $<pListOperands>2;
 				}
-	
+				;
+		
 	operand:	{
 					$<pListOperands>$= new Operands();
 				}
@@ -177,7 +203,8 @@
 				|
 				LABEL COLON
 				{
-					printf("<label:%s>\n",$1);
+					LabelNode* pLabel = new LabelNode($<pStr>1);
+					pLabel->repr(1);
 				}
 				;
 
