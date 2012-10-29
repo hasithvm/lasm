@@ -9,6 +9,8 @@
 
 uint8_t parseDigit(char& digit);
 void strToLowerCase(std::string& str);
+void strToUpperCase(std::string& str);
 char convlower(char in);
+char convupper(char in);
 void trim(std::string& in, char toTrim);
 #endif

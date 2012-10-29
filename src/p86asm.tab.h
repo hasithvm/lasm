@@ -1,8 +1,8 @@
 /* A Bison parser, made by GNU Bison 2.5.  */
 
-/* Bison interface for Yacc-like parsers in C
+/* Skeleton interface for Bison GLR parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,50 +37,63 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     SEMICOLON = 258,
-     COLON = 259,
-     END = 260,
-     COMMA = 261,
-     NEWLN = 262,
-     WORDPTR = 263,
-     BYTEPTR = 264,
-     LSQBR = 265,
-     RSQBR = 266,
-     OPCODE = 267,
-     REG = 268,
-     HEX = 269,
-     BINARY = 270,
-     CMTSTR = 271,
-     LABEL = 272,
-     LITERAL = 273,
-     TEXT = 274
+     COLON = 258,
+     END = 259,
+     COMMA = 260,
+     WORDPTR = 261,
+     BYTEPTR = 262,
+     LSQBR = 263,
+     RSQBR = 264,
+     OPCODE = 265,
+     REG = 266,
+     HEX_PRE = 267,
+     HEX_SUFF = 268,
+     DEC = 269,
+     BIN_PRE = 270,
+     BIN_SUFF = 271,
+     CMTSTR = 272,
+     LABEL = 273,
+     LITERAL = 274,
+     TEXT = 275,
+     DIRECTIVE = 276
    };
 #endif
 
 
-
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+#ifndef YYSTYPE
 typedef union YYSTYPE
 {
 
-/* Line 2068 of yacc.c  */
-#line 40 "p86asm.y"
+/* Line 2663 of glr.c  */
+#line 42 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
-	BaseExpressionNode* expr;
+	vector<BaseExpressionNode*>* pListExpr;
 	uint8_t* pAccessWidth;
 
 
 
-/* Line 2068 of yacc.c  */
-#line 78 "p86asm.tab.h"
+/* Line 2663 of glr.c  */
+#line 79 "p86asm.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
 #endif
 
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+
+  char yydummy;
+
+} YYLTYPE;
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
+
+
 extern YYSTYPE yylval;
+
 
 

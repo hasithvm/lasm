@@ -21,6 +21,6 @@ p86asm.tab.c:p86asm.y
 		bison -d p86asm.y
 
 clean:
-			rm -rf $(TARGET) *.o lex.yy.c y.tab.*
+			rm -rf $(TARGET) *.o lex.yy.c p86asm.tab.*
 
 

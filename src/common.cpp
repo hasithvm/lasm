@@ -13,6 +13,11 @@ void strToLowerCase(std::string& in)
 {
 	std::transform(in.begin(),in.end(), in.begin(), convlower);
 }
+void strToUpperCase(std::string& in)
+{
+	std::transform(in.begin(),in.end(), in.begin(), convupper);
+}
+
 void trim(std::string& in, char toTrim){
 		 
 		in.erase(
@@ -24,6 +29,13 @@ char convlower(char in)
 {
 	if ( in >= 'A'&& in <='Z')
 		return in-('A' -'a');
+
+	return in;
+}
+char convupper(char in)
+{
+	if ( in >= 'a'&& in <='z')
+		return in + ('A' - 'a');
 
 	return in;
 }

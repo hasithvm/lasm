@@ -28,46 +28,28 @@ class BaseExpressionNode{
 typedef vector<Operand*> Operands;
 
 //AST node representing an assembly instruction.
-class OpNode : public BaseExpressionNode{
-		public:
-					//constructor
-					OpNode(std::string opName, Operands* op);
-					ExpressionType getType();
-					void setContent(std::string a);
-					std::string getContent();
-					int getOperandCount();
-					Operands& getOperands();
-					void setExplicitAccessModifier(AccessWidth aw);
-					AccessWidth getExplicitAccessModifier();
-					void repr(int indentlevel);
 
-		private:
-					Operands ops;
-					std::string opstr;
-					AccessWidth m_aw;	
-};
 
-class ControlNode : public BaseExpressionNode{
-		public:
-				ControlNode(char* e, Immediate* i);
-				ExpressionType getType();
 				typedef enum ControlType_t{
 				CONTROL_ORG,
 				CONTROL_DB,
 				CONTROL_EQU,
 				CONTROL_DW,
 				} ControlNodeType;
+class ControlNode : public BaseExpressionNode{
+		public:
+				ControlNode(char* e, Immediate* i);
+				ExpressionType getType();
 				ControlNodeType getControlType();
 				void setContent(std::string a);
 				std::string getContent();
 				void setImmediate(Immediate* im);
-				void setLabel(std::string lbl);
 				Immediate* getImmediate();
 				void repr(int indentlevel);
 		private:
 				Immediate* imm;
-				ControlNode::ControlNodeType ctrltype;
-				ControlNode::ControlNodeType decodeText(std::string& text);
+				ControlNodeType ctrltype;
+				ControlNodeType decodeText(std::string& text);
 				std::string label;
 };
 class CommentNode : public BaseExpressionNode{
@@ -92,4 +74,25 @@ class LabelNode : public BaseExpressionNode{
 				std::string m_label;
 
 };	
+
+class OpNode : public BaseExpressionNode{
+		public:
+					//constructor
+					OpNode(std::string opName, Operands* op);
+					ExpressionType getType();
+					void setContent(std::string a);
+					std::string getContent();
+					int getOperandCount();
+					Operands& getOperands();
+					void setExplicitAccessModifier(AccessWidth aw);
+					AccessWidth getExplicitAccessModifier();
+					void repr(int indentlevel);
+
+		private:
+					Operands ops;
+					std::string opstr;
+					AccessWidth m_aw;
+					CommentNode* m_commentNode;
+	
+};
 #endif

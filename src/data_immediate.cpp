@@ -40,7 +40,7 @@ vector<uint8_t> out;
 int padding = 0;
 int bytes_written=0;
 unsigned int tmp = 0;
-
+std::string intermediate;
 
 //pad with zero if not an even mult
 
@@ -84,7 +84,16 @@ switch(base)
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 			{
 			out[bytes_written] = (uint8_t)*it_fwd;
-			}	
+			}
+		break;
+	case BASE_DEC:
+
+		intermediate = in.at(0) == '-'? in.substr(1,-1): in;
+		
+		for (it= intermediate.rbegin();it < intermediate.rend();it++)
+			tmp = tmp + parseDigit(*it);
+		printf("decimal digit:%d",tmp);
+			
 	default:
 	break;
 

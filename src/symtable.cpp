@@ -9,25 +9,297 @@ SymTable::SymMap SymTable::generate(){
 			{OP_DIR | OP_WORD | OP_TWO_OPERANDS ,0xC0,REG8|REG16, REG8|REG16},
 			{OP_SIGN | OP_WORD 	,0x00}
 			} 
-	 },
-	 {"and",
+	},
+	{"and",
 	 		{{0x00,0x00,REG8|REG16, IMM8|IMM16}}
 	 
-	 },
-	 {"call",
+	},
+	{"call",
 	 		{
 	 		{0x00,0xE8,IMM16}
 	 		}
 	 
-	 },
+	},
 	{"cmp",
 			{
 			{0x00}
 			}
 	
 	
+	},
+	{"dec",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"div",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"hlt",
+	{
+		{0x00}
 	}
 	
+	
+	},
+	{"in",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"inc",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"int",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"iret",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"ja",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jae",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jb",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jbe",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jc",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"je",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jg",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jge",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jl",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jle",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jnc",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jne",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jno",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jns",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jnz",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jo",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"js",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jz",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"jmp",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"mov",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"mul",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"neg",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"nop",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"not",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"or",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"out",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"pop",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"push",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"ret",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"shl",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"shr",
+			{
+			{0x00}
+			}
+	
+	
+	},
+	{"sub",
+			{
+			{0x00}
+			}
+	
+	
+	}
 	};
 	//	OPCODE("ADD", )
 //	OPCODE("ADD",0x00);
@@ -91,4 +363,19 @@ for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
 clog << endl;
 
 }
+
+bool SymTable::exists(std::string opcode){
+	clog << "SymTable: matching " << opcode << endl;
+	strToLowerCase(opcode);
+	if (m_opmap.count(opcode) > 0){
+		clog << "SymTable: match found!" << endl;
+		return true;
+	}
+	clog << "SymTable: not an opcode" << endl;
+	return false;
+}
+
+SymTable::SymTable(){
+}
+
 

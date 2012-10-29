@@ -6,6 +6,7 @@ OpNode::OpNode(std::string opName, Operands* op)
 	opstr = opName;
 	strToLowerCase(opstr);
 	m_aw = AccessWidth::AW_UNSPECIFIED;
+	m_commentNode = nullptr;
 }
 
 ExpressionType OpNode::getType(){
@@ -52,24 +53,39 @@ void OpNode::setExplicitAccessModifier(AccessWidth aw){
 	m_aw = aw;
 }
 
+/*===========================================================*/
+ControlNode::ControlNode(char* e, Immediate* i){
+label = std::string(e);
+ ctrltype = ControlNodeType::CONTROL_DB;
+decodeText(label);
+imm = i;
 
-ControlNode::ControlNode(char* pText, Immediate* i){
-std::string a = std::string(pText);
 
-decodeText(a);
 
 }
 
+ExpressionType ControlNode::getType(){
+	return ExpressionType::EXPR_CONTROL;
+}
 
-ControlNode::ControlNodeType ControlNode::decodeText(std::string& text){
+ControlNodeType ControlNode::decodeText(std::string& text){
 	strToLowerCase(text);
-	
+	return ControlNodeType::CONTROL_ORG;
 }
 
+void ControlNode::repr(int indentlevel){
+	return;
+}
 
+void ControlNode::setContent(std::string a){
+	label = a;
+}
 
+std::string ControlNode::getContent(){
+	return label;
+}
 
-
+/*==========================================================*/
 CommentNode::CommentNode(std::string a){
  cmt = a;
 }

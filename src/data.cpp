@@ -99,10 +99,51 @@ Register::RegLookupMap Register::_populate(){
 	
 	return ret;
 }
-
+bool Register::exists(std::string reg){
+	strToUpperCase(reg);
+	if (m_regmap.count(reg.substr(0,2)))
+		return true;
+	return false;
+}
 void Register::setAccessMode(AccessMode am){
 	m_am = am;	
 }
+//==============================================
+
+Constant::Constant(std::string name){
+	m_name = name;
+};
+
+void Constant::setAccessMode(AccessMode am){
+	m_am = am;
+}
+
+AccessMode Constant::getAccessMode(){
+	return m_am;
+}
+void Constant::repr(int indentlevel){
+	std::string indenter(indentlevel, '\t');
+	clog << indenter << "<Constant>" << endl;
+	clog << indenter << "\t<name>" << m_name << "</name>" <<  endl;
+	clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am] << "</accessmode>" << endl;
+	clog << indenter << "</Constant>" << endl;
+}
+
+std::string& Constant::getName(){
+	return m_name;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 std::string hex2str(uint8_t* bytes, int count)
