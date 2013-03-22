@@ -104,8 +104,8 @@ printDigit:
 ;	None.
 
 ; Constant strings for this subroutine:
-s_thousands: DB ',000$'
-s_dollars: DB '$'
+s_thousands: .DB ',000$'
+s_dollars: .DB '$'
 
 printSalary:
 	; Save registers modified by this subroutine
@@ -120,7 +120,7 @@ printSalary:
 	OUT [DX],AL			; Print it
 	MOV AL,AH			; Move salary back into AL
 	CALL printInt		; Print the salary (0-255)
-	MOV SI, s_thousands	; Move the starting address of s_thousands string into BX
+	MOV [BX +SI], s_thousands	; Move the starting address of s_thousands string into BX
 	CALL printStr 		; Print ',000'
 	
 	; Restore registers
@@ -197,4 +197,4 @@ main:
 	
 	
 
-END main		;Entry point of program is main()
+	.END main		;Entry point of program is main()

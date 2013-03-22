@@ -1,9 +1,16 @@
 #include "Nodes.h"
+BaseExpressionNode* BaseExpressionNode::getNextExpr(){
+	return m_nextptr;
 
-OpNode::OpNode(std::string opName, Operands* op)
+}
+
+void BaseExpressionNode::setNextExpr(BaseExpressionNode* ptr){
+	m_nextptr = ptr;
+}
+OpNode::OpNode(char* pOpName, Operands* op)
 {
 	ops = *op;
-	opstr = opName;
+	opstr = std::string(pOpName);
 	strToLowerCase(opstr);
 	m_aw = AccessWidth::AW_UNSPECIFIED;
 	m_commentNode = nullptr;
@@ -19,8 +26,12 @@ void OpNode::setContent(std::string a)
 	strToLowerCase(opstr);
 }
 
-std::string OpNode::getContent(){
+std::string& OpNode::getContent(){
 	return opstr;
+}
+
+Operands& OpNode::getOperands(){
+	return ops;
 }
 
 int OpNode::getOperandCount(){
@@ -54,13 +65,22 @@ void OpNode::setExplicitAccessModifier(AccessWidth aw){
 }
 
 /*===========================================================*/
-ControlNode::ControlNode(char* e, Immediate* i){
-label = std::string(e);
- ctrltype = ControlNodeType::CONTROL_DB;
-decodeText(label);
-imm = i;
+ControlNode::ControlNode(char* e, Operand* i){
+	label = std::string(e+1);
+ 	ctrltype = ControlNode::decodeText(label);
+	imm = i;
+	m_key = std::string();
+}
 
+ControlNode::CtrlTypeLookupMap ControlNode::tlm(ControlNode::_populate());
 
+ControlNode::CtrlTypeLookupMap  ControlNode::_populate(){
+	return{
+	{"db", ControlNodeType::CONTROL_DB},
+	{"dw", ControlNodeType::CONTROL_DW},
+	{"equ", ControlNodeType::CONTROL_EQU},
+	{"org", ControlNodeType::CONTROL_ORG},
+	{"end", ControlNodeType::CONTROL_END}};
 
 }
 
@@ -68,26 +88,54 @@ ExpressionType ControlNode::getType(){
 	return ExpressionType::EXPR_CONTROL;
 }
 
+ControlNodeType ControlNode::getControlType(){
+	return ctrltype;
+}
+
 ControlNodeType ControlNode::decodeText(std::string& text){
 	strToLowerCase(text);
-	return ControlNodeType::CONTROL_ORG;
+	return tlm[text];
 }
 
 void ControlNode::repr(int indentlevel){
-	return;
+	std::string indenter(indentlevel, '\t');	
+	clog << indenter << "<control>" << endl;
+	clog << indenter << "\t<name>" << label << "</name>" << endl;
+	clog << indenter << "\t<value>" << endl;
+	imm->repr(indentlevel + 1);
+		clog << indenter << "\t<value>" << endl;
+	clog << indenter << "<control>" << endl;
 }
 
 void ControlNode::setContent(std::string a){
 	label = a;
 }
 
-std::string ControlNode::getContent(){
+std::string& ControlNode::getContent(){
 	return label;
 }
 
+
+void ControlNode::setImmediate(Immediate* im){
+imm = im;
+
+}
+
+void ControlNode::setKey(char* a){
+	m_key = std::string(a);
+
+}
+
+std::string& ControlNode::getKey(){
+	return m_key;
+}
+
+Operand* ControlNode::getValue(){
+	return imm;
+}
 /*==========================================================*/
-CommentNode::CommentNode(std::string a){
- cmt = a;
+CommentNode::CommentNode(char* pContent){
+ cmt = std::string(pContent);
 }
 
 ExpressionType CommentNode::getType(){
@@ -97,7 +145,7 @@ ExpressionType CommentNode::getType(){
 void CommentNode::setContent(std::string a){
 cmt = a;
 }
-std::string CommentNode::getContent(){
+std::string& CommentNode::getContent(){
 	return cmt;
 }
 
@@ -112,7 +160,7 @@ LabelNode::LabelNode(char* a){
 	m_label = std::string(a);
 }
 
-std::string LabelNode::getContent(){
+std::string& LabelNode::getContent(){
 	return m_label;
 }
 

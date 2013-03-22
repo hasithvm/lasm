@@ -1,5 +1,7 @@
 p86asm -- replacement assembler for the p86 virtual machine.
-Copyright (C) 2012 Hasith Vidanamadura
+Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.
+
+Original p86asm specification (C) Trevor Pearce (2001)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

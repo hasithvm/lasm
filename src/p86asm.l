@@ -27,7 +27,7 @@
 ;[^\n]*/\n					yylval.pStr=strdup(yytext);				return CMTSTR;		
 
 :																	return COLON;			
-[A-Za-z][A-Za-z]{1,4}		{
+[A-Za-z][A-Za-z]{1,}	{
 								if (st.exists(std::string(yytext)))
 									{
 									yylval.pStr=strdup(yytext);
@@ -42,16 +42,17 @@
 [A-Fa-f0-9]{1,}/[Hh]		yylval.pStr=strdup(yytext);				return HEX_SUFF;				
 "0b"[0-1]{1,}				yylval.pStr=strdup(yytext);				return BIN_PRE;
 [0-1]{1,}/[Bb]				yylval.pStr=strdup(yytext);				return BIN_SUFF;
-"-"*[0-9]{1,}					yylval.pStr=strdup(yytext);				return DEC;
+"-"*[0-9]{1,}					yylval.pStr=strdup(yytext);			return DEC;
 
-[\t ]*"end"|"END"													return END;	
-([A-Za-z][A-Za-z0-9]+)/:	yylval.pStr=strdup(yytext); 			return LABEL;	
+([A-Za-z][A-Za-z0-9\_]+)/:	yylval.pStr=strdup(yytext); 			return LABEL;	
 \"(\\.|[^\\"])*\"			yylval.pStr=strdup(yytext);				return LITERAL;
 \'(\\.|[^\\'])*\'			yylval.pStr=strdup(yytext);				return LITERAL; 
 ,																	return COMMA;
-[A-Za-z][A-Za-z0-9_]+				yylval.pStr=strdup(yytext);				return TEXT;
+[A-Za-z][A-Za-z0-9_]+		yylval.pStr=strdup(yytext);				return TEXT;
 "."[A-Za-z]{2,}				yylval.pStr=strdup(yytext);				return DIRECTIVE;
 \[																	return LSQBR;
 \]																	return RSQBR;
-[\t\n]+						;									/*whitespace*/
+\+																	return PLUS;
+
+[ \t\n]+						;									/*whitespace*/
 %%

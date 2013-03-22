@@ -6,8 +6,8 @@ SymTable::SymMap SymTable::generate(){
 	SymTable::SymMap ret ={
 	{"add",
 			{
-			{OP_DIR | OP_WORD | OP_TWO_OPERANDS ,0xC0,REG8|REG16, REG8|REG16},
-			{OP_SIGN | OP_WORD 	,0x00}
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x04 ,REG8 | REG_PRESET | REG_AL, IMM8},
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x05 ,REG16 | REG_PRESET | REG_AX, IMM16}
 			} 
 	},
 	{"and",
@@ -355,7 +355,7 @@ SymTable::SymMap SymTable::generate(){
 
 void SymTable::repr(){
 
-clog << "p86asm supported opcodes:" << endl;
+//clog << "p86asm supported opcodes:" << endl;
 for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
 {
 //clog << "\t opcode: " <<it->first <<" encoding:  " << hex2str(&it->second,1)<<  endl;
@@ -365,16 +365,19 @@ clog << endl;
 }
 
 bool SymTable::exists(std::string opcode){
-	clog << "SymTable: matching " << opcode << endl;
+	//clog << "SymTable: matching " << opcode << endl;
 	strToLowerCase(opcode);
 	if (m_opmap.count(opcode) > 0){
-		clog << "SymTable: match found!" << endl;
+	//	clog << "SymTable: match found!" << endl;
 		return true;
 	}
-	clog << "SymTable: not an opcode" << endl;
+	//clog << "SymTable: not an opcode" << endl;
 	return false;
 }
+OpVars& SymTable::at(std::string search){
 
+	return m_opmap.at(search);
+}
 SymTable::SymTable(){
 }
 

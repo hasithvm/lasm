@@ -1,12 +1,14 @@
 #include "data.h"
-Immediate::Immediate(): m_am(AccessMode::UNINITIALIZED),m_data(){
+Immediate::Immediate(): m_data(){
 
 }
 
-Immediate::Immediate(std::string a,ImmediateEncoding base, AccessMode am):
-m_am(am)
+Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 {
-	m_data = Immediate::parse(a,base);
+	Operand::setAccessMode(am);
+	std::string tmp = std::string(pValue);
+	m_data = Immediate::parse(tmp,base);
+	
 }
 
 void Immediate::repr(int indentlevel){
@@ -16,18 +18,12 @@ void Immediate::repr(int indentlevel){
 		clog << indenter << "\t<value>uninitialized</value>"<<endl;	
 	else
 		clog << indenter << "\t<value>" << hex2str(&m_data[0], m_data.size()) << "</value>"<< endl;
-		clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am >> 2] << "</accessmode>" <<  endl;
+//		clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)Operand::getAccessMode() >> 2] << "</accessmode>" <<  endl;
 	clog << indenter << "</Immediate>" << endl;
 }
 
-AccessMode Immediate::getAccessMode(){
-return m_am;
-}
 
-void Immediate::setAccessMode(AccessMode am){
-	m_am = am;			
-}
-vector<uint8_t> Immediate::getBinEncoding(){
+vector<uint8_t>& Immediate::getBinEncoding(){
 return m_data;
 }
 
@@ -51,7 +47,8 @@ switch(base)
 	if (in.length() % 2 != 0)
 		in.insert(0,1,'0');
 	
-	out.resize(in.length() / 2);	
+	//skip the delmiting commas.
+	out.resize((in.length()) / 2);	
 	//in.resize(4);
 	for (it = in.rbegin();it!=in.rend();++it)
 {
@@ -79,12 +76,14 @@ switch(base)
 	}
 	break;
 	case BASE_ASC:
-		out.resize(in.length());
+		out.resize(in.length() - 2);
 		trim(in, '\'');
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 			{
 			out[bytes_written] = (uint8_t)*it_fwd;
+			bytes_written++;
 			}
+			
 		break;
 	case BASE_DEC:
 

@@ -9,18 +9,26 @@
 #include <map>
 #include <vector>
 #include "common.h"
+
 #define REGMAP(a,b)	ret[a] = b
 #define RANGE(x,a,b)	((a <= x) && (x <= b))
 
 using namespace std;
+
+enum AccessWidth : std::uint8_t{
+AW_UNSPECIFIED=0,
+AW_8BIT=1,
+AW_16BIT=2,
+};
 enum class AccessMode : std::uint8_t{
 	UNINITIALIZED=0,
-	REG_DIRECT=1,				//use register as direct access.
-	REG_ADDR=2,					//register contains address of operand.
-	IMMEDIATE=4,				//operand is an immediate
-	IMMEDIATE_ADDR=8,		//immediate contains address to actual data.
-	CONST=16,
-	CONST_ADDR=32,
+	REG_DIRECT=4,				//use register as direct access.
+	REG_ADDR=6,					//register contains address of operand.
+	REG_OFFSET=7,				//uses indexed register mode
+	IMMEDIATE=8,				//operand is an immediate
+	IMMEDIATE_ADDR=9,			//immediate contains address to actual data.
+	CONST=16,					//constant to be filled in by the assembler.
+	CONST_ADDR=17,				//constant to be filled in by the assembler, addressof.
 };
 
 enum RegType{
@@ -36,27 +44,30 @@ enum ImmediateEncoding{
 	BASE_DEC=64,
 };
 
-extern char *accessmodeLUT[3];
+
+
+extern char *accessmodeLUT[4];
 std::string hex2str(uint8_t* bytes, int count);
 char convlower(char in);
 class Operand{
 	public:
-			virtual AccessMode getAccessMode()=0;
-			virtual void setAccessMode(AccessMode am)=0;
+			Operand();
+			AccessMode getAccessMode();
+			void setAccessMode(AccessMode am);
  			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(int indentlevel)=0;
+	private:
+			AccessMode m_am;
 };
-
+typedef vector<Operand*> Operands;
+void catOperands(Operands* ptr1, Operands* ptr2);
 class Immediate : public Operand{
 	public:
 			Immediate();
-			Immediate(std::string a,ImmediateEncoding base, AccessMode am);
-			AccessMode getAccessMode();
-			void setAccessMode(AccessMode am);
-			vector<uint8_t> getBinEncoding();
+			Immediate(char* pValue,ImmediateEncoding base, AccessMode am);
+			vector<uint8_t>& getBinEncoding();
 			void repr(int indentlevel);
 	private:
-			AccessMode m_am;
 			vector<uint8_t> m_data;
 			static vector<uint8_t> parse(std::string val, ImmediateEncoding base);
 			void init();
@@ -69,17 +80,19 @@ class Register : public Operand{
 					Register(char * pRegName, AccessMode accessmode);
 					void setName(std::string& regname);
 					uint8_t getBinEncoding();
-					AccessMode getAccessMode();
 					static bool exists(std::string reg);
-					void setAccessMode(AccessMode am);
 					void repr(int indentlevel);
+					Operands* getOffsetPtr();
+					void setOffsetPtr(Operands* ptr);
+					AccessWidth getAccessWidth();
 					
 		private:
 						typedef std::map<string, uint8_t>  RegLookupMap;
 						uint8_t reg;
 						int m_regtype;
+						AccessWidth m_aw;
 						std::string m_regname;
-						AccessMode m_am;
+						Operands* m_ptrOffset;
 						uint8_t parseRegString(std::string& str);
  						static RegLookupMap m_regmap;
 						static RegLookupMap _populate();
@@ -87,14 +100,12 @@ class Register : public Operand{
 
 class Constant : public Operand{
 		public:
-					Constant(std::string name);
-					AccessMode getAccessMode();
-					void setAccessMode(AccessMode am);
+					Constant(char*  pName);
 					void repr(int indentlevel);
 					std::string& getName();
 		private:
 					std::string m_name;
-					AccessMode	m_am;
+
 };		
 
 #endif

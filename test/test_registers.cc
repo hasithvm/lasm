@@ -2,8 +2,13 @@
 #include "gtest/gtest.h"
 
 TEST(Registers,Initialization){
-Register *pReg = new Register("AX", );
-ASSERT_EQ(); 
+Register* pReg = new Register("AX",AccessMode::REG_DIRECT);
+
+ASSERT_EQ(pReg->getBinEncoding(),0x00); 
+delete pReg;
+pReg = new Register("DP",AccessMode::REG_DIRECT);
+ASSERT_EQ(pReg->getBinEncoding(),0xFF);
+
 }
 
 int main(int argc,char **argv){

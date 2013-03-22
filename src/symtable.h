@@ -12,50 +12,73 @@ using namespace std;
 
 
 //Constants for operand types.
-#define REG8	2
-#define REG16	4
-#define MEM8	8
-#define MEM16	16
-#define IMM8	32
-#define IMM16	64
+#define OP_8BIT		0
+#define	OP_16BIT	1
+#define REG			2
+
+#define MEM			4
+#define IMM			8
+
+#define REG8		REG | OP_8BIT
+#define REG16		REG | OP_16BIT
+
+#define MEM8		MEM | OP_8BIT
+#define MEM16		MEM | OP_16_BIT
+
+#define IMM8	IMM | OP_8BIT
+#define IMM16	IMM | OP_16BIT
+
+
+#define REG_PRESET	16
+
+
+#define REG_AX	0x00 << 5
+#define REG_CX	0x01 << 5
+#define REG_DX	0x02 << 5
+#define REG_BX	0x03 << 5
+
+#define REG_SP	0x04 << 5
+#define REG_BP	0x05 << 5
+#define REG_SI	0x06 << 5
+#define REG_DI	0x07 << 5
+
+#define REG_AL	0x00 << 5
+#define REG_CL	0x01 << 5
+#define REG_DL	0x02 << 5
+#define REG_BL	0x03 << 5
+#define REG_AH	0x04 << 5
+#define REG_CH	0x05 << 5
+#define REG_DH	0x06 << 5
+#define REG_BH	0x07 << 5
+
+#define isset(o, m) (m & o == m)
 
 //Defines a bitmask for the MOD/RM Extension for one-byte opcodes. See Intel refMan.
 #define MOD_RM_EXT 0xFF
 
-//Bitmask for the bit values.
-#define MOD_RM_EXTMASK 0x07
+//single byte opcode
 
-#define SINGLE_OP 0x00
-
-
-
-#define OP_DIR 0
-
-#define OP_SIGN 1
-
-#define OP_WORD 2
 //bitmask for operand count {0,1,2,3?}
-#define OP_OPERAND_COUNT_MASK 12
+#define OP_OPERANDS 3
 
 #define OP_NO_OPERANDS 0
-#define OP_SINGLE_OPERAND 4
-#define OP_TWO_OPERANDS 8
+#define OP_SINGLE_OPERAND 1
+#define OP_TWO_OPERANDS 2
+#define OP_THREE_OPERANDS 3
 
-// single operand that is the src to a fixed dest register
-#define OP_TO_FIXED_REG 36
+//there is no modRM byte
+#define OP_NO_MODRM 4
+//jump-type operation, uses displacement (16-bit?)
+#define OP_IS_JUMP 8
 
-#define OP_FIXED_SRC_DEST 
 
-//mod is fixed
-#define OP_MOD_FIXED 16
-//reg is fixed
-#define OP_REG_FIXED 32
-//rm is fixed
-#define OP_RM_FIXED 64
-//next byte has the prefixes necessary.
-#define OP_PREFIX_BYTE 128
 
-#
+//next byte after has the REG field fixed.
+#define OP_REG_EXT 32
+
+
+
+
 
 
 typedef std::vector<uint8_t> 	OpType;
@@ -73,6 +96,7 @@ class SymTable{
 						uint8_t get(std::string opcode);
 						void repr();
 						bool exists(std::string opcode);
+						OpVars& at(std::string search); 
 		private:
 					typedef map<std::string, OpVars > SymMap;
 						static SymMap m_opmap;

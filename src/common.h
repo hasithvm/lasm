@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <algorithm>
+#include "data.h"
 //common utility functions for data manipulation.
 
 
@@ -13,4 +14,6 @@ void strToUpperCase(std::string& str);
 char convlower(char in);
 char convupper(char in);
 void trim(std::string& in, char toTrim);
+
+
 #endif

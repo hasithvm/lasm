@@ -63,12 +63,20 @@
 	#include "data.h"
 	#include "symtable.h"
 	#include "Nodes.h"
-		
+	#include "common.h"
+	#include "p86Assembler.h"
+	#include <iostream>
+	#include <fstream>
+	#include "preprocessor.h"
+	ExpressionList list;		
 	using namespace std;
     extern "C"
 	{
+		extern FILE *yyin;
 		extern int yylineno;
 		int yyparse(void);
+
+
 		int yylex(void);
 		//extern int yydebug;
 		int yywrap()
@@ -79,7 +87,7 @@
 	}    
 	void yyerror(const char *str)
 	{
-		cerr << endl << "parser error:" << yylineno << "\t" << str << endl;
+		cerr << endl << "parser error: " << yylineno << "\t" << str << endl;
 	}
 	
 
@@ -88,15 +96,52 @@
 
 	main(int argc, char **argv)
 	{
+	  streambuf *psbuf, *backup;
 	//	yydebug =1;
+		ofstream toFile;
+		toFile.open("log.txt");
+		backup = clog.rdbuf();
+		psbuf = toFile.rdbuf();
+		clog.rdbuf(psbuf);
+
+		list.reserve(80);
+		FILE *myfile = fopen(argv[1], "r");
+		yyin = myfile;
+
+	if (!myfile) {
+		yyerror("Invalid file specified!");
+	yyin = stdin;
+	}
+		
+		do {
 		yyparse();
+	} while (!feof(yyin));
+
+
+
+
+
+	preprocess(list);
+
+for (int i = 0; i< list.size();i++)
+{
+	list[i]->repr(0);
+}
+clog << "assembly started!" << endl;
+	p86Assembler asmgen;
+	asmgen.parse(list);
+
+
+		clog.rdbuf(backup);  
+		toFile.close();
+
 	}
 
 
 
 
 /* Line 172 of glr.c  */
-#line 100 "p86asm.tab.c"
+#line 145 "p86asm.tab.c"
 
 
 
@@ -131,7 +176,7 @@ static YYSTYPE yyval_default;
 
 
 /* Line 243 of glr.c  */
-#line 135 "p86asm.tab.c"
+#line 180 "p86asm.tab.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -228,18 +273,18 @@ YYID (i)
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   64
+#define YYLAST   45
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  22
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  37
+#define YYNRULES  38
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  43
+#define YYNSTATES  48
 /* YYMAXRHS -- Maximum number of symbols on right-hand side of rule.  */
-#define YYMAXRHS 3
+#define YYMAXRHS 7
 /* YYMAXLEFT -- Maximum number of symbols to the left of a handle
    accessed by $0, $-1, etc., in any rule.  */
 #define YYMAXLEFT 0
@@ -290,32 +335,33 @@ static const unsigned char yytranslate[] =
 static const unsigned char yyprhs[] =
 {
        0,     0,     3,     4,     7,     9,    11,    13,    15,    17,
-      19,    21,    25,    26,    28,    32,    33,    35,    37,    41,
-      43,    45,    49,    50,    52,    53,    55,    57,    59,    61,
-      63,    65,    67,    69,    71,    73,    75,    78
+      19,    23,    24,    26,    28,    30,    34,    35,    37,    39,
+      40,    44,    46,    48,    52,    58,    66,    68,    70,    72,
+      74,    76,    78,    80,    82,    84,    86,    88,    90
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const signed char yyrhs[] =
 {
-      23,     0,    -1,    -1,    23,    24,    -1,    40,    -1,    25,
-      -1,    29,    -1,    39,    -1,    27,    -1,    26,    -1,    17,
-      -1,    28,    21,    37,    -1,    -1,    20,    -1,    10,    30,
-      31,    -1,    -1,     6,    -1,     7,    -1,    32,     5,    32,
-      -1,    32,    -1,    33,    -1,     8,    33,     9,    -1,    -1,
-      34,    -1,    -1,    20,    -1,    35,    -1,    37,    -1,    36,
-      -1,    38,    -1,    19,    -1,    15,    -1,    16,    -1,    12,
-      -1,    13,    -1,    14,    -1,    18,     3,    -1,     4,    20,
-      -1
+      23,     0,    -1,    -1,    23,    24,    -1,    25,    -1,    30,
+      -1,    40,    -1,    27,    -1,    26,    -1,    17,    -1,    28,
+      21,    29,    -1,    -1,    20,    -1,    35,    -1,    36,    -1,
+      11,    31,    32,    -1,    -1,     6,    -1,     7,    -1,    -1,
+      33,     5,    33,    -1,    33,    -1,    34,    -1,     8,    34,
+       9,    -1,     8,    34,    10,    34,     9,    -1,     8,    34,
+      10,    34,    10,    34,     9,    -1,    35,    -1,    36,    -1,
+      20,    -1,    38,    -1,    37,    -1,    39,    -1,    19,    -1,
+      15,    -1,    16,    -1,    12,    -1,    13,    -1,    14,    -1,
+      18,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short int yyrline[] =
 {
-       0,    62,    62,    64,    66,    68,    70,    72,    74,    76,
-      79,    86,    93,    95,   101,   118,   122,   129,   139,   148,
-     154,   159,   175,   179,   180,   185,   204,   206,   208,   210,
-     212,   221,   230,   240,   249,   259,   269,   279
+       0,   103,   103,   104,   109,   113,   115,   117,   119,   123,
+     130,   143,   145,   150,   152,   155,   171,   175,   182,   192,
+     196,   205,   211,   216,   235,   254,   285,   287,   291,   311,
+     313,   315,   317,   326,   335,   345,   354,   364,   374
 };
 #endif
 
@@ -325,31 +371,31 @@ static const unsigned short int yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "COLON", "END", "COMMA", "WORDPTR",
-  "BYTEPTR", "LSQBR", "RSQBR", "OPCODE", "REG", "HEX_PRE", "HEX_SUFF",
+  "BYTEPTR", "LSQBR", "RSQBR", "PLUS", "OPCODE", "HEX_PRE", "HEX_SUFF",
   "DEC", "BIN_PRE", "BIN_SUFF", "CMTSTR", "LABEL", "LITERAL", "TEXT",
   "DIRECTIVE", "$accept", "statements", "statement", "program_expr",
-  "comment", "directive", "directive_key", "code", "modifier", "params",
-  "param", "operand", "reg_and_lookup_type", "immediate_type",
-  "binary_type", "hex_type", "decimal_type", "label", "endline", 0
+  "comment", "directive", "directive_key", "directive_value", "code",
+  "modifier", "params", "param", "operand", "reg_and_lookup_type",
+  "immediate_type", "binary_type", "hex_type", "decimal_type", "label", 0
 };
 #endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const unsigned char yyr1[] =
 {
-       0,    22,    23,    23,    24,    24,    25,    25,    25,    25,
-      26,    27,    28,    28,    29,    30,    30,    30,    31,    31,
-      32,    32,    33,    33,    33,    34,    34,    35,    35,    35,
-      35,    36,    36,    37,    37,    38,    39,    40
+       0,    22,    23,    23,    24,    25,    25,    25,    25,    26,
+      27,    28,    28,    29,    29,    30,    31,    31,    31,    32,
+      32,    32,    33,    33,    33,    33,    34,    34,    35,    36,
+      36,    36,    36,    37,    37,    38,    38,    39,    40
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const unsigned char yyr2[] =
 {
        0,     2,     0,     2,     1,     1,     1,     1,     1,     1,
-       1,     3,     0,     1,     3,     0,     1,     1,     3,     1,
-       1,     3,     0,     1,     0,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     2,     2
+       3,     0,     1,     1,     1,     3,     0,     1,     1,     0,
+       3,     1,     1,     3,     5,     7,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     2
 };
 
 /* YYDPREC[RULE-NUM] -- Dynamic precedence of rule #RULE-NUM (0 if none).  */
@@ -358,7 +404,7 @@ static const unsigned char yydprec[] =
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0
+       0,     0,     0,     0,     0,     0,     0,     0,     0
 };
 
 /* YYMERGER[RULE-NUM] -- Index of merging function for rule #RULE-NUM.  */
@@ -367,7 +413,7 @@ static const unsigned char yymerger[] =
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0
+       0,     0,     0,     0,     0,     0,     0,     0,     0
 };
 
 /* YYDEFACT[S] -- default reduction number in state S.  Performed when
@@ -375,52 +421,50 @@ static const unsigned char yymerger[] =
    is an error.  */
 static const unsigned char yydefact[] =
 {
-       2,    12,     1,     0,    15,    10,     0,    13,     3,     5,
-       9,     8,     0,     6,     7,     4,    37,    16,    17,    22,
-      36,     0,    22,    33,    34,    35,    31,    32,    30,    25,
-      14,    19,    20,    23,    26,    28,    27,    29,    11,     0,
-      22,    21,    18
+       2,    11,     1,    16,     9,     0,    12,     3,     4,     8,
+       7,     0,     5,     6,    17,    18,    19,    38,     0,     0,
+      35,    36,    37,    33,    34,    32,    28,    15,    21,    22,
+      26,    27,    30,    29,    31,    10,    13,    14,     0,     0,
+      23,     0,    20,     0,    24,     0,     0,    25
 };
 
 /* YYPDEFGOTO[NTERM-NUM].  */
 static const signed char yydefgoto[] =
 {
-      -1,     1,     8,     9,    10,    11,    12,    13,    19,    30,
-      31,    32,    33,    34,    35,    36,    37,    14,    15
+      -1,     1,     7,     8,     9,    10,    11,    35,    12,    16,
+      27,    28,    29,    30,    31,    32,    33,    34,    13
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -18
+#define YYPACT_NINF -20
 static const signed char yypact[] =
 {
-     -18,    44,   -18,   -17,    -5,   -18,     6,   -18,   -18,   -18,
-     -18,   -18,   -10,   -18,   -18,   -18,   -18,   -18,   -18,     0,
-     -18,    -6,    37,   -18,   -18,   -18,   -18,   -18,   -18,   -18,
-     -18,    18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,    15,
-      22,   -18,   -18
+     -20,     1,   -20,    -3,   -20,     2,   -20,   -20,   -20,   -20,
+     -20,   -10,   -20,   -20,   -20,   -20,    -6,   -20,    24,    24,
+     -20,   -20,   -20,   -20,   -20,   -20,   -20,   -20,    12,   -20,
+     -20,   -20,   -20,   -20,   -20,   -20,   -20,   -20,     6,    15,
+     -20,    24,   -20,    23,   -20,    24,    11,   -20
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const signed char yypgoto[] =
 {
-     -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,
-     -15,     5,   -18,   -18,   -18,     7,   -18,   -18,   -18
+     -20,   -20,   -20,   -20,   -20,   -20,   -20,   -20,   -20,   -20,
+     -20,   -15,   -19,     7,    27,   -20,   -20,   -20,   -20
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -23
-static const signed char yytable[] =
+#define YYTABLE_NINF -1
+static const unsigned char yytable[] =
 {
-     -22,    17,    18,    16,   -22,   -22,    23,    24,    22,    20,
-     -22,    21,    23,    24,    25,    26,    27,   -22,   -22,    28,
-      29,   -22,   -22,    40,    41,    42,   -22,    39,    38,     0,
-      22,     0,   -22,     0,    23,    24,    25,    26,    27,   -22,
-     -22,    28,    29,   -22,     2,     0,   -22,     0,     3,    23,
-      24,    25,    26,    27,     4,     0,    28,    29,     0,     0,
-       0,     5,     6,     0,     7
+      38,     2,    19,    14,    15,    17,    20,    21,    22,    23,
+      24,    18,     3,    25,    26,    40,    41,    39,     4,     5,
+      47,     6,    43,    19,    42,    36,    46,    20,    21,    22,
+      23,    24,    44,    45,    25,    26,    20,    21,    22,    23,
+      24,     0,     0,    25,    26,    37
 };
 
 /* YYCONFLP[YYPACT[STATE-NUM]] -- Pointer into YYCONFL of start of
@@ -429,45 +473,38 @@ static const signed char yytable[] =
    yyconfl is terminated by a rule number of 0.  */
 static const unsigned char yyconflp[] =
 {
-       1,     0,     0,     0,     3,     5,     0,     0,     0,     0,
-       7,     0,     0,     0,     0,     0,     0,     9,    11,     0,
-      13,    16,    20,     0,     0,     0,    22,     0,     0,     0,
-       0,     0,    24,     0,     0,     0,     0,     0,     0,    26,
-      28,     0,    30,    33,     0,     0,    18,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0
+       0,     0,     0,     0,     1,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0
 };
 
 /* YYCONFL[I] -- lists of conflicting rule numbers, each terminated by
    0, pointed into by YYCONFLP.  */
 static const short int yyconfl[] =
 {
-       0,    24,     0,    24,     0,    24,     0,    24,     0,    24,
-       0,    24,     0,    22,    24,     0,    24,     0,    24,     0,
-      24,     0,    24,     0,    24,     0,    24,     0,    24,     0,
-      22,    24,     0,    24,     0
+       0,    19,     0
 };
 
 static const signed char yycheck[] =
 {
-       0,     6,     7,    20,     4,     5,    12,    13,     8,     3,
-      10,    21,    12,    13,    14,    15,    16,    17,    18,    19,
-      20,    21,     0,     5,     9,    40,     4,    22,    21,    -1,
-       8,    -1,    10,    -1,    12,    13,    14,    15,    16,    17,
-      18,    19,    20,    21,     0,    -1,     9,    -1,     4,    12,
-      13,    14,    15,    16,    10,    -1,    19,    20,    -1,    -1,
-      -1,    17,    18,    -1,    20
+      19,     0,     8,     6,     7,     3,    12,    13,    14,    15,
+      16,    21,    11,    19,    20,     9,    10,     5,    17,    18,
+       9,    20,    41,     8,    39,    18,    45,    12,    13,    14,
+      15,    16,     9,    10,    19,    20,    12,    13,    14,    15,
+      16,    -1,    -1,    19,    20,    18
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const unsigned char yystos[] =
 {
-       0,    23,     0,     4,    10,    17,    18,    20,    24,    25,
-      26,    27,    28,    29,    39,    40,    20,     6,     7,    30,
-       3,    21,     8,    12,    13,    14,    15,    16,    19,    20,
-      31,    32,    33,    34,    35,    36,    37,    38,    37,    33,
-       5,     9,    32
+       0,    23,     0,    11,    17,    18,    20,    24,    25,    26,
+      27,    28,    30,    40,     6,     7,    31,     3,    21,     8,
+      12,    13,    14,    15,    16,    19,    20,    32,    33,    34,
+      35,    36,    37,    38,    39,    29,    35,    36,    34,     5,
+       9,    10,    33,    34,     9,    10,    34,     9
 };
 
 
@@ -906,68 +943,82 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   switch (yyn)
     {
-        case 10:
+        case 3:
 
 /* Line 936 of glr.c  */
-#line 80 "p86asm.y"
+#line 105 "p86asm.y"
     {
-					BaseExpressionNode* pComment = new CommentNode(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)));
-					pComment->repr(1);
-					free(pComment);
+					list.push_back((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.pExpr));
 				}
     break;
 
-  case 11:
+  case 9:
 
 /* Line 936 of glr.c  */
-#line 87 "p86asm.y"
+#line 124 "p86asm.y"
     {
-				 	printf("%s directive, key=%s\n", (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pStr), (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr));
-					(((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands)->at(0)->repr(1);
+					BaseExpressionNode* pComment = new CommentNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
+
+					((*yyvalp).pExpr) = pComment;
 				}
     break;
 
-  case 13:
+  case 10:
 
 /* Line 936 of glr.c  */
-#line 96 "p86asm.y"
+#line 131 "p86asm.y"
+    {
+					ControlNode* pControl = new ControlNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pStr),(((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands)->at(0));
+					
+					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pStr));
+					if ((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr) != nullptr)
+				 	pControl->setKey((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr));
+					((*yyvalp).pExpr) = pControl;
+
+					
+				}
+    break;
+
+  case 12:
+
+/* Line 936 of glr.c  */
+#line 146 "p86asm.y"
     {
 					((*yyvalp).pStr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr); 
-				}
-    break;
-
-  case 14:
-
-/* Line 936 of glr.c  */
-#line 102 "p86asm.y"
-    {
-					
-					OpNode* pCode = new OpNode(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr)), (((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands));
-					if ((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth))
-					{
-						pCode->setExplicitAccessModifier((AccessWidth)*(((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth));
-						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth));					
-
-					}
-						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr));
-						pCode->repr(1);
-						
 				}
     break;
 
   case 15:
 
 /* Line 936 of glr.c  */
-#line 118 "p86asm.y"
+#line 156 "p86asm.y"
     {
-					((*yyvalp).pAccessWidth) = nullptr;			
+					
+					OpNode* pCode = new OpNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr), (((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands));
+					if ((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth))
+					{
+						pCode->setExplicitAccessModifier((AccessWidth)*(((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth));
+						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pAccessWidth));					
+					}
+						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr));
+						((*yyvalp).pExpr) = pCode;
+						
 				}
     break;
 
   case 16:
 
 /* Line 936 of glr.c  */
-#line 123 "p86asm.y"
+#line 171 "p86asm.y"
+    {
+					((*yyvalp).pAccessWidth) = nullptr;			
+				}
+    break;
+
+  case 17:
+
+/* Line 936 of glr.c  */
+#line 176 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_16BIT;
@@ -975,10 +1026,10 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 				}
     break;
 
-  case 17:
+  case 18:
 
 /* Line 936 of glr.c  */
-#line 130 "p86asm.y"
+#line 183 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_8BIT;
@@ -988,10 +1039,19 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 				}
     break;
 
-  case 18:
+  case 19:
 
 /* Line 936 of glr.c  */
-#line 140 "p86asm.y"
+#line 192 "p86asm.y"
+    {
+					((*yyvalp).pListOperands)= new Operands();
+				}
+    break;
+
+  case 20:
+
+/* Line 936 of glr.c  */
+#line 197 "p86asm.y"
     {
 					Operands* p1 =(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pListOperands);
 					Operands* p2 =(((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands);
@@ -1001,28 +1061,28 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 				}
     break;
 
-  case 19:
+  case 21:
 
 /* Line 936 of glr.c  */
-#line 149 "p86asm.y"
+#line 206 "p86asm.y"
     {
 					((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pListOperands);
 				}
     break;
 
-  case 20:
+  case 22:
 
 /* Line 936 of glr.c  */
-#line 155 "p86asm.y"
+#line 212 "p86asm.y"
     {
 					((*yyvalp).pListOperands)  = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pListOperands);
 				}
     break;
 
-  case 21:
+  case 23:
 
 /* Line 936 of glr.c  */
-#line 160 "p86asm.y"
+#line 217 "p86asm.y"
     {
 					if ((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pListOperands)->size() != 0)
 					{
@@ -1033,27 +1093,77 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 					
 					if (op->getAccessMode() == AccessMode::IMMEDIATE)
 						op->setAccessMode(AccessMode::IMMEDIATE_ADDR);
-					}
+					
+					if (op->getAccessMode() == AccessMode::CONST)
+						op->setAccessMode(AccessMode::CONST_ADDR);
 					((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pListOperands);
+					}
+					
 				}
     break;
 
-  case 22:
+  case 24:
 
 /* Line 936 of glr.c  */
-#line 175 "p86asm.y"
+#line 236 "p86asm.y"
     {
-					((*yyvalp).pListOperands)= new Operands();
+					Operand* op1 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (5))].yystate.yysemantics.yysval.pListOperands)->at(0);
+					Operand* op2 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (5))].yystate.yysemantics.yysval.pListOperands)->at(0);
+					if (op1->getAccessMode() == AccessMode::REG_DIRECT)
+						{
+							((Register*)op1)->setOffsetPtr((((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (5))].yystate.yysemantics.yysval.pListOperands));
+							((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (5))].yystate.yysemantics.yysval.pListOperands);
+						}
+					else if (op2->getAccessMode()== AccessMode::REG_DIRECT)
+						{
+							((Register*)op2)->setOffsetPtr((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (5))].yystate.yysemantics.yysval.pListOperands));
+							((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (5))].yystate.yysemantics.yysval.pListOperands);
+						}
+					else
+						yyerror("indexed mode must have at least one valid register!");
+							((*yyvalp).pListOperands)->at(0)->setAccessMode(AccessMode::REG_OFFSET);
 				}
     break;
 
   case 25:
 
 /* Line 936 of glr.c  */
-#line 186 "p86asm.y"
+#line 255 "p86asm.y"
     {
-							if (Register::exists(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)))){
-							printf ("this is a reg\n");
+					Operand* op1 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands)->at(0);
+					Operand* op2 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands)->at(0);
+					Operand* op3 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((6) - (7))].yystate.yysemantics.yysval.pListOperands)->at(0);
+					if (op1->getAccessMode() == AccessMode::REG_DIRECT)
+						{
+							catOperands((((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands),(((yyGLRStackItem const *)yyvsp)[YYFILL ((6) - (7))].yystate.yysemantics.yysval.pListOperands));
+							((Register*)op1)->setOffsetPtr((((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands));
+							
+							((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands);
+						}
+					else if (op2->getAccessMode()== AccessMode::REG_DIRECT)
+						{
+							catOperands((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands),(((yyGLRStackItem const *)yyvsp)[YYFILL ((6) - (7))].yystate.yysemantics.yysval.pListOperands));
+							((Register*)op2)->setOffsetPtr((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands));
+							((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands);
+						}
+					else if (op3->getAccessMode()== AccessMode::REG_DIRECT)
+						{
+							catOperands((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands),(((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands));
+							((Register*)op3)->setOffsetPtr((((yyGLRStackItem const *)yyvsp)[YYFILL ((6) - (7))].yystate.yysemantics.yysval.pListOperands));
+							((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((6) - (7))].yystate.yysemantics.yysval.pListOperands);
+						}
+					else
+						yyerror("indexed mode must have at least one valid register!");
+
+				}
+    break;
+
+  case 28:
+
+/* Line 936 of glr.c  */
+#line 292 "p86asm.y"
+    {
+							if (Register::exists((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr))){
 							Register *reg = new Register((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr), AccessMode::REG_DIRECT);
 							free ((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 							Operands* ptr = new std::vector<Operand*>;
@@ -1062,6 +1172,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 							}
 							else{
 								Constant* cnst = new Constant((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
+								cnst->setAccessMode(AccessMode::CONST);
 								free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 								Operands* ptr = new std::vector<Operand*>;
 								ptr->push_back(cnst);
@@ -1070,12 +1181,12 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 						}
     break;
 
-  case 30:
+  case 32:
 
 /* Line 936 of glr.c  */
-#line 213 "p86asm.y"
+#line 318 "p86asm.y"
     {
-						Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)),BASE_ASC,AccessMode::IMMEDIATE);
+						Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_ASC,AccessMode::IMMEDIATE);
 						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 						Operands* ptr = new std::vector<Operand*>;
 						ptr->push_back(i);
@@ -1083,38 +1194,12 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 					}
     break;
 
-  case 31:
-
-/* Line 936 of glr.c  */
-#line 222 "p86asm.y"
-    {
-					Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)).substr(2,-1),BASE_BIN,AccessMode::IMMEDIATE);
-					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
-					Operands* ptr = new std::vector<Operand*>;
-					ptr->push_back(i);
-					((*yyvalp).pListOperands) = ptr;
-				}
-    break;
-
-  case 32:
-
-/* Line 936 of glr.c  */
-#line 231 "p86asm.y"
-    {
-					Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)),BASE_BIN,AccessMode::IMMEDIATE);
-					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
-					Operands* ptr = new std::vector<Operand*>;
-					ptr->push_back(i);
-					((*yyvalp).pListOperands) = ptr;
-				}
-    break;
-
   case 33:
 
 /* Line 936 of glr.c  */
-#line 241 "p86asm.y"
+#line 327 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)).substr(2,-1),BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1125,9 +1210,9 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 34:
 
 /* Line 936 of glr.c  */
-#line 250 "p86asm.y"
+#line 336 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)),BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1138,9 +1223,35 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 35:
 
 /* Line 936 of glr.c  */
-#line 260 "p86asm.y"
+#line 346 "p86asm.y"
     {
-					Immediate *i = new Immediate(std::string((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr)),BASE_DEC,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_HEX,AccessMode::IMMEDIATE);
+					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
+					Operands* ptr = new std::vector<Operand*>;
+					ptr->push_back(i);
+					((*yyvalp).pListOperands) = ptr;
+				}
+    break;
+
+  case 36:
+
+/* Line 936 of glr.c  */
+#line 355 "p86asm.y"
+    {
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_HEX,AccessMode::IMMEDIATE);
+					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
+					Operands* ptr = new std::vector<Operand*>;
+					ptr->push_back(i);
+					((*yyvalp).pListOperands) = ptr;
+				}
+    break;
+
+  case 37:
+
+/* Line 936 of glr.c  */
+#line 365 "p86asm.y"
+    {
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_DEC,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1149,32 +1260,22 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 					}
     break;
 
-  case 36:
+  case 38:
 
 /* Line 936 of glr.c  */
-#line 270 "p86asm.y"
+#line 375 "p86asm.y"
     {
 					LabelNode* pLabel = new LabelNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.pStr));
-					pLabel->repr(1);
-					vector<BaseExpressionNode*>* pList = new vector<BaseExpressionNode*>();
-					pList->push_back(pLabel);
-					((*yyvalp).pListExpr) = pList;
-				}
-    break;
 
-  case 37:
-
-/* Line 936 of glr.c  */
-#line 280 "p86asm.y"
-    {
-					printf("program end\n");
+					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.pStr));
+					((*yyvalp).pExpr) = pLabel;
 				}
     break;
 
 
 
 /* Line 936 of glr.c  */
-#line 1178 "p86asm.tab.c"
+#line 1279 "p86asm.tab.c"
       default: break;
     }
 
@@ -1275,7 +1376,7 @@ yylhsNonterm (yyRuleNum yyrule)
 }
 
 #define yypact_value_is_default(yystate) \
-  ((yystate) == (-18))
+  ((yystate) == (-20))
 
 /** True iff LR state STATE has only a default reduction (regardless
  *  of token).  */
@@ -2831,6 +2932,6 @@ yypdumpstack (yyGLRStack* yystackp)
 
 
 /* Line 2659 of glr.c  */
-#line 284 "p86asm.y"
+#line 382 "p86asm.y"
 
 

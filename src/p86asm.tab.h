@@ -44,8 +44,8 @@
      BYTEPTR = 262,
      LSQBR = 263,
      RSQBR = 264,
-     OPCODE = 265,
-     REG = 266,
+     PLUS = 265,
+     OPCODE = 266,
      HEX_PRE = 267,
      HEX_SUFF = 268,
      DEC = 269,
@@ -65,11 +65,11 @@ typedef union YYSTYPE
 {
 
 /* Line 2663 of glr.c  */
-#line 42 "p86asm.y"
+#line 87 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
-	vector<BaseExpressionNode*>* pListExpr;
+	BaseExpressionNode* pExpr;
 	uint8_t* pAccessWidth;
 
 

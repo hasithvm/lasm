@@ -1,11 +1,24 @@
 #include "data.h"
 //string lookup table for register types.
-char *regtypeLUT[3] = {"uninitialized","general purpose", "special"};
-char *accessmodeLUT[3] = {"uninitialized", "direct","address"};
+char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
+char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
+
+Operand::Operand():m_am(AccessMode::UNINITIALIZED){
+
+}
+
+AccessMode Operand::getAccessMode(){
+	return m_am;
+}
+
+void Operand::setAccessMode(AccessMode am){
+	m_am = am;
+}
+
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0xFF),m_am(AccessMode::UNINITIALIZED),m_regtype(0), m_regname()
+Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL)
 {
 }
 
@@ -13,13 +26,16 @@ Register::Register(): reg(0xFF),m_am(AccessMode::UNINITIALIZED),m_regtype(0), m_
 
 //extended constructor. Consumes a regname and an accessmode.
 Register::Register(char* pRegName, AccessMode accessmode): 
-reg(0xFF), m_am(accessmode),m_regtype(0),m_regname()
+reg(0xFF), m_regtype(0),m_regname(),m_ptrOffset(NULL)
+
 {
 //create the LUT for regtypes. Really should make this static.
 string tmp = std::string((const char *)pRegName,2);
 //call the parser function.
 reg = Register::parseRegString(tmp);
 m_regname = tmp.substr(0,2);
+Operand::setAccessMode(accessmode);
+
 }
 
 //sets the register name, ie "AX". 
@@ -33,19 +49,22 @@ uint8_t Register::getBinEncoding(){
 return reg;
 
 }
-
-//returns the register accessmode.
-AccessMode Register::getAccessMode(){
-return m_am;
-}
-
 //prints a representation of the register to clog.
 void Register::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');
 	clog << indenter << "<Register>" << endl;
 	clog << indenter << "\t<address>"<< hex2str(&reg,1) << "</address>" << endl;
 	clog << indenter << "\t<name>" << m_regname << "</name>" <<  endl;
-	clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am] << "</accessmode>" << endl;
+	//clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)Operand::getAccessMode()] << "</accessmode>" << endl;
+	if (Operand::getAccessMode() == AccessMode::REG_OFFSET)
+	{
+		clog << indenter << "\t<offset>" << endl;
+		Operands* ops =  getOffsetPtr();
+		for (int i =0;i < ops->size();i++){
+			ops->at(i)->repr(indentlevel + 1);
+		}
+		clog << indenter << "\t</offset>" << endl;
+	}
 	clog << indenter << "\t<type>" << regtypeLUT[m_regtype] <<  "</type>"<< endl;
 	clog << indenter << "</Register>" << endl;
 }
@@ -54,23 +73,28 @@ void Register::repr(int indentlevel){
 //returns a binary representation of the register.
 uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
-for (int i=0;i<2;i++)
+for (int i=0;i<str.size();i++)
 		str[i] = std::toupper(str[i]);
-std::string tmp_regname = str.substr(0,2);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
-if (m_regmap.find(tmp_regname) == m_regmap.end())
+if (m_regmap.find(str) == m_regmap.end())
 {
 	cerr << "Error! invalid register identifier specified!" << endl;
 	return 0xFF;
 }
 //set the register type
 if ((str.at(1) != 'H') && 
-		RANGE(m_regmap[tmp_regname],0x04, 0x07))
+		RANGE(m_regmap[str],0x04, 0x07))
 	m_regtype = REG_SP;
 else
 	m_regtype = REG_GP;
-		 
-return m_regmap[tmp_regname];
+
+if (str.at(1) == 'H' || (str.at(1) == 'L' ))
+	m_aw = AccessWidth::AW_8BIT;
+else
+	m_aw = AccessWidth::AW_16BIT;
+	 
+
+return m_regmap[str];
 }
 
 Register::RegLookupMap Register::_populate(){
@@ -101,31 +125,31 @@ Register::RegLookupMap Register::_populate(){
 }
 bool Register::exists(std::string reg){
 	strToUpperCase(reg);
-	if (m_regmap.count(reg.substr(0,2)))
+	if (m_regmap.count(reg))
 		return true;
 	return false;
 }
-void Register::setAccessMode(AccessMode am){
-	m_am = am;	
+
+void Register::setOffsetPtr(Operands* ptr){
+	m_ptrOffset = ptr;
+}
+
+Operands* Register::getOffsetPtr(){
+	return m_ptrOffset;
 }
 //==============================================
 
-Constant::Constant(std::string name){
-	m_name = name;
+Constant::Constant(char* pName){
+	m_name = std::string(pName);
 };
 
-void Constant::setAccessMode(AccessMode am){
-	m_am = am;
-}
 
-AccessMode Constant::getAccessMode(){
-	return m_am;
-}
 void Constant::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');
 	clog << indenter << "<Constant>" << endl;
 	clog << indenter << "\t<name>" << m_name << "</name>" <<  endl;
-	clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)m_am] << "</accessmode>" << endl;
+//	clog << indenter << "\t<accessmode>" << accessmodeLUT[((uint8_t)Operand::getAccessMode()) >> 4] << "</accessmode>" << endl;
+
 	clog << indenter << "</Constant>" << endl;
 }
 
@@ -142,7 +166,10 @@ std::string& Constant::getName(){
 
 
 
-
+void catOperands(Operands* ptr1, Operands* ptr2)
+{
+	ptr1->insert(ptr1->end(), ptr2->begin(), ptr2->end());
+}
 
 
 

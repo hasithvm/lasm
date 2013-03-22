@@ -2,8 +2,9 @@
 #define NODES_H
 #include <string>
 #include <cstdlib>
-#include "data.h"
+
 #include <cstddef>
+#include "data.h"
 using namespace std;
 enum ExpressionType{
 EXPR_OP=1,
@@ -12,20 +13,20 @@ EXPR_CONTROL=4,
 EXPR_COMMENT=5,
 };
 
-enum AccessWidth : std::uint8_t{
-AW_UNSPECIFIED=0,
-AW_8BIT=1,
-AW_16BIT=2,
-};
+
 //Base class for the AST Nodes.
 class BaseExpressionNode{
 		public:
 					virtual ExpressionType getType()=0;
 					virtual void setContent(std::string a) =0;
-					virtual std::string getContent()=0;
+					virtual std::string& getContent()=0;
 					virtual void repr(int indentlevel)=0;
+					BaseExpressionNode* getNextExpr();
+					void setNextExpr(BaseExpressionNode* ptr);
+		private:
+				BaseExpressionNode* m_nextptr;
 };
-typedef vector<Operand*> Operands;
+
 
 //AST node representing an assembly instruction.
 
@@ -35,29 +36,37 @@ typedef vector<Operand*> Operands;
 				CONTROL_DB,
 				CONTROL_EQU,
 				CONTROL_DW,
+				CONTROL_END
 				} ControlNodeType;
 class ControlNode : public BaseExpressionNode{
 		public:
-				ControlNode(char* e, Immediate* i);
+				ControlNode(char* e, Operand* i);
 				ExpressionType getType();
 				ControlNodeType getControlType();
 				void setContent(std::string a);
-				std::string getContent();
+				std::string& getContent();
 				void setImmediate(Immediate* im);
-				Immediate* getImmediate();
+				Operand* getValue();
+				void setKey(char* a);
+				std::string& getKey();
 				void repr(int indentlevel);
+				
 		private:
-				Immediate* imm;
+				typedef std::map<std::string, ControlNodeType>  CtrlTypeLookupMap;
+				Operand* imm;
 				ControlNodeType ctrltype;
 				ControlNodeType decodeText(std::string& text);
 				std::string label;
+				std::string m_key;
+				static CtrlTypeLookupMap tlm;
+				static CtrlTypeLookupMap _populate();
 };
 class CommentNode : public BaseExpressionNode{
 		public:
-				CommentNode(std::string a);
+				CommentNode(char* pContent);
 				ExpressionType getType();
 				void setContent(std::string a);
-				std::string getContent();
+				std::string& getContent();
 				void repr(int indentlevel);
 		private:
 				std::string cmt;	
@@ -68,7 +77,7 @@ class LabelNode : public BaseExpressionNode{
 				LabelNode(char* a);
 				ExpressionType getType();
 				void setContent(std::string a);
-				std::string getContent();
+				std::string& getContent();
 				void repr(int indentlevel);
 		private:
 				std::string m_label;
@@ -78,10 +87,10 @@ class LabelNode : public BaseExpressionNode{
 class OpNode : public BaseExpressionNode{
 		public:
 					//constructor
-					OpNode(std::string opName, Operands* op);
+					OpNode(char* pOpName, Operands* op);
 					ExpressionType getType();
 					void setContent(std::string a);
-					std::string getContent();
+					std::string& getContent();
 					int getOperandCount();
 					Operands& getOperands();
 					void setExplicitAccessModifier(AccessWidth aw);
@@ -95,4 +104,7 @@ class OpNode : public BaseExpressionNode{
 					CommentNode* m_commentNode;
 	
 };
+
+
+typedef std::vector<BaseExpressionNode*> ExpressionList;
 #endif
