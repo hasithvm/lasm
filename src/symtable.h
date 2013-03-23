@@ -23,14 +23,31 @@ using namespace std;
 #define REG16		REG | OP_16BIT
 
 #define MEM8		MEM | OP_8BIT
-#define MEM16		MEM | OP_16_BIT
+#define MEM16		MEM | OP_16BIT
 
 #define IMM8	IMM | OP_8BIT
 #define IMM16	IMM | OP_16BIT
 
 
 #define REG_PRESET	16
+#define ENC_REG_AX	0x00
+#define ENC_REG_CX	0x01
+#define ENC_REG_DX	0x02
+#define ENC_REG_BX	0x03
 
+#define ENC_REG_SP	0x04
+#define ENC_REG_BP	0x05
+#define ENC_REG_SI	0x06
+#define ENC_REG_DI	0x07
+
+#define ENC_REG_AL	0x00
+#define ENC_REG_CL	0x01
+#define ENC_REG_DL	0x02
+#define ENC_REG_BL	0x03
+#define ENC_REG_AH	0x04
+#define ENC_REG_CH	0x05
+#define ENC_REG_DH	0x06
+#define ENC_REG_BH	0x07
 
 #define REG_AX	0x00 << 5
 #define REG_CX	0x01 << 5
@@ -62,19 +79,21 @@ using namespace std;
 #define OP_OPERANDS 3
 
 #define OP_NO_OPERANDS 0
-#define OP_SINGLE_OPERAND 1
+#define OP_ONE_OPERAND 1
 #define OP_TWO_OPERANDS 2
 #define OP_THREE_OPERANDS 3
 
 //there is no modRM byte
 #define OP_NO_MODRM 4
 //jump-type operation, uses displacement (16-bit?)
-#define OP_IS_JUMP 8
+#define OP_IS_JMP 8
+
+//used only in the PUSH. OR the dst regis 
+#define OP_REG_ADD 16
 
 
-
-//next byte after has the REG field fixed.
-#define OP_REG_EXT 32
+//next byte after has base value of the mod/rm byte. all mod/rms are ORed with it.
+#define OP_MODRM_EXT 32
 
 
 

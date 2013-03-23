@@ -18,7 +18,7 @@ void Operand::setAccessMode(AccessMode am){
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL)
+Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL), m_isIndexBase(false)
 {
 }
 
@@ -26,7 +26,7 @@ Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL)
 
 //extended constructor. Consumes a regname and an accessmode.
 Register::Register(char* pRegName, AccessMode accessmode): 
-reg(0xFF), m_regtype(0),m_regname(),m_ptrOffset(NULL)
+reg(0xFF), m_regtype(0),m_regname(),m_ptrOffset(NULL), m_isIndexBase(false)
 
 {
 //create the LUT for regtypes. Really should make this static.
@@ -92,7 +92,8 @@ if (str.at(1) == 'H' || (str.at(1) == 'L' ))
 	m_aw = AccessWidth::AW_8BIT;
 else
 	m_aw = AccessWidth::AW_16BIT;
-	 
+if ((m_regtype == REG_SP) &&( m_regmap[str] > 0x04) || (str.compare("BX") == 0))
+	m_isIndexBase = true;
 
 return m_regmap[str];
 }
@@ -136,6 +137,15 @@ void Register::setOffsetPtr(Operands* ptr){
 
 Operands* Register::getOffsetPtr(){
 	return m_ptrOffset;
+}
+
+AccessWidth& Register::getAccessWidth(){
+	return m_aw;
+}
+
+bool& Register::isIndexable(){
+	return m_isIndexBase;
+
 }
 //==============================================
 

@@ -16,9 +16,9 @@
 using namespace std;
 
 enum AccessWidth : std::uint8_t{
-AW_UNSPECIFIED=0,
-AW_8BIT=1,
-AW_16BIT=2,
+AW_UNSPECIFIED=0xFF,
+AW_8BIT=0,
+AW_16BIT=1,
 };
 enum class AccessMode : std::uint8_t{
 	UNINITIALIZED=0,
@@ -56,6 +56,8 @@ class Operand{
 			void setAccessMode(AccessMode am);
  			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(int indentlevel)=0;
+
+			
 	private:
 			AccessMode m_am;
 };
@@ -65,8 +67,11 @@ class Immediate : public Operand{
 	public:
 			Immediate();
 			Immediate(char* pValue,ImmediateEncoding base, AccessMode am);
+
 			vector<uint8_t>& getBinEncoding();
 			void repr(int indentlevel);
+			Immediate* clone() const;
+			int size();
 	private:
 			vector<uint8_t> m_data;
 			static vector<uint8_t> parse(std::string val, ImmediateEncoding base);
@@ -84,11 +89,13 @@ class Register : public Operand{
 					void repr(int indentlevel);
 					Operands* getOffsetPtr();
 					void setOffsetPtr(Operands* ptr);
-					AccessWidth getAccessWidth();
-					
+					AccessWidth& getAccessWidth();
+					RegType& getRegType();
+					bool& isIndexable();
 		private:
 						typedef std::map<string, uint8_t>  RegLookupMap;
 						uint8_t reg;
+						bool m_isIndexBase;
 						int m_regtype;
 						AccessWidth m_aw;
 						std::string m_regname;
@@ -103,6 +110,7 @@ class Constant : public Operand{
 					Constant(char*  pName);
 					void repr(int indentlevel);
 					std::string& getName();
+
 		private:
 					std::string m_name;
 

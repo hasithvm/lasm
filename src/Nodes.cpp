@@ -14,6 +14,7 @@ OpNode::OpNode(char* pOpName, Operands* op)
 	strToLowerCase(opstr);
 	m_aw = AccessWidth::AW_UNSPECIFIED;
 	m_commentNode = nullptr;
+	m_line = 0;
 }
 
 ExpressionType OpNode::getType(){
@@ -64,6 +65,16 @@ void OpNode::setExplicitAccessModifier(AccessWidth aw){
 	m_aw = aw;
 }
 
+
+void OpNode::setLineNumber(int line){
+	m_line  = line;
+
+}
+
+int OpNode::getLineNumber(){
+	return m_line;
+
+}
 /*===========================================================*/
 ControlNode::ControlNode(char* e, Operand* i){
 	label = std::string(e+1);

@@ -7,295 +7,314 @@ SymTable::SymMap SymTable::generate(){
 	{"add",
 			{
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x04 ,REG8 | REG_PRESET | REG_AL, IMM8},
-			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x05 ,REG16 | REG_PRESET | REG_AX, IMM16}
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x05 ,REG16 | REG_PRESET | REG_AX, IMM16},
+			{OP_TWO_OPERANDS, 0x00, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x01, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0x80, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0x81, REG16|MEM16, IMM16}
 			} 
 	},
 	{"and",
-	 		{{0x00,0x00,REG8|REG16, IMM8|IMM16}}
-	 
+			{
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x24 ,REG8 | REG_PRESET | REG_AL, IMM8},
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x25 ,REG16 | REG_PRESET | REG_AX, IMM16},
+			{OP_TWO_OPERANDS, 0x20, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x21, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x04 << 3,0x80, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x03 << 3,0x81, REG16|MEM16, IMM16},
+
+			}	
+			
 	},
 	{"call",
 	 		{
-	 		{0x00,0xE8,IMM16}
+	 		{OP_ONE_OPERAND | OP_NO_MODRM,0xE8,IMM16}
 	 		}
 	 
 	},
 	{"cmp",
 			{
-			{0x00}
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3C, REG8 | REG_PRESET | REG_AL, IMM8},
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3D ,REG16 | REG_PRESET | REG_AX, IMM16},
 			}
-	
 	
 	},
 	{"dec",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x01<<3,0xFE, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x01<<3,0xFF, REG16|MEM16}
 			}
-	
 	
 	},
 	{"div",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x06 << 3,0xF6, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x06 << 3,0xF7, REG16|MEM16}
 			}
 	
 	
 	},
 	{"hlt",
 	{
-		{0x00}
+			{OP_NO_OPERANDS | OP_NO_MODRM, 0xF4}
 	}
 	
 	
 	},
 	{"in",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"inc",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x00,0xFE, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x00,0xFF, REG16|MEM16}
 			}
 	
 	
 	},
 	{"int",
 			{
-			{0x00}
 			}
 	
 	
 	},
 	{"iret",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"ja",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jae",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jb",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jbe",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jc",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_IS_JMP,0x72, IMM8}
 			}
 	
 	
 	},
 	{"je",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_IS_JMP,0x74, IMM8}
 			}
 	
 	
 	},
 	{"jg",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jge",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jl",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_IS_JMP,0x7C, IMM8}
 			}
 	
 	
 	},
 	{"jle",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jnc",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jne",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jno",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jns",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jnz",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jo",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"js",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jz",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"jmp",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_IS_JMP, 0xE9, IMM16}
 			}
 	
 	
 	},
 	{"mov",
 			{
-			{0x00}
+			{OP_TWO_OPERANDS, 0x88, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x89, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0xC6, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0xC7, REG16|MEM16, IMM16},
+			{OP_TWO_OPERANDS ,0x8A, REG8, MEM8},
+			{OP_TWO_OPERANDS ,0x8B, REG8, MEM16},
 			}
 	
 	
 	},
 	{"mul",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x04 << 3,0xF6, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x04 << 3,0xF7, REG16|MEM16}
 			}
 	
 	
 	},
 	{"neg",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"nop",
 			{
-			{0x00}
+			{OP_NO_OPERANDS | OP_NO_MODRM, 0x90}
 			}
 	
 	
 	},
 	{"not",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"or",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"out",
 			{
-			{0x00}
+			{OP_TWO_OPERANDS | OP_NO_MODRM, 0xEE, REG16 |REG_PRESET | REG_DX, REG8 | REG_PRESET | REG_AL}
 			}
 	
 	
 	},
 	{"pop",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_REG_ADD, 0x58, REG16}
 			}
 	
 	
 	},
 	{"push",
 			{
-			{0x00}
+			{OP_ONE_OPERAND | OP_NO_MODRM | OP_REG_ADD, 0x90, REG16}
 			}
 	
 	
 	},
 	{"ret",
 			{
-			{0x00}
+			{OP_NO_OPERANDS | OP_NO_MODRM,0xC3}
 			}
 	
 	
 	},
 	{"shl",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"shr",
 			{
-			{0x00}
+
 			}
 	
 	
 	},
 	{"sub",
 			{
-			{0x00}
+
 			}
 	
 	

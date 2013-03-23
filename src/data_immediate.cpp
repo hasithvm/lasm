@@ -2,7 +2,9 @@
 Immediate::Immediate(): m_data(){
 
 }
-
+Immediate* Immediate::clone() const{
+	return new Immediate(*this);
+}
 Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 {
 	Operand::setAccessMode(am);
@@ -78,6 +80,7 @@ switch(base)
 	case BASE_ASC:
 		out.resize(in.length() - 2);
 		trim(in, '\'');
+		printf("len_str: %d\n",in.length());
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 			{
 			out[bytes_written] = (uint8_t)*it_fwd;
@@ -101,4 +104,7 @@ switch(base)
 	return out;
 }
 
+int Immediate::size(){
+	return m_data.size();
 
+}

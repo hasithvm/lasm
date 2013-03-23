@@ -96,8 +96,11 @@ class OpNode : public BaseExpressionNode{
 					void setExplicitAccessModifier(AccessWidth aw);
 					AccessWidth getExplicitAccessModifier();
 					void repr(int indentlevel);
+					void setLineNumber(int line);
+					int getLineNumber();
 
 		private:
+					int m_line;					
 					Operands ops;
 					std::string opstr;
 					AccessWidth m_aw;

@@ -12,6 +12,7 @@
 	#include <iostream>
 	#include <fstream>
 	#include "preprocessor.h"
+	#include "VirgoWriter.h"
 	ExpressionList list;		
 	using namespace std;
     extern "C"
@@ -74,7 +75,7 @@ for (int i = 0; i< list.size();i++)
 clog << "assembly started!" << endl;
 	p86Assembler asmgen;
 	asmgen.parse(list);
-
+	writeFile(asmgen.getSegments(), NULL, asmgen.getStartingAddress());
 
 		clog.rdbuf(backup);  
 		toFile.close();
@@ -161,6 +162,7 @@ clog << "assembly started!" << endl;
 						pCode->setExplicitAccessModifier((AccessWidth)*$<pAccessWidth>2);
 						free($<pAccessWidth>2);					
 					}
+						pCode->setLineNumber(yylineno);
 						free($<pStr>1);
 						$<pExpr>$ = pCode;
 						

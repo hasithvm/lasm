@@ -24,7 +24,7 @@
 %x ENDCOND
 %option yylineno
 %%
-;[^\n]*/\n					yylval.pStr=strdup(yytext);				return CMTSTR;		
+;[^\n]*/\n					yylval.pStr=strdup(yytext);yylineno--;	return CMTSTR;		
 
 :																	return COLON;			
 [A-Za-z][A-Za-z]{1,}	{
@@ -39,7 +39,7 @@
 "WORD PTR"															return WORDPTR;
 "BYTE PTR"															return BYTEPTR;
 "0x"[A-Faf0-9]{1,}			yylval.pStr=strdup(yytext);				return HEX_PRE;				
-[A-Fa-f0-9]{1,}/[Hh]		yylval.pStr=strdup(yytext);				return HEX_SUFF;				
+[0-9][A-Fa-f0-9]{1,}/[Hh]		yylval.pStr=strdup(yytext);			return HEX_SUFF;				
 "0b"[0-1]{1,}				yylval.pStr=strdup(yytext);				return BIN_PRE;
 [0-1]{1,}/[Bb]				yylval.pStr=strdup(yytext);				return BIN_SUFF;
 "-"*[0-9]{1,}					yylval.pStr=strdup(yytext);			return DEC;

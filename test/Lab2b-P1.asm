@@ -26,7 +26,7 @@ LoopPS:
 	MOV AL, [SI]	; Load the next char to be printed - USING INPUT PARAMETER BX
 	CMP AL, '$'		; Compare the char to '$'
 	JE quitPS		; If it is equal, then quit subroutine and return to calling code
-	OUT [DX],AL		; If it is not equal to '$', then print it
+	OUT DX,AL		; If it is not equal to '$', then print it
 	INC SI			; Point to the next char to be printed
 	jmp LoopPS		; Jump back to the top of the loop
 quitPS:
@@ -52,13 +52,13 @@ printInt:
 
 	
 	MOV DX, Display
-	MOV CL, 10		; Will be dividing by 10...
+	MOV CL, 0x10		; Will be dividing by 10...
 	
 LoopPI:
-	CMP AL, 0x10		; Compare the number to 10
+	CMP AL, 10h		; Compare the number to 10
 	JL printLast	; If it is less than 10, then print this digit
 	; If it is greater than 10, divide by 10
-	MOV AH, 0x0		; Clear AH
+	MOV AH, 00h		; Clear AH
 	DIV CL			; Divide number by 10
 	CALL printDigit ; Print the quotient in AL
 	MOV AL, AH		; Move remainder into AL to be printed
@@ -87,7 +87,7 @@ printDigit:
 	
 	MOV DX, Display
 	ADD AL, '0'		; Convert number to ASCII code
-	OUT [DX],AL		; Print it
+	OUT DX,AL		; Print it
 	
 	; Restore registers
 	POP DX			; FIX ME
@@ -117,10 +117,10 @@ printSalary:
 	
 	MOV AH,AL			; Keep a copy of the salary in AH (need AL for printing...)
 	MOV AL, [s_dollars]	; Print '$' preceeding number
-	OUT [DX],AL			; Print it
+	OUT DX, AL			; Print it
 	MOV AL,AH			; Move salary back into AL
 	CALL printInt		; Print the salary (0-255)
-	MOV [BX +SI], s_thousands	; Move the starting address of s_thousands string into BX
+	MOV SI, s_thousands	; Move the starting address of s_thousands string into BX
 	CALL printStr 		; Print ',000'
 	
 	; Restore registers
@@ -146,9 +146,9 @@ newLine:
 	PUSH DX			; FIX ME
 	MOV DX, Display		; Initialize the output port number in DX
 	MOV AL, s_LF		; Load line feed (LF) into AL
-	out [DX],AL			; print the char
+	out DX,AL			; print the char
 	MOV AL, s_CR		; Load carriage return (CR) into AL
-	out [DX],AL			; print the char
+	out DX ,AL			; print the char
 	
 	; Restore registers
 	POP DX			; FIX ME
@@ -168,8 +168,8 @@ newLine:
 .ORG 00A0h
 
 str1: .DB 'Hello World!$'		; Should print as 'Hello World!'
-num1: .DB 0x86					; Should print as decimal 86
-sal1: .DB 0x34 				; Should print as '$34,000'
+num1: .DB 86h					; Should print as decimal 86
+sal1: .DB 34h				; Should print as '$34,000'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 ; main: Main function to test all subroutines

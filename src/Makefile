@@ -1,5 +1,5 @@
 TARGET=p86asm
-SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp p86Assembler.cpp preprocessor.cpp
+SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp p86Assembler.cpp preprocessor.cpp VirgoWriter.cpp
 OBJ=$(SRC:.cpp=.o)
 CXXFLAGS=-std=c++0x -g
 all:$(TARGET)
@@ -14,7 +14,7 @@ p86asm: $(OBJ)
 	$(CC) -c $(CCFLAGS)  -ll $<
 
 lex.yy.c :p86asm.l
-	flex -v p86asm.l
+	flex p86asm.l
 
 		
 p86asm.tab.c:p86asm.y
