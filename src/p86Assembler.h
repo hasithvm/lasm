@@ -6,7 +6,7 @@
 #include "common.h"
 
 
-static bool type_match(Operand* reg);
+
 void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMem[]);
 
 
@@ -14,7 +14,7 @@ class BinarySegment{
 	public:		
 			BinarySegment();
 			void push_back(uint8_t byte);
-			void setAddrFlag();
+			void setUpdateFlag(bool isRel);
 			void setConstant(Constant* cst);
 			void setAddrSize(AccessWidth aw);
 			int getAddrStartIndex();
@@ -22,16 +22,21 @@ class BinarySegment{
 			int size();
 			void setCounter(unsigned int c);
 			unsigned int getCounter();
-			bool NeedsUpdateAddress();
+			bool getUpdateFlag();
 			Constant* getConstant();
 			AccessWidth& getAddrSize();
+			bool getRelativeAddressFlag();
+			void setStringData(std::string a);
+			std::string& getStringData();
 	private:
-			vector<uint8_t> data;
-			bool updateAddress;
-			Constant* addr;
-			AccessWidth addrSize;
-			int addrStartIndex;
+			vector<uint8_t> m_data;
+			bool m_updateAddress;
+			bool m_isRel;
+			Constant* m_addr;
+			AccessWidth m_addrSize;
+			int m_addrStartIndex;
 			int m_counter;
+			string m_stringData;
 
 };
 
@@ -47,9 +52,10 @@ class p86Assembler{
 		void _handleOpNode(OpNode* op);
 		void _handleControlNode(ControlNode* ctl);
 		void _handleLabelNode(LabelNode* ctl);
-		vector<uint8_t>* calculateOperands(Operands operands);
+		void _postpass();
+
 		bool _construct(OpType pattern, Operands& ops);
- 		void printSeg(BinarySegment* binseg);
+ 		void _addSeg(BinarySegment* binseg);
 		SymTable st;
 		vector<BinarySegment*> segs;	
 		unsigned int counter;

@@ -3,20 +3,28 @@
 
 
 
-BinarySegment::BinarySegment():data(),updateAddress(false),addr(NULL),addrSize(AccessWidth::AW_UNSPECIFIED), addrStartIndex(0),m_counter(0){
+BinarySegment::BinarySegment()
+:m_data(),
+m_updateAddress(false),
+m_addr(NULL),
+m_addrSize(AccessWidth::AW_UNSPECIFIED),
+m_addrStartIndex(0),
+m_counter(0),
+m_stringData(){
 
 
 }
 
-void BinarySegment::setAddrFlag(){
+void BinarySegment::setUpdateFlag(bool isRel){
 
-	addrStartIndex = data.size();
-	updateAddress = true;
+	m_addrStartIndex = m_data.size();
+	m_updateAddress = true;
+	m_isRel = isRel;
 
 }
 void BinarySegment::push_back(uint8_t byte){
 
-	data.push_back(byte);
+	m_data.push_back(byte);
 }
 
 unsigned int BinarySegment::getCounter(){
@@ -28,41 +36,51 @@ void BinarySegment::setCounter(unsigned int c){
 }
 
 void BinarySegment::setConstant(Constant* c){
-	addr = c;
+	m_addr = c;
 
 }
 
 Constant* BinarySegment::getConstant(){
-	return addr;
+	return m_addr;
 
 }
 
-bool BinarySegment::NeedsUpdateAddress(){
+bool BinarySegment::getUpdateFlag(){
 
-	return updateAddress;
+	return m_updateAddress;
 }
 void BinarySegment::setAddrSize(AccessWidth aw){
 
-	addrSize = aw;
+	m_addrSize = aw;
 }
 
 AccessWidth& BinarySegment::getAddrSize(){
 
-	return addrSize;
+	return m_addrSize;
 }
 
 int BinarySegment::getAddrStartIndex(){
-	return addrStartIndex;
+	return m_addrStartIndex;
 }
 uint8_t& BinarySegment::operator[](int index){
-	return data[index];
+	return m_data[index];
 }
 
 int BinarySegment::size(){
-	return data.size();
+	return m_data.size();
 }
 
+bool BinarySegment::getRelativeAddressFlag(){
+	return m_isRel;
 
+}
+void BinarySegment::setStringData(std::string a){
+	m_stringData = a;
+}
+
+std::string& BinarySegment::getStringData(){
+	return m_stringData;
+}
 
 
 
@@ -117,33 +135,49 @@ void p86Assembler::parse(ExpressionList& pExprList){
 
 
 }
+	_postpass();
+}
+void p86Assembler::_postpass(){
+
+
+	int loc_target;
+	int loc_addr;
+	int finalAddress;
+	int addrStart;
+
 	for (int i = 0; i < segs.size();i++){
-	if (segs[i]->NeedsUpdateAddress()){
-	int loc_target = LocationMap.at(segs[i]->getConstant()->getName()); 
-	int loc_addr = segs[i]->getCounter() + segs[i]->size();
-	int addrStart = segs[i]->getAddrStartIndex();
-	int diff = loc_target - loc_addr;
-	switch (segs[i]->getAddrSize()){
-		
-		case (AccessWidth::AW_8BIT):		
-		if (diff < -128 || diff > 127)
-			clog << "ERROR: Jump offset is longer than 8 bits!" << endl;
-		else{
-			 (*segs[i])[addrStart] = (int8_t)diff & 0x00FF;
-			}
-		break;
-		case (AccessWidth::AW_16BIT):
-			printf("diff = %d", diff);
-			(*segs[i])[addrStart] = (diff & 0x00FF);
-			(*segs[i])[addrStart + 1] = (diff & 0xFF00) >> 8;
-		break;
-		default:
-		break;	
+	if (segs[i]->getUpdateFlag()){
+		loc_target = LocationMap.at(segs[i]->getConstant()->getName()); 
+		loc_addr = segs[i]->getCounter() + segs[i]->size();
+		addrStart = segs[i]->getAddrStartIndex();
 	
-	}
+		if (segs[i]->getRelativeAddressFlag())
+			finalAddress = loc_target - loc_addr;
+		else
+			finalAddress = loc_target;
+	
+		switch (segs[i]->getAddrSize()){
+		
+			case (AccessWidth::AW_8BIT):		
+			if (finalAddress < -128 || finalAddress > 127)
+				clog << "ERROR: Jump offset is longer than 8 bits!" << endl;
+			else{
+				 (*segs[i])[addrStart] = (int8_t)(finalAddress & 0x00FF);
+				}
+			break;
+			case (AccessWidth::AW_16BIT):
 
+				(*segs[i])[addrStart] = (finalAddress & 0x00FF);
+				(*segs[i])[addrStart + 1] = (finalAddress & 0xFF00) >> 8;
+			break;
+			
+			default:
+			break;	
+	
+			}
+	
 
-	}
+		}
 
 	clog << "Computed word: " << hex2str(&(*segs[i])[0], segs[i]->size()) << " PC = " << segs[i]->getCounter() << endl;
 	}
@@ -173,7 +207,7 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 	case (ControlNodeType::CONTROL_ORG):
 
 		if (imm->size() != 2){
-		clog << "WARNING: ORG argument must be 16-bits wide" << endl;
+		clog << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
 		return;		
 		}
 		counter = (imm->getBinEncoding()[1] << 8) | imm->getBinEncoding()[0];
@@ -194,9 +228,10 @@ void p86Assembler::_handleOpNode(OpNode* op){
 		bool match = false;
 		Operands& operands = op->getOperands();
 		OpVars& opv = st.at(op->getContent());
-		if (opv.size() == 0)
+		if (opv.size() == 0){
 			clog << "ERROR: Unimplemented mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
-
+			return;			
+			}
 
 		for (int j = 0;j < opv.size();j++)
 			{
@@ -232,6 +267,7 @@ int operandCount = pattern[0] & OP_OPERANDS;
 int arg0 = pattern.size() - operandCount;
 int arg1 = pattern.size() - operandCount + 1;
 int opcodeIndex = 1;
+uint8_t modrm = 0;
 //break out the operands correctly
 decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
 //single byte operands
@@ -240,7 +276,7 @@ if ((pattern[0] & OP_NO_MODRM)  &&  ((pattern[0] & OP_OPERANDS) == 0)){
 			//don't need operands!
 	
 			binseg->push_back(pattern[opcodeIndex]);
-			printSeg(binseg);
+			_addSeg(binseg);
 			return true;
 }
 if ((pattern[arg0] & IMM) == IMM){
@@ -248,7 +284,7 @@ if ((pattern[arg0] & IMM) == IMM){
 	if (consts[0]){
 //used primarily for the CALL/JMP instruction.
 	binseg->push_back(pattern[opcodeIndex]);
-	binseg->setAddrFlag();
+	binseg->setUpdateFlag(true);
 	binseg->setConstant(consts[0]);
 
 	//default to 8-bit offset
@@ -261,7 +297,7 @@ if ((pattern[arg0] & IMM) == IMM){
 	}
 
 
-	printSeg(binseg);
+	_addSeg(binseg);
 	return true;
 }
 }
@@ -278,8 +314,8 @@ if ((pattern[arg0] & REG) == REG){
 
 			if ((pattern[0] & OP_OPERANDS) == 1){ //there is no arg2 to this operand
 			/**
-				Note: for the Virgo/Libra architecture, the only opcode that 
-				uses one operand implied is PUSH
+				Note: for the Virgo/Libra architecture, the only two opcodes that 
+				use one operand implied are PUSH/POP
 			**/
 				uint8_t opcode = pattern[opcodeIndex];
 
@@ -289,7 +325,7 @@ if ((pattern[arg0] & REG) == REG){
 
 
 				binseg->push_back(opcode);
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 			}
 
@@ -307,7 +343,7 @@ if ((pattern[arg0] & REG) == REG){
 
 			//this is an OUT DX,A[L|X] instruction.
 				binseg->push_back(pattern[opcodeIndex]);
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 
 			}
@@ -326,7 +362,7 @@ if ((pattern[arg0] & REG) == REG){
 						for (int i = 0; i < len;i++){		
 							binseg->push_back(imm_data[imm_data.size() - i - 1]);
 						}
-						printSeg(binseg);
+						_addSeg(binseg);
 						return true;
 		
 			
@@ -342,7 +378,7 @@ if ((pattern[arg0] & REG) == REG){
 					return false;
 					}			
 
-				uint8_t modrm = 0xC0; //MOD field is b11
+				modrm = 0xC0; //MOD field is b11
 				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
 				{
 					modrm |= pattern[1];
@@ -352,7 +388,7 @@ if ((pattern[arg0] & REG) == REG){
 				binseg->push_back(pattern[opcodeIndex]);
 
 				binseg->push_back(modrm);
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 	
 
@@ -369,11 +405,11 @@ if ((pattern[arg0] & REG) == REG){
 					return false;
 					}			
 
-				uint8_t modrm = 0xC0; //MOD field is b11
+				modrm = 0xC0; //MOD field is b11
 				modrm |= (reg[1]->getBinEncoding() << 3) |  (reg[0]->getBinEncoding());
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;	
 
 			}
@@ -385,7 +421,7 @@ if ((pattern[arg0] & REG) == REG){
 					return false;
 					}			
 
-				uint8_t modrm = 0xC0; //MOD field is b11
+				modrm = 0xC0; //MOD field is b11
 				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
 				{
 					modrm |= pattern[1];
@@ -404,9 +440,9 @@ if ((pattern[arg0] & REG) == REG){
 				}
 				else {
 					for (int i = 0; i < len;i++)		
-						binseg->push_back(imm_data[imm_data.size() - i - 1]);
+						binseg->push_back(imm_data[i]);
 				}
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 
 
@@ -426,7 +462,7 @@ if ((pattern[arg0] & REG) == REG){
 					return false;
 					}			
 
-				uint8_t modrm = 0xC0; //MOD field is b11
+				modrm = 0xC0; //MOD field is b11
 				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
 				{
 					modrm |= pattern[1];
@@ -435,12 +471,12 @@ if ((pattern[arg0] & REG) == REG){
 				modrm |= reg[0]->getBinEncoding();
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
-				binseg->setAddrFlag();
+				binseg->setUpdateFlag(false);
 				binseg->setConstant(consts[1]);
 				binseg->setAddrSize(AccessWidth::AW_16BIT);
 				binseg->push_back(0);
 				binseg->push_back(0);
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 
 
@@ -463,7 +499,7 @@ if ((pattern[arg0] & REG) == REG){
 					return false;
 				}			
 
-				uint8_t modrm = 0x00; //MOD field is b11
+				modrm = 0x00; //MOD field is b11
 				bool	hasDisp = false;
 				//special case to handle intel encoding snafu
 				bool zeroDisp = false;
@@ -474,6 +510,11 @@ if ((pattern[arg0] & REG) == REG){
 					opcodeIndex = opcodeIndex + 1;
 				}
 				if (imm[1] && imm[1]->getAccessMode() == AccessMode::IMMEDIATE_ADDR){
+					//addressing mode is disp16
+					hasDisp = true;
+					modrm = 0x06;
+				}
+				else if (consts[1] && consts[1]->getAccessMode() == AccessMode::CONST_ADDR){
 					//addressing mode is disp16
 					hasDisp = true;
 					modrm = 0x06;
@@ -530,7 +571,7 @@ if ((pattern[arg0] & REG) == REG){
 				binseg->push_back(0);
 				binseg->push_back(0);
 				}
-				printSeg(binseg);
+				_addSeg(binseg);
 				return true;
 
 
@@ -548,42 +589,49 @@ if (pattern[arg0] & MEM == MEM){
 
 return false;
 }
-void p86Assembler::printSeg(BinarySegment* binseg){
-binseg->setCounter(counter);
-segs.push_back(binseg);
 
 
-counter = counter + binseg->size();
+
+void p86Assembler::_addSeg(BinarySegment* binseg){
+	binseg->setCounter(counter);
+	segs.push_back(binseg);
+	counter = counter + binseg->size();
 }
 void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMemory[]){
 
 
-
-	for (int i = 0 ; i < ops.size(); i++){
-		if (ops[i]->getAccessMode() == AccessMode::REG_DIRECT || ops[i]->getAccessMode() == AccessMode::REG_ADDR){
-			rs[i] =(Register*) ops[i]; 
-		}
-		else if (ops[i]->getAccessMode() == AccessMode::IMMEDIATE || ops[i]->getAccessMode() == AccessMode::IMMEDIATE_ADDR)
-			imms[i] = (Immediate*) ops[i];
-		else if (ops[i]->getAccessMode() == AccessMode::CONST || ops[i]->getAccessMode() == AccessMode::CONST_ADDR)
-			consts[i] =(Constant*) ops[i];
 	
-	if ((ops[i]->getAccessMode() == AccessMode::IMMEDIATE_ADDR) ||
-		 (ops[i]->getAccessMode() == AccessMode::CONST_ADDR) ||
-		 (ops[i]->getAccessMode() == AccessMode::REG_ADDR))
-		isMemory[i] = true;
+	for (int i = 0 ; i < ops.size(); i++){
+		AccessMode& am = ops[i]->getAccessMode();
 
+		switch (am){
+		case (AccessMode::REG_DIRECT):
+		case (AccessMode::REG_ADDR):
+		case (AccessMode::REG_OFFSET):
+			rs[i] =(Register*) ops[i]; 
+			break;
+
+		case (AccessMode::IMMEDIATE):
+		case (AccessMode::IMMEDIATE_ADDR):
+			imms[i] = (Immediate*) ops[i];
+			break;
+		case (AccessMode::CONST):
+		case (AccessMode::CONST_ADDR):
+			consts[i] =(Constant*) ops[i];
+			break;
+
+		}
+		switch (am){
+		case (AccessMode::IMMEDIATE_ADDR):
+		case (AccessMode::CONST_ADDR):
+		case (AccessMode::REG_ADDR):
+			isMemory[i] = true;
+			break;
+		default:
+			break;
+		}
 	}
 
 }
-
-static bool type_match(Operand* op){
-		clog << "This is a reg!" << endl;
-	if (dynamic_cast<Immediate*> (op))
-		clog << "This is a imm!" << endl;
-	if (dynamic_cast<Constant*> (op))
-		clog << "This is a const!" << endl;
-
-}   
 
 

@@ -7,7 +7,7 @@ Operand::Operand():m_am(AccessMode::UNINITIALIZED){
 
 }
 
-AccessMode Operand::getAccessMode(){
+AccessMode& Operand::getAccessMode(){
 	return m_am;
 }
 

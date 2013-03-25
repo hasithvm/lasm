@@ -41,6 +41,9 @@
 
 	main(int argc, char **argv)
 	{
+	cout << "p86Assembler -- Libra\n \
+Based on original specifications from Trevor Pearce, Carleton University\n\
+This project is licensed GPLv3 by the creators." << endl;
 	  streambuf *psbuf, *backup;
 	//	yydebug =1;
 		ofstream toFile;
@@ -54,8 +57,10 @@
 		yyin = myfile;
 
 	if (!myfile) {
-		yyerror("Invalid file specified!");
+		yyerror("No inputfile specified\nSwitching to interactive mode....");
 	yyin = stdin;
+
+		cout << "============\nInteractive Mode"<< endl;
 	}
 		
 		do {

@@ -52,7 +52,7 @@ char convlower(char in);
 class Operand{
 	public:
 			Operand();
-			AccessMode getAccessMode();
+			AccessMode& getAccessMode();
 			void setAccessMode(AccessMode am);
  			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(int indentlevel)=0;
