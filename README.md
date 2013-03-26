@@ -1,7 +1,21 @@
-p86asm -- replacement assembler for the p86 virtual machine.
+p86asm -- replacement assembler for the p86 virtual machine
+
+
+Incomplete alpha build of revised assembler.
+
+Missing features:
+Write-to-memory operations are not supported, but I/O is.
+Register-displacement addressing mode is not supported.
+Selectable file output, currently hardcoded to dump "out.obj".
+
+
+Currently compiles only with GCC and C++11 support. 
+
+
 Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.
 
 Original p86asm specification (C) Trevor Pearce (2001)
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
