@@ -92,6 +92,7 @@ class Register : public Operand{
 					AccessWidth& getAccessWidth();
 					RegType& getRegType();
 					bool& isIndexable();
+					std::string& getRegName();
 		private:
 						typedef std::map<string, uint8_t>  RegLookupMap;
 						uint8_t reg;

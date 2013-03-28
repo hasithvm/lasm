@@ -98,6 +98,7 @@ class OpNode : public BaseExpressionNode{
 					void repr(int indentlevel);
 					void setLineNumber(int line);
 					int getLineNumber();
+					std::string getSourceRepr();
 
 		private:
 					int m_line;					

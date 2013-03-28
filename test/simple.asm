@@ -2,4 +2,4 @@ num1:
 	.db 40h
 
  
-mov al, [num1]
+neg [num1]

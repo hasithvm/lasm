@@ -49,6 +49,12 @@ uint8_t Register::getBinEncoding(){
 return reg;
 
 }
+
+std::string& Register::getRegName(){
+
+	return m_regname;
+
+}
 //prints a representation of the register to clog.
 void Register::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');

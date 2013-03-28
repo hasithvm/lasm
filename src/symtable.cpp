@@ -242,8 +242,8 @@ SymTable::SymMap SymTable::generate(){
 	},
 	{"neg",
 			{
-			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x03 << 3, 0xF6, REG8|IMM8},
-			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x03 << 3, 0xF7, REG16|IMM16},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x03 << 3, 0xF6, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x03 << 3, 0xF7, REG16|MEM16},
 			}
 	
 	
@@ -257,8 +257,8 @@ SymTable::SymMap SymTable::generate(){
 	},
 	{"not",
 			{
-			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x02 << 3, 0xF6, REG8|IMM8},
-			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x02 << 3, 0xF7, REG16|IMM16},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x02 << 3, 0xF6, REG8|MEM8},
+			{OP_ONE_OPERAND | OP_MODRM_EXT, 0x02 << 3, 0xF7, REG16|MEM16},
 			}
 	
 	

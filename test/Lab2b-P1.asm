@@ -52,7 +52,7 @@ printInt:
 
 	
 	MOV DX, Display
-	MOV CL, 0x10		; Will be dividing by 10...
+	MOV CL, 0x0A		; Will be dividing by 10...
 	
 LoopPI:
 	CMP AL, 10h		; Compare the number to 10
@@ -168,8 +168,8 @@ newLine:
 .ORG 00A0h
 
 str1: .DB 'Hello World!$'		; Should print as 'Hello World!'
-num1: .DB 86h					; Should print as decimal 86
-sal1: .DB 34h				; Should print as '$34,000'
+num1: .DB 0x42h					; Should print as decimal 86
+sal1: .DB 0x32h				; Should print as '$34,000'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 ; main: Main function to test all subroutines

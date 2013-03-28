@@ -76,11 +76,13 @@ bool BinarySegment::getRelativeAddressFlag(){
 }
 void BinarySegment::setStringData(std::string a){
 	m_stringData = a;
+
 }
 
 std::string& BinarySegment::getStringData(){
 	return m_stringData;
 }
+
 
 
 
@@ -239,8 +241,10 @@ void p86Assembler::_handleOpNode(OpNode* op){
 				int opcode_offset = 1;
 			if ((op_prop & OP_OPERANDS) == operands.size()){
 				match = _construct(opv[j], operands);
-				if (match) break;
-				
+				if (match){
+					segs[segs.size()-1]->setStringData(op->getSourceRepr());
+					 break;
+				}				
 			
 			}   
 			
@@ -302,7 +306,7 @@ if ((pattern[arg0] & IMM) == IMM){
 }
 }
 //switch on the DEST of this opcode
-if ((pattern[arg0] & REG) == REG){
+if (!isMem[0]){
 
 		//source isn't a memory location
 	if (!isMem[1]){
@@ -568,6 +572,11 @@ if ((pattern[arg0] & REG) == REG){
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
 				if (hasDisp){
+				if (consts[1]){
+				binseg->setUpdateFlag(false);
+				binseg->setConstant(consts[1]);
+				binseg->setAddrSize(AccessWidth::AW_16BIT);
+				}
 				binseg->push_back(0);
 				binseg->push_back(0);
 				}
@@ -582,7 +591,63 @@ if ((pattern[arg0] & REG) == REG){
 		}
 
 }
-if (pattern[arg0] & MEM == MEM){
+if (isMem[0]){
+/*
+Acceptable memory operations:
+R->Mem
+Imm->Mem
+
+
+#note: no inherent operations. There is a set of one-memory operand opcodes
+(INV and NEG)? that take in a m8/16 operand.
+*/
+	//if constant and constant refers to memory addr
+	if(consts[0] && isMem[0]){
+	//used primarily for the CALL/JMP instruction.
+	binseg->push_back(pattern[opcodeIndex]);
+	binseg->setUpdateFlag(true);
+	binseg->setConstant(consts[0]);
+
+	//default to 8-bit offset
+	binseg->setAddrSize(AccessWidth::AW_8BIT);
+	binseg->push_back(0);
+
+	if (pattern[arg0] & 0x01){
+		binseg->setAddrSize(AccessWidth::AW_16BIT);
+		binseg->push_back(0);
+	}
+
+
+	_addSeg(binseg);
+	return true;
+
+	}
+
+	/*//immediates specify absolute addresses
+	if(imm[0] && isMem[0]){
+	//used primarily for the CALL/JMP instruction.
+	binseg->push_back(pattern[opcodeIndex]);
+	binseg->setUpdateFlag(false);
+	binseg->setConstant(consts[0]);
+
+
+	//default to 8-bit offset
+	binseg->setAddrSize(AccessWidth::AW_8BIT);
+	binseg->push_back(0);
+
+	if (pattern[arg0] & 0x01){
+		binseg->setAddrSize(AccessWidth::AW_16BIT);
+		binseg->push_back(0);
+	}
+
+
+	_addSeg(binseg);
+	return true;
+
+	}
+	*/
+
+
 
 
 }
