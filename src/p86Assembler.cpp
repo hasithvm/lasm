@@ -3,107 +3,7 @@
 
 
 
-BinarySegment::BinarySegment()
-:m_data(),
-m_updateAddress(false),
-m_addr(NULL),
-m_addrSize(AccessWidth::AW_UNSPECIFIED),
-m_addrStartIndex(0),
-m_counter(0),
-m_stringData(){
-
-
-}
-
-void BinarySegment::setUpdateFlag(bool isRel){
-
-	m_addrStartIndex = m_data.size();
-	m_updateAddress = true;
-	m_isRel = isRel;
-
-}
-void BinarySegment::push_back(uint8_t byte){
-
-	m_data.push_back(byte);
-}
-
-unsigned int BinarySegment::getCounter(){
-	return m_counter;
-
-}
-void BinarySegment::setCounter(unsigned int c){
-	m_counter = c;
-}
-
-void BinarySegment::setConstant(Constant* c){
-	m_addr = c;
-
-}
-
-Constant* BinarySegment::getConstant(){
-	return m_addr;
-
-}
-
-bool BinarySegment::getUpdateFlag(){
-
-	return m_updateAddress;
-}
-void BinarySegment::setAddrSize(AccessWidth aw){
-
-	m_addrSize = aw;
-}
-
-AccessWidth& BinarySegment::getAddrSize(){
-
-	return m_addrSize;
-}
-
-int BinarySegment::getAddrStartIndex(){
-	return m_addrStartIndex;
-}
-uint8_t& BinarySegment::operator[](int index){
-	return m_data[index];
-}
-
-int BinarySegment::size(){
-	return m_data.size();
-}
-
-bool BinarySegment::getRelativeAddressFlag(){
-	return m_isRel;
-
-}
-void BinarySegment::setStringData(std::string a){
-	m_stringData = a;
-
-}
-
-std::string& BinarySegment::getStringData(){
-	return m_stringData;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(){
+p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0){
 
 }
 
@@ -162,7 +62,7 @@ void p86Assembler::_postpass(){
 		
 			case (AccessWidth::AW_8BIT):		
 			if (finalAddress < -128 || finalAddress > 127)
-				clog << "ERROR: Jump offset is longer than 8 bits!" << endl;
+				cerr << "ERROR: Jump offset is longer than 8 bits!" << endl;
 			else{
 				 (*segs[i])[addrStart] = (int8_t)(finalAddress & 0x00FF);
 				}
@@ -193,26 +93,65 @@ void p86Assembler::_handleLabelNode(LabelNode* label){
 void p86Assembler::_handleControlNode(ControlNode* ctrl){
 	
 	BinarySegment* binseg = new BinarySegment();
-	Immediate* imm = (Immediate*) ctrl->getValue();
+	Immediate* immVal = NULL;
+	Constant* constVal = NULL;
+
+	if (ctrl->getValue()->getAccessMode() == AccessMode::IMMEDIATE)
+		immVal = (Immediate*) ctrl->getValue();
+
+	else if (ctrl->getValue()->getAccessMode() == AccessMode::CONST)
+		constVal = (Constant*) ctrl->getValue();
+
 	switch(ctrl->getControlType()){
+
+
 	case (ControlNodeType::CONTROL_DB):
 
 
 		
 		binseg->setCounter(counter);
-		for (int i = 0;i < imm->size();i++)
-			binseg->push_back(imm->getBinEncoding()[i]);
+		if (constVal){
+			clog << "ERROR: reserving memory bytes requires an immediate operand" << endl;
+			return;
+		}
+		for (int i = 0;i < immVal->size();i++)
+			binseg->push_back(immVal->getBinEncoding()[i]);
 		segs.push_back(binseg);
+		counter = counter + binseg->size();
+		break;
+	//TODO: Implement DW 
+	case (ControlNodeType::CONTROL_DW):
+		binseg->setCounter(counter);
+		if (constVal){
+			binseg->setUpdateFlag(false);
+			binseg->setConstant(constVal);
+			binseg->setAddrSize(AccessWidth::AW_16BIT);
+			binseg->push_back(0);
+			binseg->push_back(0);
+			segs.push_back(binseg);
+		}
+		else if (immVal){
+		for (int i = 0;i < immVal->size();i+=2){
+			int16_t tmp =(int16_t) immVal->getBinEncoding()[0];
+			binseg->push_back(tmp & 0xFF);
+			binseg->push_back((tmp >> 8) & 0xFF);
+		}
+		segs.push_back(binseg);
+
+		}
+		else
+			cerr << "ERROR: reserving memory requires an immediate or constant operand" << endl;
+
 		counter = counter + binseg->size();
 		break;
 
 	case (ControlNodeType::CONTROL_ORG):
 
-		if (imm->size() != 2){
+		if (immVal->size() != 2){
 		clog << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
 		return;		
 		}
-		counter = (imm->getBinEncoding()[1] << 8) | imm->getBinEncoding()[0];
+		counter = (immVal->getBinEncoding()[1] << 8) | immVal->getBinEncoding()[0];
 		break;
 
 	case (ControlNodeType::CONTROL_END):
@@ -227,11 +166,11 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 	}
 }
 void p86Assembler::_handleOpNode(OpNode* op){
-		bool match = false;
+		int match = 1;
 		Operands& operands = op->getOperands();
 		OpVars& opv = st.at(op->getContent());
 		if (opv.size() == 0){
-			clog << "ERROR: Unimplemented mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
+			cerr << "ERROR: Unimplemented mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
 			return;			
 			}
 
@@ -239,18 +178,22 @@ void p86Assembler::_handleOpNode(OpNode* op){
 			{
 				uint8_t op_prop = opv[j][0];
 				int opcode_offset = 1;
-			if ((op_prop & OP_OPERANDS) == operands.size()){
-				match = _construct(opv[j], operands);
-				if (match){
-					segs[segs.size()-1]->setStringData(op->getSourceRepr());
+			//if ((op_prop & OP_OPERANDS) == operands.size()){
+				match = _construct(opv[j], op, operands);
+				if (match == 0){
+					segs[segs.size()-1]->setStringData(getSourceRepr(op));
 					 break;
-				}				
+				}
+				if (match == -1)
+					break;
 			
-			}   
+			//}   
 			
 			}
-		if (!match)
-			clog << "ERROR: Incorrect operands for mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
+		if (match == 1)
+			cerr << "ERROR: Incorrect operands for mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
+		else if (match ==-1)
+			cerr << "ERROR: Assembly failed on " << op->getContent()  << " at line " << op->getLineNumber() << endl;
 }
 
 /**
@@ -259,7 +202,7 @@ void p86Assembler::_handleOpNode(OpNode* op){
 *@param ops source operands specified in code
 *@return None
 */
-bool p86Assembler::_construct(OpType pattern, Operands& ops){
+int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
 
 BinarySegment* binseg = new BinarySegment();
 Register  *reg[3] = {NULL,NULL,NULL};
@@ -272,16 +215,24 @@ int arg0 = pattern.size() - operandCount;
 int arg1 = pattern.size() - operandCount + 1;
 int opcodeIndex = 1;
 uint8_t modrm = 0;
+bool hasDisp = false;
+bool zeroDisp = false;
+vector<uint8_t> immediateData;
+unsigned int immSz = 0;
+
 //break out the operands correctly
 decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
 //single byte operands
 
 if ((pattern[0] & OP_NO_MODRM)  &&  ((pattern[0] & OP_OPERANDS) == 0)){
 			//don't need operands!
-	
-			binseg->push_back(pattern[opcodeIndex]);
-			_addSeg(binseg);
-			return true;
+	if (ops.size() != 0){
+	cerr << "ERROR: opcode "<< op->getContent() << " does not require operands!" << endl;
+			return -1;
+	}
+	binseg->push_back(pattern[opcodeIndex]);
+	_addSeg(binseg);
+	return 0;
 }
 if ((pattern[arg0] & IMM) == IMM){
 
@@ -302,8 +253,33 @@ if ((pattern[arg0] & IMM) == IMM){
 
 
 	_addSeg(binseg);
-	return true;
+	return 0;
 }
+	if (imm[0] && ops.size() == 1){
+
+	binseg->push_back(pattern[opcodeIndex]);
+	immediateData = imm[0]->getBinEncoding();
+
+	immSz = (pattern[arg0] & 0x01) + 1;
+		//sign-extend the operand
+		if (immediateData.size() < immSz){
+					int16_t data =(int16_t) immediateData[0];
+					binseg->push_back((uint8_t)(data & 0xFF00));	
+					binseg->push_back((uint8_t)(data & 0x00FF));	
+				}
+				else {
+					for (int i = 0; i < immSz;i++)		
+						binseg->push_back(immediateData[i]);
+				}
+
+	_addSeg(binseg);
+	return 0;
+
+
+	}
+
+	//if (imm[0] && )
+
 }
 //switch on the DEST of this opcode
 if (!isMem[0]){
@@ -312,7 +288,7 @@ if (!isMem[0]){
 	if (!isMem[1]){
 		//first afg isn't a reg
 		if (!reg[0] || ! (reg[0]->getAccessMode() == AccessMode::REG_DIRECT))
-			return false;
+			return 1;
 		//arguments are inherent to the opcode
 		if (pattern[0] & OP_NO_MODRM){
 
@@ -330,14 +306,14 @@ if (!isMem[0]){
 
 				binseg->push_back(opcode);
 				_addSeg(binseg);
-				return true;
+				return 0;
 			}
 
 
 
 			//without a mod/rm byte, it has to be a REG(preset) <-IMM
 			if (reg[0]->getBinEncoding() != (pattern[arg0] >> 5))
-				return false;
+				return 1;
 			
 
 			if (reg[1] && (pattern[arg1] & REG_PRESET) &&
@@ -348,52 +324,54 @@ if (!isMem[0]){
 			//this is an OUT DX,A[L|X] instruction.
 				binseg->push_back(pattern[opcodeIndex]);
 				_addSeg(binseg);
-				return true;
+				return 0;
 
 			}
 
 			//reject if the next arg isn't an immediate
 			if (!imm[1] || ((uint8_t)reg[0]->getAccessWidth() != (pattern[arg0] & 0x01)))
-				return false;
+				return 1;
 
 			//this is now not a REG<-mem operation (no mod/rm), it has to be a REG<-imm
 						binseg->push_back(pattern[opcodeIndex]);
-						vector<uint8_t>& imm_data = imm[1]->getBinEncoding();
+						immediateData = imm[1]->getBinEncoding();
 
 						int len = (pattern[arg0] & 0x01 ) + 1;
 
 
 						for (int i = 0; i < len;i++){		
-							binseg->push_back(imm_data[imm_data.size() - i - 1]);
+							binseg->push_back(immediateData[immediateData.size() - i - 1]);
 						}
 						_addSeg(binseg);
-						return true;
+						return 0;
 		
 			
 
 		}
 		else{
+			if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT){
+				modrm |= pattern[1];
+				opcodeIndex = opcodeIndex + 1;
+			}
+
+
+
 			//single operand opcode that requires a mod/rm byte
 			if (!reg[1] && !imm[1] && (arg1 == pattern.size()) && !isMem[0])
 			{
 
 				if ((pattern[arg0] & 0x01) != (uint8_t) reg[0]->getAccessWidth()){	
-					clog << "ERROR: Register widths do not match!" << endl;
-					return false;
+					return 1;
 					}			
 
-				modrm = 0xC0; //MOD field is b11
-				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
-				{
-					modrm |= pattern[1];
-					opcodeIndex = opcodeIndex + 1;
-				}
+				modrm |= 0xC0; //MOD field is b11
+
 				modrm |= reg[0]->getBinEncoding();
 				binseg->push_back(pattern[opcodeIndex]);
 
 				binseg->push_back(modrm);
 				_addSeg(binseg);
-				return true;
+				return 0;
 	
 
 
@@ -403,18 +381,25 @@ if (!isMem[0]){
 			if ((reg[1]) && ((pattern[arg1] & REG) == REG)){
 
 
-				if ((reg[1]->getAccessWidth() != reg[0]->getAccessWidth()) ||
+				if (reg[1]->getAccessWidth() != (pattern[arg1] & 0x01) ||
 				 ((pattern[arg0] & 0x01) != (uint8_t) reg[0]->getAccessWidth())){	
-					clog << "ERROR: Register widths do not match!" << endl;
-					return false;
-					}			
+					return 1;
+				}
+				if ((pattern[arg1] & REG_PRESET)){
+					if (reg[1]->getBinEncoding() != pattern[arg1] >> 5)
+						return 1;
+				}
 
-				modrm = 0xC0; //MOD field is b11
-				modrm |= (reg[1]->getBinEncoding() << 3) |  (reg[0]->getBinEncoding());
+				modrm |= 0xC0; //MOD field is b11
+				modrm |= (reg[0]->getBinEncoding());
+
+				if (!(pattern[0] & OP_MODRM_EXT))
+					modrm |= reg[1]->getBinEncoding() << 3;
+
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
 				_addSeg(binseg);
-				return true;	
+				return 0;	
 
 			}
 			
@@ -422,15 +407,11 @@ if (!isMem[0]){
 			if ((imm[1]) && ((pattern[arg1] & IMM) == IMM)){
 				if ((pattern[arg0] & 0x01) != (uint8_t) reg[0]->getAccessWidth()){
 
-					return false;
+					return 1;
 					}			
 
-				modrm = 0xC0; //MOD field is b11
-				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
-				{
-					modrm |= pattern[1];
-					opcodeIndex = opcodeIndex + 1;
-				}
+				modrm |= 0xC0; //MOD field is b11
+
 				modrm |= reg[0]->getBinEncoding();
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
@@ -439,15 +420,16 @@ if (!isMem[0]){
 				int len =reg[0]->getAccessWidth()+ 1;
 				if (imm_data.size() < len){
 					int16_t data =(int16_t) imm_data[0];
-					binseg->push_back((uint8_t)(data & 0xFF00));	
 					binseg->push_back((uint8_t)(data & 0x00FF));	
+					binseg->push_back((uint8_t)(data & 0xFF00));	
+
 				}
 				else {
 					for (int i = 0; i < len;i++)		
 						binseg->push_back(imm_data[i]);
 				}
 				_addSeg(binseg);
-				return true;
+				return 0;
 
 
 			}
@@ -461,17 +443,15 @@ if (!isMem[0]){
 		
 
 				//is 16-bit register only!
-				if (((pattern[arg0] & 0x01) != 0x01) || ((uint8_t) reg[0]->getAccessWidth() != 0x01)){
-
-					return false;
+				if ((pattern[arg0] & 0x01) != 0x01)
+					return 1;
+				if (reg[0]->getAccessWidth() != 0x01){
+					cerr << "ERROR: 16-bit register required" << endl;
+					return -1;
 					}			
 
-				modrm = 0xC0; //MOD field is b11
-				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
-				{
-					modrm |= pattern[1];
-					opcodeIndex = opcodeIndex + 1;
-				}
+				modrm |= 0xC0; //MOD field is b11
+
 				modrm |= reg[0]->getBinEncoding();
 				binseg->push_back(pattern[opcodeIndex]);
 				binseg->push_back(modrm);
@@ -481,7 +461,7 @@ if (!isMem[0]){
 				binseg->push_back(0);
 				binseg->push_back(0);
 				_addSeg(binseg);
-				return true;
+				return 0;
 
 
 			}
@@ -495,23 +475,23 @@ if (!isMem[0]){
 }
 		else{
 			if ((pattern[arg1] & MEM) == 0)
-				return false;
+				return 1;
 
 			//REG <--MEM
 				if ((pattern[arg0] & 0x01) != (uint8_t) reg[0]->getAccessWidth()){
 
-					return false;
+					return 1;
 				}			
 
 				modrm = 0x00; //MOD field is b11
-				bool	hasDisp = false;
+				hasDisp = false;
 				//special case to handle intel encoding snafu
-				bool zeroDisp = false;
+				zeroDisp = false;
 
 				if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT)
 				{
 					modrm |= pattern[1];
-					opcodeIndex = opcodeIndex + 1;
+
 				}
 				if (imm[1] && imm[1]->getAccessMode() == AccessMode::IMMEDIATE_ADDR){
 					//addressing mode is disp16
@@ -544,6 +524,7 @@ if (!isMem[0]){
 							break;
 							default:
 							clog << "ERROR: Undefined register-addressing mode!" << endl;
+							return -1;
 							break;
 						}
 					 
@@ -581,7 +562,7 @@ if (!isMem[0]){
 				binseg->push_back(0);
 				}
 				_addSeg(binseg);
-				return true;
+				return 0;
 
 
 			
@@ -591,7 +572,7 @@ if (!isMem[0]){
 		}
 
 }
-if (isMem[0]){
+if (isMem[0] && (pattern[arg0] & MEM)){
 /*
 Acceptable memory operations:
 R->Mem
@@ -602,24 +583,113 @@ Imm->Mem
 (INV and NEG)? that take in a m8/16 operand.
 */
 	//if constant and constant refers to memory addr
-	if(consts[0] && isMem[0]){
-	//used primarily for the CALL/JMP instruction.
+
+	if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT){
+		modrm |= pattern[1];
+		opcodeIndex = opcodeIndex + 1;
+	}
+
+	if(consts[0]){
+
+	/*This is redundant, schedule for cleanup
+	if (consts[0]->getAccessMode() == AccessMode::CONST){
+
+		cerr << "ERROR: Destination must be constant address" << endl;
+		return -1;
+
+
+	}*/
+		if (reg[1] && (pattern[arg1] & REG)){
+			if( (pattern[arg1] & 0x01) != (uint8_t) reg[1]->getAccessWidth())
+				return 1;
+
+			modrm |= reg[1]->getBinEncoding() << 3;
+		}
+		else if (imm[1] && (pattern[arg1] & IMM)){
+
+
+
+			if (op->getExplicitAccessModifier() == AW_UNSPECIFIED){
+				cerr << "ERROR: Ambiguous operand size for " << op->getContent() << endl;
+				return -1;
+			}
+			if ((uint8_t)op->getExplicitAccessModifier() != (pattern[arg0] & 0x01))
+				return 1;
+
+			immediateData = imm[1]->getBinEncoding();
+			immSz = (unsigned int)op->getExplicitAccessModifier() + 1;
+
+
+	}
+	else if (isMem[1]){
+
+		cerr << "ERROR: memory-to-memory operations not supported!" << endl;
+		return -1;
+	}
+
+	modrm |= 0x06;
 	binseg->push_back(pattern[opcodeIndex]);
-	binseg->setUpdateFlag(true);
+	binseg->push_back(modrm);
+	binseg->setUpdateFlag(false);
 	binseg->setConstant(consts[0]);
 
-	//default to 8-bit offset
-	binseg->setAddrSize(AccessWidth::AW_8BIT);
-	binseg->push_back(0);
 
-	if (pattern[arg0] & 0x01){
-		binseg->setAddrSize(AccessWidth::AW_16BIT);
+	//addr is 16-bit offset
+	binseg->setAddrSize(AccessWidth::AW_16BIT);
 		binseg->push_back(0);
+		binseg->push_back(0);
+	if (immSz){
+		//sign-extend the operand
+		if (immediateData.size() < immSz){
+					int16_t data =(int16_t) immediateData[0];
+					binseg->push_back((uint8_t)(data & 0xFF00));	
+					binseg->push_back((uint8_t)(data & 0x00FF));	
+				}
+				else {
+					for (int i = 0; i < immSz;i++)		
+						binseg->push_back(immediateData[i]);
+				}
+
 	}
 
 
 	_addSeg(binseg);
-	return true;
+	return 0;
+
+	}
+
+
+	else if (reg[0]){
+
+		if( reg[0]->getAccessMode() == AccessMode::REG_ADDR){
+			if (reg[0]->isIndexable()){ 
+			switch (reg[0]->getBinEncoding()){
+				case (ENC_REG_BP):
+					hasDisp = true;
+					zeroDisp = true;
+					modrm |= 0x46;
+					break;
+				case (ENC_REG_SI):
+					modrm |= 0x04;
+					break;
+				case (ENC_REG_DI):
+					modrm |= 0x05;
+					break;
+				case (ENC_REG_BX):
+					modrm |= 0x07;
+					break;
+				default:
+					clog << "ERROR: Undefined register-addressing mode!" << endl;
+				break;
+			}
+				 
+			}
+			else{
+				clog << "ERROR: Undefined register-addressing mode!" << endl;
+				return -1;
+			}
+		}
+		
 
 	}
 
@@ -652,7 +722,7 @@ Imm->Mem
 
 }
 
-return false;
+return 1;
 }
 
 
@@ -696,6 +766,49 @@ void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** c
 			break;
 		}
 	}
+
+}
+
+
+static std::string getSourceRepr(OpNode* ptr){
+	std::string returnStr;
+	std::string paramStr;
+	returnStr = ptr->getContent();
+	Operands& ops = ptr->getOperands();
+	for (int i = 0; i < ops.size();i++)
+	{
+		paramStr = "";
+		switch (ops[i]->getAccessMode()){
+		case (AccessMode::REG_DIRECT):
+			paramStr =((Register*) ops[i])->getRegName();
+			break;
+		case (AccessMode::REG_ADDR):
+			paramStr = "[" + ((Register*) ops[i])->getRegName() + "]";
+			break;
+		case (AccessMode::CONST_ADDR):
+			paramStr = "[";
+			paramStr+=((Constant*) ops[i])->getName();
+			paramStr += "]";
+			break;
+		case (AccessMode::IMMEDIATE):
+			paramStr =((Immediate*) ops[i])->getSourceRepr();
+			break;
+		case (AccessMode::IMMEDIATE_ADDR):
+			paramStr ="[" + ((Immediate*) ops[i])->getSourceRepr() + "]";
+		case (AccessMode::CONST):
+			paramStr = ((Constant*) ops[i])->getName();
+			break;
+		default:
+			paramStr = "";
+			break;
+
+		}
+		returnStr+= " ";
+		returnStr+=paramStr;
+		if (i < (ops.size() - 1))
+			returnStr += ",";
+	}
+	return returnStr;
 
 }
 

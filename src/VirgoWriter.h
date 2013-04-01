@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "BinarySegment.hpp"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ using namespace std;
 
 
 
-void writeFile(vector<BinarySegment*>& segments, char* filename, unsigned int startingAddress);
+void writeFile(vector<BinarySegment*>& segments, std::string& filename, unsigned int startingAddress);
 
 
 

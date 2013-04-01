@@ -59,31 +59,7 @@ void OpNode::repr(int indentlevel){
 
 }
 
-std::string OpNode::getSourceRepr(){
-	std::string returnStr;
-	std::string paramStr;
-	returnStr = opstr;
-	for (int i = 0; i < ops.size();i++)
-	{
-		switch (ops[i]->getAccessMode()){
-		case (AccessMode::REG_DIRECT):
-			paramStr =((Register*) ops[i])->getRegName();
-			break;
-		case (AccessMode::CONST_ADDR):
-			paramStr = "[";
-			paramStr+=((Constant*) ops[i])->getName();
-			paramStr += "]";			
-			break;
-		default:
-			paramStr = "";
 
-		}
-		returnStr+= " ";
-		returnStr+=paramStr;
-	}
-	return returnStr;
-
-}
 AccessWidth OpNode::getExplicitAccessModifier(){
 	return m_aw;
 }

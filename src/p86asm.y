@@ -13,6 +13,7 @@
 	#include <fstream>
 	#include "preprocessor.h"
 	#include "VirgoWriter.h"
+	#include "version.h"
 	ExpressionList list;		
 	using namespace std;
     extern "C"
@@ -20,7 +21,7 @@
 		extern FILE *yyin;
 		extern int yylineno;
 		int yyparse(void);
-
+		string strOutputFile;
 
 		int yylex(void);
 		//extern int yydebug;
@@ -32,7 +33,7 @@
 	}    
 	void yyerror(const char *str)
 	{
-		cerr << endl << "parser error: " << yylineno << "\t" << str << endl;
+		cerr << endl << "ERROR: lasm-parser (" << yylineno << ")\t" << str << endl;
 	}
 	
 
@@ -41,9 +42,7 @@
 
 	main(int argc, char **argv)
 	{
-	cout << "p86Assembler -- Libra\n \
-Based on original specifications from Trevor Pearce, Carleton University\n\
-This project is licensed GPLv3 by the creators." << endl;
+	cout << "Libra-8086 Emulator -- Assembler\n" << "Built on " << __DATE__  << " : " << __TIME__  << endl;
 	  streambuf *psbuf, *backup;
 	//	yydebug =1;
 		ofstream toFile;
@@ -54,12 +53,14 @@ This project is licensed GPLv3 by the creators." << endl;
 
 		list.reserve(80);
 		FILE *myfile = fopen(argv[1], "r");
+		if (myfile)
+			strOutputFile = string(argv[2]);
 		yyin = myfile;
-
+	
 	if (!myfile) {
 		yyerror("No inputfile specified\nSwitching to interactive mode....");
 	yyin = stdin;
-
+	strOutputFile = "a.obj";
 		cout << "============\nInteractive Mode"<< endl;
 	}
 		
@@ -80,8 +81,8 @@ for (int i = 0; i< list.size();i++)
 clog << "assembly started!" << endl;
 	p86Assembler asmgen;
 	asmgen.parse(list);
-	writeFile(asmgen.getSegments(), NULL, asmgen.getStartingAddress());
-
+	writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+cout << "Output file " << strOutputFile << " created" << endl;
 		clog.rdbuf(backup);  
 		toFile.close();
 
@@ -351,7 +352,7 @@ clog << "assembly started!" << endl;
 
 	hex_type:	HEX_PRE
 				{
-					Immediate *i = new Immediate($<pStr>1,BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1 + 2,BASE_HEX,AccessMode::IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);

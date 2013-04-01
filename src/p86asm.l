@@ -36,8 +36,8 @@
 								else
 									REJECT;
 							}
-"WORD PTR"															return WORDPTR;
-"BYTE PTR"															return BYTEPTR;
+"word"															return WORDPTR;
+"byte"															return BYTEPTR;
 "0x"[A-Faf0-9]{1,}			yylval.pStr=strdup(yytext);				return HEX_PRE;				
 [0-9][A-Fa-f0-9]{1,}/[Hh]		yylval.pStr=strdup(yytext);			return HEX_SUFF;				
 "0b"[0-1]{1,}				yylval.pStr=strdup(yytext);				return BIN_PRE;

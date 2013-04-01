@@ -8,9 +8,8 @@ Immediate* Immediate::clone() const{
 Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 {
 	Operand::setAccessMode(am);
-	std::string tmp = std::string(pValue);
-	m_data = Immediate::parse(tmp,base);
-	
+	m_orig = std::string(pValue);
+	m_data = Immediate::parse(m_orig,base);
 }
 
 void Immediate::repr(int indentlevel){
@@ -28,9 +27,11 @@ void Immediate::repr(int indentlevel){
 vector<uint8_t>& Immediate::getBinEncoding(){
 return m_data;
 }
+string& Immediate::getSourceRepr(){
+	return m_orig;
+}
 
-
-vector<uint8_t> Immediate::parse(std::string in, ImmediateEncoding base)
+vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 {
 		string::iterator it_fwd;
 string::reverse_iterator it;
@@ -38,6 +39,7 @@ vector<uint8_t> out;
 int padding = 0;
 int bytes_written=0;
 unsigned int tmp = 0;
+int counter = 1;
 std::string intermediate;
 
 //pad with zero if not an even mult
@@ -80,7 +82,6 @@ switch(base)
 	case BASE_ASC:
 		out.resize(in.length() - 2);
 		trim(in, '\'');
-		printf("len_str: %d\n",in.length());
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 			{
 			out[bytes_written] = (uint8_t)*it_fwd;
@@ -91,10 +92,15 @@ switch(base)
 	case BASE_DEC:
 
 		intermediate = in.at(0) == '-'? in.substr(1,-1): in;
-		
-		for (it= intermediate.rbegin();it < intermediate.rend();it++)
-			tmp = tmp + parseDigit(*it);
-		printf("decimal digit:%d",tmp);
+
+		for (it= intermediate.rbegin();it < intermediate.rend();it++){
+			tmp = tmp + (counter) *  parseDigit(*it);
+			counter*=10;
+		}
+		do {
+		out.push_back((uint8_t)tmp & 0xFF);
+		tmp >>= 8;
+		} while (tmp > 0);
 			
 	default:
 	break;

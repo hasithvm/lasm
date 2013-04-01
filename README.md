@@ -1,4 +1,4 @@
-p86asm -- replacement assembler for the p86 virtual machine
+lasm -- replacement assembler for the p8086 virtual machine
 
 
 Incomplete alpha build of revised assembler.
@@ -9,7 +9,7 @@ Register-displacement addressing mode is not supported.
 Selectable file output, currently hardcoded to dump "out.obj".
 
 
-Currently compiles only with GCC and C++11 support. 
+Currently compiles only with GCC, requires C++11 support. 
 
 
 Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.

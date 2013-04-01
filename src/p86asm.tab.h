@@ -65,7 +65,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2663 of glr.c  */
-#line 93 "p86asm.y"
+#line 94 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;

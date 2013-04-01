@@ -69,6 +69,7 @@
 	#include <fstream>
 	#include "preprocessor.h"
 	#include "VirgoWriter.h"
+	#include "version.h"
 	ExpressionList list;		
 	using namespace std;
     extern "C"
@@ -76,7 +77,7 @@
 		extern FILE *yyin;
 		extern int yylineno;
 		int yyparse(void);
-
+		string strOutputFile;
 
 		int yylex(void);
 		//extern int yydebug;
@@ -88,7 +89,7 @@
 	}    
 	void yyerror(const char *str)
 	{
-		cerr << endl << "parser error: " << yylineno << "\t" << str << endl;
+		cerr << endl << "ERROR: lasm-parser (" << yylineno << ")\t" << str << endl;
 	}
 	
 
@@ -97,9 +98,7 @@
 
 	main(int argc, char **argv)
 	{
-	cout << "p86Assembler -- Libra\n \
-Based on original specifications from Trevor Pearce, Carleton University\n\
-This project is licensed GPLv3 by the creators." << endl;
+	cout << "Libra-8086 Emulator -- Assembler\n" << "Built on " << __DATE__  << " : " << __TIME__  << endl;
 	  streambuf *psbuf, *backup;
 	//	yydebug =1;
 		ofstream toFile;
@@ -110,12 +109,14 @@ This project is licensed GPLv3 by the creators." << endl;
 
 		list.reserve(80);
 		FILE *myfile = fopen(argv[1], "r");
+		if (myfile)
+			strOutputFile = string(argv[2]);
 		yyin = myfile;
-
+	
 	if (!myfile) {
 		yyerror("No inputfile specified\nSwitching to interactive mode....");
 	yyin = stdin;
-
+	strOutputFile = "a.obj";
 		cout << "============\nInteractive Mode"<< endl;
 	}
 		
@@ -136,8 +137,8 @@ for (int i = 0; i< list.size();i++)
 clog << "assembly started!" << endl;
 	p86Assembler asmgen;
 	asmgen.parse(list);
-	writeFile(asmgen.getSegments(), NULL, asmgen.getStartingAddress());
-
+	writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+cout << "Output file " << strOutputFile << " created" << endl;
 		clog.rdbuf(backup);  
 		toFile.close();
 
@@ -147,7 +148,7 @@ clog << "assembly started!" << endl;
 
 
 /* Line 172 of glr.c  */
-#line 151 "p86asm.tab.c"
+#line 152 "p86asm.tab.c"
 
 
 
@@ -182,7 +183,7 @@ static YYSTYPE yyval_default;
 
 
 /* Line 243 of glr.c  */
-#line 186 "p86asm.tab.c"
+#line 187 "p86asm.tab.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -364,10 +365,10 @@ static const signed char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short int yyrline[] =
 {
-       0,   109,   109,   110,   115,   119,   121,   123,   125,   129,
-     136,   149,   151,   156,   158,   161,   178,   182,   189,   199,
-     203,   212,   218,   223,   242,   261,   292,   294,   298,   318,
-     320,   322,   324,   333,   342,   352,   361,   371,   381
+       0,   110,   110,   111,   116,   120,   122,   124,   126,   130,
+     137,   150,   152,   157,   159,   162,   179,   183,   190,   200,
+     204,   213,   219,   224,   243,   262,   293,   295,   299,   319,
+     321,   323,   325,   334,   343,   353,   362,   372,   382
 };
 #endif
 
@@ -952,7 +953,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
         case 3:
 
 /* Line 936 of glr.c  */
-#line 111 "p86asm.y"
+#line 112 "p86asm.y"
     {
 					list.push_back((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.pExpr));
 				}
@@ -961,7 +962,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 9:
 
 /* Line 936 of glr.c  */
-#line 130 "p86asm.y"
+#line 131 "p86asm.y"
     {
 					BaseExpressionNode* pComment = new CommentNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 
@@ -972,7 +973,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 10:
 
 /* Line 936 of glr.c  */
-#line 137 "p86asm.y"
+#line 138 "p86asm.y"
     {
 					ControlNode* pControl = new ControlNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pStr),(((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands)->at(0));
 					
@@ -988,7 +989,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 12:
 
 /* Line 936 of glr.c  */
-#line 152 "p86asm.y"
+#line 153 "p86asm.y"
     {
 					((*yyvalp).pStr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr); 
 				}
@@ -997,7 +998,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 15:
 
 /* Line 936 of glr.c  */
-#line 162 "p86asm.y"
+#line 163 "p86asm.y"
     {
 					
 					OpNode* pCode = new OpNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pStr), (((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands));
@@ -1016,7 +1017,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 16:
 
 /* Line 936 of glr.c  */
-#line 178 "p86asm.y"
+#line 179 "p86asm.y"
     {
 					((*yyvalp).pAccessWidth) = nullptr;			
 				}
@@ -1025,7 +1026,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 17:
 
 /* Line 936 of glr.c  */
-#line 183 "p86asm.y"
+#line 184 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_16BIT;
@@ -1036,7 +1037,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 18:
 
 /* Line 936 of glr.c  */
-#line 190 "p86asm.y"
+#line 191 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_8BIT;
@@ -1049,7 +1050,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 19:
 
 /* Line 936 of glr.c  */
-#line 199 "p86asm.y"
+#line 200 "p86asm.y"
     {
 					((*yyvalp).pListOperands)= new Operands();
 				}
@@ -1058,7 +1059,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 20:
 
 /* Line 936 of glr.c  */
-#line 204 "p86asm.y"
+#line 205 "p86asm.y"
     {
 					Operands* p1 =(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.pListOperands);
 					Operands* p2 =(((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (3))].yystate.yysemantics.yysval.pListOperands);
@@ -1071,7 +1072,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 21:
 
 /* Line 936 of glr.c  */
-#line 213 "p86asm.y"
+#line 214 "p86asm.y"
     {
 					((*yyvalp).pListOperands) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pListOperands);
 				}
@@ -1080,7 +1081,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 22:
 
 /* Line 936 of glr.c  */
-#line 219 "p86asm.y"
+#line 220 "p86asm.y"
     {
 					((*yyvalp).pListOperands)  = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pListOperands);
 				}
@@ -1089,7 +1090,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 23:
 
 /* Line 936 of glr.c  */
-#line 224 "p86asm.y"
+#line 225 "p86asm.y"
     {
 					if ((((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (3))].yystate.yysemantics.yysval.pListOperands)->size() != 0)
 					{
@@ -1112,7 +1113,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 24:
 
 /* Line 936 of glr.c  */
-#line 243 "p86asm.y"
+#line 244 "p86asm.y"
     {
 					Operand* op1 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (5))].yystate.yysemantics.yysval.pListOperands)->at(0);
 					Operand* op2 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (5))].yystate.yysemantics.yysval.pListOperands)->at(0);
@@ -1135,7 +1136,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 25:
 
 /* Line 936 of glr.c  */
-#line 262 "p86asm.y"
+#line 263 "p86asm.y"
     {
 					Operand* op1 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (7))].yystate.yysemantics.yysval.pListOperands)->at(0);
 					Operand* op2 = (((yyGLRStackItem const *)yyvsp)[YYFILL ((4) - (7))].yystate.yysemantics.yysval.pListOperands)->at(0);
@@ -1168,7 +1169,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 28:
 
 /* Line 936 of glr.c  */
-#line 299 "p86asm.y"
+#line 300 "p86asm.y"
     {
 							if (Register::exists((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr))){
 							Register *reg = new Register((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr), AccessMode::REG_DIRECT);
@@ -1191,7 +1192,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 32:
 
 /* Line 936 of glr.c  */
-#line 325 "p86asm.y"
+#line 326 "p86asm.y"
     {
 						Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_ASC,AccessMode::IMMEDIATE);
 						free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
@@ -1204,7 +1205,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 33:
 
 /* Line 936 of glr.c  */
-#line 334 "p86asm.y"
+#line 335 "p86asm.y"
     {
 					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
@@ -1217,7 +1218,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 34:
 
 /* Line 936 of glr.c  */
-#line 343 "p86asm.y"
+#line 344 "p86asm.y"
     {
 					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
@@ -1230,9 +1231,9 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 35:
 
 /* Line 936 of glr.c  */
-#line 353 "p86asm.y"
+#line 354 "p86asm.y"
     {
-					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr) + 2,BASE_HEX,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -1243,7 +1244,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 36:
 
 /* Line 936 of glr.c  */
-#line 362 "p86asm.y"
+#line 363 "p86asm.y"
     {
 					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_HEX,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
@@ -1256,7 +1257,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 37:
 
 /* Line 936 of glr.c  */
-#line 372 "p86asm.y"
+#line 373 "p86asm.y"
     {
 					Immediate *i = new Immediate((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr),BASE_DEC,AccessMode::IMMEDIATE);
 					free((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.pStr));
@@ -1270,7 +1271,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 38:
 
 /* Line 936 of glr.c  */
-#line 382 "p86asm.y"
+#line 383 "p86asm.y"
     {
 					LabelNode* pLabel = new LabelNode((((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.pStr));
 
@@ -1282,7 +1283,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
 
 /* Line 936 of glr.c  */
-#line 1286 "p86asm.tab.c"
+#line 1287 "p86asm.tab.c"
       default: break;
     }
 
@@ -2939,6 +2940,6 @@ yypdumpstack (yyGLRStack* yystackp)
 
 
 /* Line 2659 of glr.c  */
-#line 389 "p86asm.y"
+#line 390 "p86asm.y"
 
 

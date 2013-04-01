@@ -32,10 +32,19 @@ SymTable::SymMap SymTable::generate(){
 	 		}
 	 
 	},
+	{"cli",
+		{
+		{OP_NO_OPERANDS | OP_NO_MODRM, 0xFA}
+		}
+	},
 	{"cmp",
 			{
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3C, REG8 | REG_PRESET | REG_AL, IMM8},
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3D ,REG16 | REG_PRESET | REG_AX, IMM16},
+			{OP_TWO_OPERANDS, 0x38, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x39, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x07 << 3,0x80, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x07 << 3,0x81, REG16|MEM16, IMM16},
 			}
 	
 	},
@@ -63,7 +72,7 @@ SymTable::SymMap SymTable::generate(){
 	},
 	{"in",
 			{
-			{OP_TWO_OPERANDS | OP_NO_MODRM, 0xEE, REG8 |REG_PRESET | REG_AL, REG16 | REG_PRESET | REG_DX}
+			{OP_TWO_OPERANDS | OP_NO_MODRM, 0xEC, REG8 |REG_PRESET | REG_AL, REG16 | REG_PRESET | REG_DX}
 			}
 	
 	
@@ -265,7 +274,12 @@ SymTable::SymMap SymTable::generate(){
 	},
 	{"or",
 			{
-
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x0C ,REG8 | REG_PRESET | REG_AL, IMM8},
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x0D ,REG16 | REG_PRESET | REG_AX, IMM16},
+			{OP_TWO_OPERANDS, 0x08, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x09, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x01 << 3,0x80, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x01 << 3,0x81, REG16|MEM16, IMM16}
 			}
 	
 	
@@ -298,19 +312,39 @@ SymTable::SymMap SymTable::generate(){
 	
 	
 	},
+	{"sti",
+			{
+			{OP_NO_OPERANDS | OP_NO_MODRM, 0xFB}
+			}
+	},
 	{"shl",
 			{
-
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x04 << 3, 0xD2, REG8 | MEM8, REG8 | REG_PRESET | REG_CL},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x04 << 3, 0xD3, REG8 | MEM8, REG8 | REG_PRESET | REG_CL}  
+			}
+	
+	
+	},
+	{"rol",
+			{
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x00, 0xD2, REG8 | MEM8, REG8 | REG_PRESET | REG_CL}, 
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x00, 0xD3, REG16 | MEM16, REG8 | REG_PRESET | REG_CL} 
+			}
+	
+	},
+	{"ror",
+			{
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x01 << 3, 0xD2, REG8 | MEM8, REG8 | REG_PRESET | REG_CL},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x01 << 3, 0xD3, REG8 | MEM8, REG8 | REG_PRESET | REG_CL}  
 			}
 	
 	
 	},
 	{"shr",
 			{
-
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x05 << 3, 0xD2, REG8 | MEM8, REG8 | REG_PRESET | REG_CL}, 
+			{OP_TWO_OPERANDS | OP_MODRM_EXT ,0x05 << 3, 0xD3, REG16 | MEM16, REG8 | REG_PRESET | REG_CL} 
 			}
-	
-	
 	},
 	{"sub",
 			{
@@ -323,8 +357,18 @@ SymTable::SymMap SymTable::generate(){
 			} 
 	
 	
+	},
+	{"xor",
+			{
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x34 ,REG8 | REG_PRESET | REG_AL, IMM8},
+			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x35 ,REG16 | REG_PRESET | REG_AX, IMM16},
+			{OP_TWO_OPERANDS, 0x30, REG8|MEM8, REG8},
+			{OP_TWO_OPERANDS, 0x31, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x06 << 3,0x80, REG8|MEM8, IMM8},
+			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x06 << 3,0x81, REG16|MEM16, IMM16}
+			}
 	}
-	};
+};
 	return ret;
 
 

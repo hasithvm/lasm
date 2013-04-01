@@ -72,10 +72,12 @@ class Immediate : public Operand{
 			void repr(int indentlevel);
 			Immediate* clone() const;
 			int size();
+			std::string& getSourceRepr();
 	private:
 			vector<uint8_t> m_data;
-			static vector<uint8_t> parse(std::string val, ImmediateEncoding base);
+			static vector<uint8_t> parse(std::string& in, ImmediateEncoding base);
 			void init();
+			std::string m_orig;
 			
 };
 

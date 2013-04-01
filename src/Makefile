@@ -1,10 +1,10 @@
-TARGET=p86asm
-SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp p86Assembler.cpp preprocessor.cpp VirgoWriter.cpp
+TARGET=lasm
+SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp BinarySegment.cpp p86Assembler.cpp preprocessor.cpp VirgoWriter.cpp
 OBJ=$(SRC:.cpp=.o)
-CXXFLAGS=-std=c++0x -g
+CXXFLAGS=-std=c++0x -O3
 all:$(TARGET)
 
-p86asm: $(OBJ) 
+lasm: $(OBJ) 
 		g++ -g $(CXXFLAGS) $(OBJ) -ll -o $(TARGET) 
 				
 %.o : %.cpp

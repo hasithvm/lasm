@@ -3,11 +3,11 @@
 std::string hexdump(uint8_t* bytes, int count);
 std::string hexdump(unsigned int a);
 std::string hexdump_reverse(unsigned int a);
-void writeFile(vector<BinarySegment*>& segments, char* filename, unsigned int startingAddress){
+void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int startingAddress){
 	ofstream outfile;		
 	int bytes_written = 0;
 	clog << "Starting object-write process!" << endl; 
-	outfile.open ("out.obj");
+	outfile.open (filename);
 	Constant* label;
 	 	
 	outfile << "3 " << segments.size() << " " << startingAddress << "       " << endl;
