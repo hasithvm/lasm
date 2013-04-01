@@ -1,20 +1,21 @@
-lasm -- replacement assembler for the p8086 virtual machine
+#lasm -- replacement assembler for the p8086 virtual machine
 
 
 Alpha build of revised assembler.
 
-Missing features:
-Register-displacement addressing mode is not supported.
-Selectable file output, currently hardcoded to dump "out.obj".
+##Missing features
+* Register-based addressing mode is not supported.
+* Selectable file output, currently hardcoded to dump "out.obj".
 
 
-Currently compiles only with GCC, requires C++11 support. 
+*Currently compiles only with GCC, requires C++11 support.* 
 
 **Usage**
+```bash
     lasm [filename] [outputfile]
+```
 
-
-
+##License
 Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.
 
 Original p86asm specification (C) Trevor Pearce (2001)
