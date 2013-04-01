@@ -1,15 +1,18 @@
 lasm -- replacement assembler for the p8086 virtual machine
 
 
-Incomplete alpha build of revised assembler.
+Alpha build of revised assembler.
 
 Missing features:
-Write-to-memory operations are not supported, but I/O is.
 Register-displacement addressing mode is not supported.
 Selectable file output, currently hardcoded to dump "out.obj".
 
 
 Currently compiles only with GCC, requires C++11 support. 
+
+**Usage**
+    lasm [filename] [outputfile]
+
 
 
 Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.
