@@ -1,0 +1,198 @@
+<label>
+	<name>num1</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>40</value>
+	</Immediate>
+	<value>
+<control>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>00</value>
+	</Immediate>
+	<value>
+<control>
+<control>
+	<name>dw</name>
+	<value>
+	<Constant>
+		<name>main</name>
+	</Constant>
+	<value>
+<control>
+<control>
+	<name>dw</name>
+	<value>
+	<Immediate>
+		<value>00</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>main</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>80</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>cmp</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>00</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>add</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+		<Immediate>
+			<value>02</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>01</address>
+			<name>CL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>02</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>xor</opcode>
+	<params>
+		<Register>
+			<address>01</address>
+			<name>CL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>01</address>
+			<name>CL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>shl</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>01</address>
+			<name>CL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>;mov AX, 0xFFFF</content>
+<comment>
+<comment>
+	<content>;mov BX, 0x9000</content>
+<comment>
+<comment>
+	<content>;mov CX, 0x4000</content>
+<comment>
+<comment>
+	<content>;mov SI, num1</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Constant>
+			<name>num1</name>
+		</Constant>
+		<Register>
+			<address>01</address>
+			<name>CL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>int</opcode>
+	<params>
+		<Immediate>
+			<value>00</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>;div word  [num1]</content>
+<comment>
+<comment>
+	<content>;neg byte  [num1]</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>hlt</opcode>
+	<params>
+	</params>
+</statement>
+<control>
+	<name>end</name>
+	<value>
+	<Constant>
+		<name>main</name>
+	</Constant>
+	<value>
+<control>
+assembly started!
+Location num1 maps to counter: 0
+Location main maps to counter: 6
+Computed word: 40 PC = 0
+Computed word: 00 PC = 1
+Computed word: 0006 PC = 2
+Computed word: 0000 PC = 4
+Computed word: 80C0C6 PC = 6
+Computed word: 003C PC = 9
+Computed word: 0002C681 PC = 11
+Computed word: 02C1C6 PC = 15
+Computed word: C930 PC = 18
+Computed word: E0D2 PC = 20
+Computed word: 00000E88 PC = 22
+Computed word: 00CD PC = 26
+Computed word: F4 PC = 28
+Starting object-write process!

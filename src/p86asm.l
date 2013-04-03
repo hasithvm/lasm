@@ -23,6 +23,7 @@
 %x CMT
 %x ENDCOND
 %option yylineno
+%option nodefault
 %%
 ;[^\n]*/\n					yylval.pStr=strdup(yytext);yylineno--;	return CMTSTR;		
 
@@ -54,5 +55,7 @@
 \]																	return RSQBR;
 \+																	return PLUS;
 
-[ \t\n]+						;									/*whitespace*/
+[ \t\r\n]+						;									/*whitespace*/
+[Hh]																/*leftover suffixes*/
+.	printf("bad input character '%s' at line %d\n", yytext, yylineno);
 %%

@@ -48,6 +48,7 @@ switch(base)
 {
 	case BASE_HEX:
 	strToLowerCase(in);
+
 	if (in.length() % 2 != 0)
 		in.insert(0,1,'0');
 	

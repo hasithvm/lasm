@@ -111,7 +111,7 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		
 		binseg->setCounter(counter);
 		if (constVal){
-			clog << "ERROR: reserving memory bytes requires an immediate operand" << endl;
+			cerr << "ERROR: reserving memory bytes requires an immediate operand" << endl;
 			return;
 		}
 		for (int i = 0;i < immVal->size();i++)
@@ -148,7 +148,7 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 	case (ControlNodeType::CONTROL_ORG):
 
 		if (immVal->size() != 2){
-		clog << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
+		cout << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
 		return;		
 		}
 		counter = (immVal->getBinEncoding()[1] << 8) | immVal->getBinEncoding()[0];
@@ -523,7 +523,7 @@ if (!isMem[0]){
 							modrm = 0x07;
 							break;
 							default:
-							clog << "ERROR: Undefined register-addressing mode!" << endl;
+							cerr << "ERROR: Undefined register-addressing mode!" << endl;
 							return -1;
 							break;
 						}
@@ -679,13 +679,13 @@ Imm->Mem
 					modrm |= 0x07;
 					break;
 				default:
-					clog << "ERROR: Undefined register-addressing mode!" << endl;
+					cerr << "ERROR: Undefined register-addressing mode!" << endl;
 				break;
 			}
 				 
 			}
 			else{
-				clog << "ERROR: Undefined register-addressing mode!" << endl;
+				cerr << "ERROR: Undefined register-addressing mode!" << endl;
 				return -1;
 			}
 		}

@@ -1,0 +1,1234 @@
+<comment>
+	<content>; Lab4a Part I - Program to prompt the user to enter a string</content>
+<comment>
+<comment>
+	<content>;				Gets characters from the keyboard one at a time</content>
+<comment>
+<comment>
+	<content>; 				Checks if the user presses 'ENTER'</content>
+<comment>
+<comment>
+	<content>;				Once 'ENTER' is pressed, echos the string back from the stack in REVERSE order</content>
+<comment>
+<comment>
+	<content>; Constant definitions</content>
+<comment>
+<control>
+	<name>equ</name>
+	<value>
+	<Immediate>
+		<value>04E9</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; address of Virgo display</content>
+<comment>
+<control>
+	<name>equ</name>
+	<value>
+	<Immediate>
+		<value>0D</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; ASCII value for Carriage return</content>
+<comment>
+<control>
+	<name>equ</name>
+	<value>
+	<Immediate>
+		<value>0A</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; ASCII value for NewLine</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>;Insert Sub-routines getChar, printStr, and newLine from Lab 3B here</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; newLine: Subroutine to print a newline and a linefeed character</content>
+<comment>
+<comment>
+	<content>; Input parameters:</content>
+<comment>
+<comment>
+	<content>; 	None.</content>
+<comment>
+<comment>
+	<content>; Output parameters:</content>
+<comment>
+<comment>
+	<content>;	None.</content>
+<comment>
+<comment>
+	<content>; Constants for this subroutine:</content>
+<comment>
+<label>
+	<name>newLine</name>
+<label>
+<comment>
+	<content>; Save registers modified by this subroutine</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Initialize the output port number in DX</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0A</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Load line feed (LF) into AL</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; print the char</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0D</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Load carriage return (CR) into AL</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; print the char</content>
+<comment>
+<comment>
+	<content>; Restore registers</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<comment>
+	<content>;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; printStr: Subroutine to print a '$'-terminated string</content>
+<comment>
+<comment>
+	<content>; Input parameters:</content>
+<comment>
+<comment>
+	<content>; 	SI: Address of start of string to be printed</content>
+<comment>
+<comment>
+	<content>; Output parameters:</content>
+<comment>
+<comment>
+	<content>;	None.</content>
+<comment>
+<label>
+	<name>printStr</name>
+<label>
+<comment>
+	<content>; Save registers modified by this subroutine</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; </content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<label>
+	<name>LoopPS</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; Load the next char to be printed - USING INPUT PARAMETER BX</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>cmp</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>24</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Compare the char to '$'</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>je</opcode>
+	<params>
+		<Constant>
+			<name>quitPS</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; If it is equal, then quit subroutine and return to calling code</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; If it is not equal to '$', then print it</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>inc</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; Point to the next char to be printed</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>jmp</opcode>
+	<params>
+		<Constant>
+			<name>LoopPS</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; Jump back to the top of the loop</content>
+<comment>
+<label>
+	<name>quitPS</name>
+<label>
+<comment>
+	<content>; Restore registers</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; getChar: waits for a keypress and returns pressed key in AL</content>
+<comment>
+<comment>
+	<content>; Input parameters:</content>
+<comment>
+<comment>
+	<content>; 	none.</content>
+<comment>
+<comment>
+	<content>; Output parameters:</content>
+<comment>
+<comment>
+	<content>;	AL: ASCII Value of key pressed by user</content>
+<comment>
+<comment>
+	<content>; Constants used by this subroutine</content>
+<comment>
+<control>
+	<name>equ</name>
+	<value>
+	<Immediate>
+		<value>0064</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; FIX ME port number of keyboard STATUS reg</content>
+<comment>
+<control>
+	<name>equ</name>
+	<value>
+	<Immediate>
+		<value>0060</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; FIX ME port number of keyboard BUFFER reg</content>
+<comment>
+<label>
+	<name>getChar</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; save reg used</content>
+<comment>
+<label>
+	<name>GCWait</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0064</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; addr of keybrd STATUS</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>in</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; Read contents of keyboard STATUS register</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>cmp</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>00</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; key pressed?</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>jz</opcode>
+	<params>
+		<Constant>
+			<name>GCWait</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; no, go back and check again for keypress</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0060</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; load port number of kbrd BUFFER register</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>in</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; get key into AL from BUFFER</content>
+<comment>
+<label>
+	<name>GCDone</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; restore regs</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; END OF SUBROUTINES FROM lab3b.asm</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; print2Str: Subroutine to print a '$'-terminated string</content>
+<comment>
+<comment>
+	<content>;			Each character in the string is stored</content>
+<comment>
+<comment>
+	<content>; 			as a 2-byte value. Only the lower byte is meaningful</content>
+<comment>
+<comment>
+	<content>; Input parameters:</content>
+<comment>
+<comment>
+	<content>; 	SI: Address of start of string to be printed</content>
+<comment>
+<comment>
+	<content>; Output parameters:</content>
+<comment>
+<comment>
+	<content>;	None.</content>
+<comment>
+<label>
+	<name>print2Str</name>
+<label>
+<comment>
+	<content>; Save registers modified by this subroutine</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; </content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<label>
+	<name>LoopP2S</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; Load the next char to be printed - USING INPUT PARAMETER BX</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>cmp</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>24</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Compare the char to '$'</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>je</opcode>
+	<params>
+		<Constant>
+			<name>quitP2S</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; If it is equal, then quit subroutine and return to calling code</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; If it is not equal to '$', then print it</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>add</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+		<Immediate>
+			<value>02</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; Point to the next char to be printed</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>jmp</opcode>
+	<params>
+		<Constant>
+			<name>LoopP2S</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; Jump back to the top of the loop</content>
+<comment>
+<label>
+	<name>quitP2S</name>
+<label>
+<comment>
+	<content>; Restore registers</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<label>
+	<name>Message1</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>24676E697274732061207265746E45</value>
+	</Immediate>
+	<value>
+<control>
+<comment>
+	<content>; Prompt to be printed on screen</content>
+<comment>
+<comment>
+	<content>;;;;;;;;;;;;;</content>
+<comment>
+<comment>
+	<content>; Main function: Asks the user to enter a string </content>
+<comment>
+<comment>
+	<content>; 				Echos the string to screen in reverse order.</content>
+<comment>
+<comment>
+	<content>;				Uses printStr, newline, and getChar subroutines.</content>
+<comment>
+<label>
+	<name>main</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+		<Constant>
+			<name>Message1</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>;FIX ME -- prompt the user</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printStr</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>;FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>newLine</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>;FIX ME</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>04</address>
+			<name>AH</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>00</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- These three lines should push a '$' (zero-padded to 16 bits). WHY??</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>24</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; </content>
+<comment>
+<label>
+	<name>gsAgain</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>getChar</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Get a character</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>cmp</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0A</value>
+		</Immediate>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Next two lines should check if the user pressed ENTER, then stop accepting characters</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>je</opcode>
+	<params>
+		<Constant>
+			<name>gsPrint</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Push the character as a 16-bit value</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>jmp</opcode>
+	<params>
+		<Constant>
+			<name>gsAgain</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Get the next char</content>
+<comment>
+<label>
+	<name>gsPrint</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+		<Register>
+			<address>04</address>
+			<name>SP</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Load the starting address of the string</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>print2Str</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME -- Print the string in reverse</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>newLine</name>
+		</Constant>
+	</params>
+</statement>
+<comment>
+	<content>; FIX ME</content>
+<comment>
+<label>
+	<name>gsDone</name>
+<label>
+<comment>
+	<content>;Quit</content>
+<comment>
+<statement>
+	<type>opcode</type>
+	<opcode>hlt</opcode>
+	<params>
+	</params>
+</statement>
+<control>
+	<name>end</name>
+	<value>
+	<Constant>
+		<name>main</name>
+	</Constant>
+	<value>
+<control>
+<comment>
+	<content>;Entry point of program is main()</content>
+<comment>
+assembly started!
+Location newLine maps to counter: 0
+Location printStr maps to counter: 17
+Location LoopPS maps to counter: 24
+Location quitPS maps to counter: 36
+Location getChar maps to counter: 40
+Location GCWait maps to counter: 41
+Location GCDone maps to counter: 55
+Location print2Str maps to counter: 57
+Location LoopP2S maps to counter: 64
+Location quitP2S maps to counter: 78
+Location Message1 maps to counter: 82
+Location main maps to counter: 97
+Location gsAgain maps to counter: 114
+Location gsPrint maps to counter: 125
+Location gsDone maps to counter: 133
+Computed word: 50 PC = 0
+Computed word: 52 PC = 1
+Computed word: 04E9C2C7 PC = 2
+Computed word: 0AC0C6 PC = 6
+Computed word: EE PC = 9
+Computed word: 0DC0C6 PC = 10
+Computed word: EE PC = 13
+Computed word: 5A PC = 14
+Computed word: 58 PC = 15
+Computed word: C3 PC = 16
+Computed word: 50 PC = 17
+Computed word: 56 PC = 18
+Computed word: 52 PC = 19
+Computed word: 04E9C2C7 PC = 20
+Computed word: 048A PC = 24
+Computed word: 243C PC = 26
+Computed word: 0674 PC = 28
+Computed word: EE PC = 30
+Computed word: C6FF PC = 31
+Computed word: FFF4E9 PC = 33
+Computed word: 5A PC = 36
+Computed word: 5E PC = 37
+Computed word: 58 PC = 38
+Computed word: C3 PC = 39
+Computed word: 52 PC = 40
+Computed word: 0064C2C7 PC = 41
+Computed word: EC PC = 45
+Computed word: 003C PC = 46
+Computed word: F774 PC = 48
+Computed word: 0060C2C7 PC = 50
+Computed word: EC PC = 54
+Computed word: 5A PC = 55
+Computed word: C3 PC = 56
+Computed word: 50 PC = 57
+Computed word: 56 PC = 58
+Computed word: 52 PC = 59
+Computed word: 04E9C2C7 PC = 60
+Computed word: 048A PC = 64
+Computed word: 243C PC = 66
+Computed word: 0874 PC = 68
+Computed word: EE PC = 70
+Computed word: 0002C681 PC = 71
+Computed word: FFF2E9 PC = 75
+Computed word: 5A PC = 78
+Computed word: 5E PC = 79
+Computed word: 58 PC = 80
+Computed word: C3 PC = 81
+Computed word: 24676E697274732061207265746E45 PC = 82
+Computed word: 0052C6C7 PC = 97
+Computed word: FFA9E8 PC = 101
+Computed word: FF95E8 PC = 104
+Computed word: 00C4C6 PC = 107
+Computed word: 24C0C6 PC = 110
+Computed word: 50 PC = 113
+Computed word: FFB3E8 PC = 114
+Computed word: 0A3C PC = 117
+Computed word: 0474 PC = 119
+Computed word: 50 PC = 121
+Computed word: FFF5E9 PC = 122
+Computed word: E689 PC = 125
+Computed word: FFB7E8 PC = 127
+Computed word: FF7BE8 PC = 130
+Computed word: F4 PC = 133
+Starting object-write process!
