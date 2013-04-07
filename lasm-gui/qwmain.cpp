@@ -80,11 +80,11 @@ void QWMain::on_pbAssemble_clicked()
     if (!sFilename.isNull())
     {QStringList args;
     QString sOutName = sFilename;
-    sOutName.append(".obj");
+    sOutName.replace(sOutName.lastIndexOf("."),-1,".obj");
     args.append(sFilename);
     args.append(sOutName);
     ui->taConsole->append("===============================");
-    pRunnable.start("../src/lasm",args);
+    pRunnable.start("./lasm",args);
     }
     else
         ui->taConsole->append("No file selected!");

@@ -1,9 +1,10 @@
 Terminals unused in grammar
 
-   REG
+   END
+   CMTSTR
 
 
-State 19 conflicts: 1 shift/reduce
+State 14 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -13,122 +14,125 @@ Grammar
     1 statements: /* empty */
     2           | statements statement
 
-    3 statement: endline
-    4          | program_expr
+    3 statement: program_expr
 
-    5 program_expr: code
-    6             | label
-    7             | directive
-    8             | comment
+    4 program_expr: code
+    5             | label
+    6             | directive
 
-    9 comment: CMTSTR
+    7 terminator: /* empty */
+    8           | NEWLN
 
-   10 directive: directive_key DIRECTIVE immediate_type
+    9 directive: directive_key DIRECTIVE directive_value terminator
 
-   11 directive_key: /* empty */
-   12              | TEXT
+   10 directive_key: /* empty */
+   11              | TEXT
 
-   13 code: OPCODE modifier params
+   12 directive_value: reg_and_lookup_type
+   13                | immediate_type
 
-   14 modifier: /* empty */
-   15         | WORDPTR
-   16         | BYTEPTR
+   14 code: OPCODE modifier params terminator
 
-   17 params: /* empty */
-   18       | param COMMA param
-   19       | param
+   15 modifier: /* empty */
+   16         | WORDPTR
+   17         | BYTEPTR
 
-   20 param: operand
-   21      | LSQBR operand RSQBR
+   18 params: /* empty */
+   19       | param COMMA param
+   20       | param
 
-   22 operand: reg_and_lookup_type
-   23        | immediate_type
+   21 param: operand
+   22      | LSQBR operand RSQBR
+   23      | LSQBR operand PLUS operand RSQBR
+   24      | LSQBR operand PLUS operand PLUS operand RSQBR
 
-   24 reg_and_lookup_type: TEXT
+   25 operand: reg_and_lookup_type
+   26        | immediate_type
 
-   25 immediate_type: hex_type
-   26               | binary_type
-   27               | decimal_type
-   28               | LITERAL
+   27 reg_and_lookup_type: TEXT
 
-   29 binary_type: BIN_PRE
-   30            | BIN_SUFF
+   28 immediate_type: hex_type
+   29               | binary_type
+   30               | decimal_type
+   31               | LITERAL
 
-   31 hex_type: HEX_PRE
-   32         | HEX_SUFF
+   32 binary_type: BIN_PRE
+   33            | BIN_SUFF
 
-   33 decimal_type: DEC
+   34 hex_type: HEX_PRE
+   35         | HEX_SUFF
 
-   34 label: LABEL COLON
+   36 decimal_type: DEC
 
-   35 endline: END TEXT
+   37 label: LABEL COLON
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-COLON (258) 34
-END (259) 35
-COMMA (260) 18
-WORDPTR (261) 15
-BYTEPTR (262) 16
-LSQBR (263) 21
-RSQBR (264) 21
-OPCODE (265) 13
-REG (266)
-HEX_PRE (267) 31
-HEX_SUFF (268) 32
-DEC (269) 33
-BIN_PRE (270) 29
-BIN_SUFF (271) 30
-CMTSTR (272) 9
-LABEL (273) 34
-LITERAL (274) 28
-TEXT (275) 12 24 35
-DIRECTIVE (276) 10
+COLON (258) 37
+END (259)
+COMMA (260) 19
+WORDPTR (261) 16
+BYTEPTR (262) 17
+LSQBR (263) 22 23 24
+RSQBR (264) 22 23 24
+PLUS (265) 23 24
+NEWLN (266) 8
+OPCODE (267) 14
+HEX_PRE (268) 34
+HEX_SUFF (269) 35
+DEC (270) 36
+BIN_PRE (271) 32
+BIN_SUFF (272) 33
+CMTSTR (273)
+LABEL (274) 37
+LITERAL (275) 31
+TEXT (276) 11 27
+DIRECTIVE (277) 9
 
 
 Nonterminals, with rules where they appear
 
-$accept (22)
+$accept (23)
     on left: 0
-statements (23)
+statements (24)
     on left: 1 2, on right: 0 2
-statement (24)
-    on left: 3 4, on right: 2
-program_expr (25)
-    on left: 5 6 7 8, on right: 4
-comment (26)
-    on left: 9, on right: 8
-directive (27)
-    on left: 10, on right: 7
-directive_key (28)
-    on left: 11 12, on right: 10
-code (29)
-    on left: 13, on right: 5
-modifier (30)
-    on left: 14 15 16, on right: 13
-params (31)
-    on left: 17 18 19, on right: 13
-param (32)
-    on left: 20 21, on right: 18 19
-operand (33)
-    on left: 22 23, on right: 20 21
-reg_and_lookup_type (34)
-    on left: 24, on right: 22
-immediate_type (35)
-    on left: 25 26 27 28, on right: 10 23
-binary_type (36)
-    on left: 29 30, on right: 26
-hex_type (37)
-    on left: 31 32, on right: 25
-decimal_type (38)
-    on left: 33, on right: 27
-label (39)
-    on left: 34, on right: 6
-endline (40)
-    on left: 35, on right: 3
+statement (25)
+    on left: 3, on right: 2
+program_expr (26)
+    on left: 4 5 6, on right: 3
+terminator (27)
+    on left: 7 8, on right: 9 14
+directive (28)
+    on left: 9, on right: 6
+directive_key (29)
+    on left: 10 11, on right: 9
+directive_value (30)
+    on left: 12 13, on right: 9
+code (31)
+    on left: 14, on right: 4
+modifier (32)
+    on left: 15 16 17, on right: 14
+params (33)
+    on left: 18 19 20, on right: 14
+param (34)
+    on left: 21 22 23 24, on right: 19 20
+operand (35)
+    on left: 25 26, on right: 21 22 23 24
+reg_and_lookup_type (36)
+    on left: 27, on right: 12 25
+immediate_type (37)
+    on left: 28 29 30 31, on right: 13 26
+binary_type (38)
+    on left: 32 33, on right: 29
+hex_type (39)
+    on left: 34 35, on right: 28
+decimal_type (40)
+    on left: 36, on right: 30
+label (41)
+    on left: 37, on right: 5
 
 
 state 0
@@ -146,22 +150,18 @@ state 1
     2 statements: statements . statement
 
     $end    shift, and go to state 2
-    END     shift, and go to state 3
-    OPCODE  shift, and go to state 4
-    CMTSTR  shift, and go to state 5
-    LABEL   shift, and go to state 6
-    TEXT    shift, and go to state 7
+    OPCODE  shift, and go to state 3
+    LABEL   shift, and go to state 4
+    TEXT    shift, and go to state 5
 
-    $default  reduce using rule 11 (directive_key)
+    $default  reduce using rule 10 (directive_key)
 
-    statement      go to state 8
-    program_expr   go to state 9
-    comment        go to state 10
-    directive      go to state 11
-    directive_key  go to state 12
-    code           go to state 13
-    label          go to state 14
-    endline        go to state 15
+    statement      go to state 6
+    program_expr   go to state 7
+    directive      go to state 8
+    directive_key  go to state 9
+    code           go to state 10
+    label          go to state 11
 
 
 state 2
@@ -173,344 +173,431 @@ state 2
 
 state 3
 
-   35 endline: END . TEXT
+   14 code: OPCODE . modifier params terminator
 
-    TEXT  shift, and go to state 16
+    WORDPTR  shift, and go to state 12
+    BYTEPTR  shift, and go to state 13
+
+    $default  reduce using rule 15 (modifier)
+
+    modifier  go to state 14
 
 
 state 4
 
-   13 code: OPCODE . modifier params
+   37 label: LABEL . COLON
 
-    WORDPTR  shift, and go to state 17
-    BYTEPTR  shift, and go to state 18
-
-    $default  reduce using rule 14 (modifier)
-
-    modifier  go to state 19
+    COLON  shift, and go to state 15
 
 
 state 5
 
-    9 comment: CMTSTR .
+   11 directive_key: TEXT .
 
-    $default  reduce using rule 9 (comment)
+    $default  reduce using rule 11 (directive_key)
 
 
 state 6
-
-   34 label: LABEL . COLON
-
-    COLON  shift, and go to state 20
-
-
-state 7
-
-   12 directive_key: TEXT .
-
-    $default  reduce using rule 12 (directive_key)
-
-
-state 8
 
     2 statements: statements statement .
 
     $default  reduce using rule 2 (statements)
 
 
-state 9
+state 7
 
-    4 statement: program_expr .
-
-    $default  reduce using rule 4 (statement)
-
-
-state 10
-
-    8 program_expr: comment .
-
-    $default  reduce using rule 8 (program_expr)
-
-
-state 11
-
-    7 program_expr: directive .
-
-    $default  reduce using rule 7 (program_expr)
-
-
-state 12
-
-   10 directive: directive_key . DIRECTIVE immediate_type
-
-    DIRECTIVE  shift, and go to state 21
-
-
-state 13
-
-    5 program_expr: code .
-
-    $default  reduce using rule 5 (program_expr)
-
-
-state 14
-
-    6 program_expr: label .
-
-    $default  reduce using rule 6 (program_expr)
-
-
-state 15
-
-    3 statement: endline .
+    3 statement: program_expr .
 
     $default  reduce using rule 3 (statement)
 
 
-state 16
+state 8
 
-   35 endline: END TEXT .
+    6 program_expr: directive .
 
-    $default  reduce using rule 35 (endline)
-
-
-state 17
-
-   15 modifier: WORDPTR .
-
-    $default  reduce using rule 15 (modifier)
+    $default  reduce using rule 6 (program_expr)
 
 
-state 18
+state 9
 
-   16 modifier: BYTEPTR .
+    9 directive: directive_key . DIRECTIVE directive_value terminator
+
+    DIRECTIVE  shift, and go to state 16
+
+
+state 10
+
+    4 program_expr: code .
+
+    $default  reduce using rule 4 (program_expr)
+
+
+state 11
+
+    5 program_expr: label .
+
+    $default  reduce using rule 5 (program_expr)
+
+
+state 12
+
+   16 modifier: WORDPTR .
 
     $default  reduce using rule 16 (modifier)
 
 
+state 13
+
+   17 modifier: BYTEPTR .
+
+    $default  reduce using rule 17 (modifier)
+
+
+state 14
+
+   14 code: OPCODE modifier . params terminator
+
+    LSQBR     shift, and go to state 17
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    TEXT      [reduce using rule 18 (params)]
+    $default  reduce using rule 18 (params)
+
+    params               go to state 25
+    param                go to state 26
+    operand              go to state 27
+    reg_and_lookup_type  go to state 28
+    immediate_type       go to state 29
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 15
+
+   37 label: LABEL COLON .
+
+    $default  reduce using rule 37 (label)
+
+
+state 16
+
+    9 directive: directive_key DIRECTIVE . directive_value terminator
+
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    directive_value      go to state 33
+    reg_and_lookup_type  go to state 34
+    immediate_type       go to state 35
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 17
+
+   22 param: LSQBR . operand RSQBR
+   23      | LSQBR . operand PLUS operand RSQBR
+   24      | LSQBR . operand PLUS operand PLUS operand RSQBR
+
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    operand              go to state 36
+    reg_and_lookup_type  go to state 28
+    immediate_type       go to state 29
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 18
+
+   34 hex_type: HEX_PRE .
+
+    $default  reduce using rule 34 (hex_type)
+
+
 state 19
 
-   13 code: OPCODE modifier . params
+   35 hex_type: HEX_SUFF .
 
-    LSQBR     shift, and go to state 22
-    HEX_PRE   shift, and go to state 23
-    HEX_SUFF  shift, and go to state 24
-    DEC       shift, and go to state 25
-    BIN_PRE   shift, and go to state 26
-    BIN_SUFF  shift, and go to state 27
-    LITERAL   shift, and go to state 28
-    TEXT      shift, and go to state 29
-
-    TEXT      [reduce using rule 17 (params)]
-    $default  reduce using rule 17 (params)
-
-    params               go to state 30
-    param                go to state 31
-    operand              go to state 32
-    reg_and_lookup_type  go to state 33
-    immediate_type       go to state 34
-    binary_type          go to state 35
-    hex_type             go to state 36
-    decimal_type         go to state 37
+    $default  reduce using rule 35 (hex_type)
 
 
 state 20
 
-   34 label: LABEL COLON .
+   36 decimal_type: DEC .
 
-    $default  reduce using rule 34 (label)
+    $default  reduce using rule 36 (decimal_type)
 
 
 state 21
 
-   10 directive: directive_key DIRECTIVE . immediate_type
+   32 binary_type: BIN_PRE .
 
-    HEX_PRE   shift, and go to state 23
-    HEX_SUFF  shift, and go to state 24
-    DEC       shift, and go to state 25
-    BIN_PRE   shift, and go to state 26
-    BIN_SUFF  shift, and go to state 27
-    LITERAL   shift, and go to state 28
-
-    immediate_type  go to state 38
-    binary_type     go to state 35
-    hex_type        go to state 36
-    decimal_type    go to state 37
+    $default  reduce using rule 32 (binary_type)
 
 
 state 22
 
-   21 param: LSQBR . operand RSQBR
+   33 binary_type: BIN_SUFF .
 
-    HEX_PRE   shift, and go to state 23
-    HEX_SUFF  shift, and go to state 24
-    DEC       shift, and go to state 25
-    BIN_PRE   shift, and go to state 26
-    BIN_SUFF  shift, and go to state 27
-    LITERAL   shift, and go to state 28
-    TEXT      shift, and go to state 29
-
-    operand              go to state 39
-    reg_and_lookup_type  go to state 33
-    immediate_type       go to state 34
-    binary_type          go to state 35
-    hex_type             go to state 36
-    decimal_type         go to state 37
+    $default  reduce using rule 33 (binary_type)
 
 
 state 23
 
-   31 hex_type: HEX_PRE .
+   31 immediate_type: LITERAL .
 
-    $default  reduce using rule 31 (hex_type)
+    $default  reduce using rule 31 (immediate_type)
 
 
 state 24
 
-   32 hex_type: HEX_SUFF .
+   27 reg_and_lookup_type: TEXT .
 
-    $default  reduce using rule 32 (hex_type)
+    $default  reduce using rule 27 (reg_and_lookup_type)
 
 
 state 25
 
-   33 decimal_type: DEC .
+   14 code: OPCODE modifier params . terminator
 
-    $default  reduce using rule 33 (decimal_type)
+    NEWLN  shift, and go to state 37
+
+    $default  reduce using rule 7 (terminator)
+
+    terminator  go to state 38
 
 
 state 26
 
-   29 binary_type: BIN_PRE .
+   19 params: param . COMMA param
+   20       | param .
 
-    $default  reduce using rule 29 (binary_type)
+    COMMA  shift, and go to state 39
+
+    $default  reduce using rule 20 (params)
 
 
 state 27
 
-   30 binary_type: BIN_SUFF .
-
-    $default  reduce using rule 30 (binary_type)
-
-
-state 28
-
-   28 immediate_type: LITERAL .
-
-    $default  reduce using rule 28 (immediate_type)
-
-
-state 29
-
-   24 reg_and_lookup_type: TEXT .
-
-    $default  reduce using rule 24 (reg_and_lookup_type)
-
-
-state 30
-
-   13 code: OPCODE modifier params .
-
-    $default  reduce using rule 13 (code)
-
-
-state 31
-
-   18 params: param . COMMA param
-   19       | param .
-
-    COMMA  shift, and go to state 40
-
-    $default  reduce using rule 19 (params)
-
-
-state 32
-
-   20 param: operand .
-
-    $default  reduce using rule 20 (param)
-
-
-state 33
-
-   22 operand: reg_and_lookup_type .
-
-    $default  reduce using rule 22 (operand)
-
-
-state 34
-
-   23 operand: immediate_type .
-
-    $default  reduce using rule 23 (operand)
-
-
-state 35
-
-   26 immediate_type: binary_type .
-
-    $default  reduce using rule 26 (immediate_type)
-
-
-state 36
-
-   25 immediate_type: hex_type .
-
-    $default  reduce using rule 25 (immediate_type)
-
-
-state 37
-
-   27 immediate_type: decimal_type .
-
-    $default  reduce using rule 27 (immediate_type)
-
-
-state 38
-
-   10 directive: directive_key DIRECTIVE immediate_type .
-
-    $default  reduce using rule 10 (directive)
-
-
-state 39
-
-   21 param: LSQBR operand . RSQBR
-
-    RSQBR  shift, and go to state 41
-
-
-state 40
-
-   18 params: param COMMA . param
-
-    LSQBR     shift, and go to state 22
-    HEX_PRE   shift, and go to state 23
-    HEX_SUFF  shift, and go to state 24
-    DEC       shift, and go to state 25
-    BIN_PRE   shift, and go to state 26
-    BIN_SUFF  shift, and go to state 27
-    LITERAL   shift, and go to state 28
-    TEXT      shift, and go to state 29
-
-    param                go to state 42
-    operand              go to state 32
-    reg_and_lookup_type  go to state 33
-    immediate_type       go to state 34
-    binary_type          go to state 35
-    hex_type             go to state 36
-    decimal_type         go to state 37
-
-
-state 41
-
-   21 param: LSQBR operand RSQBR .
+   21 param: operand .
 
     $default  reduce using rule 21 (param)
 
 
+state 28
+
+   25 operand: reg_and_lookup_type .
+
+    $default  reduce using rule 25 (operand)
+
+
+state 29
+
+   26 operand: immediate_type .
+
+    $default  reduce using rule 26 (operand)
+
+
+state 30
+
+   29 immediate_type: binary_type .
+
+    $default  reduce using rule 29 (immediate_type)
+
+
+state 31
+
+   28 immediate_type: hex_type .
+
+    $default  reduce using rule 28 (immediate_type)
+
+
+state 32
+
+   30 immediate_type: decimal_type .
+
+    $default  reduce using rule 30 (immediate_type)
+
+
+state 33
+
+    9 directive: directive_key DIRECTIVE directive_value . terminator
+
+    NEWLN  shift, and go to state 37
+
+    $default  reduce using rule 7 (terminator)
+
+    terminator  go to state 40
+
+
+state 34
+
+   12 directive_value: reg_and_lookup_type .
+
+    $default  reduce using rule 12 (directive_value)
+
+
+state 35
+
+   13 directive_value: immediate_type .
+
+    $default  reduce using rule 13 (directive_value)
+
+
+state 36
+
+   22 param: LSQBR operand . RSQBR
+   23      | LSQBR operand . PLUS operand RSQBR
+   24      | LSQBR operand . PLUS operand PLUS operand RSQBR
+
+    RSQBR  shift, and go to state 41
+    PLUS   shift, and go to state 42
+
+
+state 37
+
+    8 terminator: NEWLN .
+
+    $default  reduce using rule 8 (terminator)
+
+
+state 38
+
+   14 code: OPCODE modifier params terminator .
+
+    $default  reduce using rule 14 (code)
+
+
+state 39
+
+   19 params: param COMMA . param
+
+    LSQBR     shift, and go to state 17
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    param                go to state 43
+    operand              go to state 27
+    reg_and_lookup_type  go to state 28
+    immediate_type       go to state 29
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 40
+
+    9 directive: directive_key DIRECTIVE directive_value terminator .
+
+    $default  reduce using rule 9 (directive)
+
+
+state 41
+
+   22 param: LSQBR operand RSQBR .
+
+    $default  reduce using rule 22 (param)
+
+
 state 42
 
-   18 params: param COMMA param .
+   23 param: LSQBR operand PLUS . operand RSQBR
+   24      | LSQBR operand PLUS . operand PLUS operand RSQBR
 
-    $default  reduce using rule 18 (params)
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    operand              go to state 44
+    reg_and_lookup_type  go to state 28
+    immediate_type       go to state 29
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 43
+
+   19 params: param COMMA param .
+
+    $default  reduce using rule 19 (params)
+
+
+state 44
+
+   23 param: LSQBR operand PLUS operand . RSQBR
+   24      | LSQBR operand PLUS operand . PLUS operand RSQBR
+
+    RSQBR  shift, and go to state 45
+    PLUS   shift, and go to state 46
+
+
+state 45
+
+   23 param: LSQBR operand PLUS operand RSQBR .
+
+    $default  reduce using rule 23 (param)
+
+
+state 46
+
+   24 param: LSQBR operand PLUS operand PLUS . operand RSQBR
+
+    HEX_PRE   shift, and go to state 18
+    HEX_SUFF  shift, and go to state 19
+    DEC       shift, and go to state 20
+    BIN_PRE   shift, and go to state 21
+    BIN_SUFF  shift, and go to state 22
+    LITERAL   shift, and go to state 23
+    TEXT      shift, and go to state 24
+
+    operand              go to state 47
+    reg_and_lookup_type  go to state 28
+    immediate_type       go to state 29
+    binary_type          go to state 30
+    hex_type             go to state 31
+    decimal_type         go to state 32
+
+
+state 47
+
+   24 param: LSQBR operand PLUS operand PLUS operand . RSQBR
+
+    RSQBR  shift, and go to state 48
+
+
+state 48
+
+   24 param: LSQBR operand PLUS operand PLUS operand RSQBR .
+
+    $default  reduce using rule 24 (param)

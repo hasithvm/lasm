@@ -21,9 +21,12 @@ class BaseExpressionNode{
 					virtual void setContent(std::string a) =0;
 					virtual std::string& getContent()=0;
 					virtual void repr(int indentlevel)=0;
+					int getLineNumber();
+					void setLineNumber(int lineno);
 					BaseExpressionNode* getNextExpr();
 					void setNextExpr(BaseExpressionNode* ptr);
 		private:
+				int m_line;
 				BaseExpressionNode* m_nextptr;
 };
 
@@ -61,6 +64,8 @@ class ControlNode : public BaseExpressionNode{
 				static CtrlTypeLookupMap tlm;
 				static CtrlTypeLookupMap _populate();
 };
+
+/*
 class CommentNode : public BaseExpressionNode{
 		public:
 				CommentNode(char* pContent);
@@ -71,7 +76,7 @@ class CommentNode : public BaseExpressionNode{
 		private:
 				std::string cmt;	
 };	
-
+*/
 class LabelNode : public BaseExpressionNode{
 		public:
 				LabelNode(char* a);
@@ -96,16 +101,12 @@ class OpNode : public BaseExpressionNode{
 					void setExplicitAccessModifier(AccessWidth aw);
 					AccessWidth getExplicitAccessModifier();
 					void repr(int indentlevel);
-					void setLineNumber(int line);
-					int getLineNumber();
 					std::string getSourceRepr();
 
 		private:
-					int m_line;					
 					Operands ops;
 					std::string opstr;
 					AccessWidth m_aw;
-					CommentNode* m_commentNode;
 	
 };
 

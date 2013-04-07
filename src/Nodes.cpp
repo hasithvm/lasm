@@ -1,4 +1,7 @@
 #include "Nodes.h"
+
+
+
 BaseExpressionNode* BaseExpressionNode::getNextExpr(){
 	return m_nextptr;
 
@@ -7,14 +10,27 @@ BaseExpressionNode* BaseExpressionNode::getNextExpr(){
 void BaseExpressionNode::setNextExpr(BaseExpressionNode* ptr){
 	m_nextptr = ptr;
 }
+
+
+void BaseExpressionNode::setLineNumber(int lineno){
+	m_line  = lineno;
+
+}
+
+int BaseExpressionNode::getLineNumber(){
+	return m_line;
+
+}
+
+//================================================================
+
+
 OpNode::OpNode(char* pOpName, Operands* op)
 {
 	ops = *op;
 	opstr = std::string(pOpName);
 	strToLowerCase(opstr);
 	m_aw = AccessWidth::AW_UNSPECIFIED;
-	m_commentNode = nullptr;
-	m_line = 0;
 }
 
 ExpressionType OpNode::getType(){
@@ -68,15 +84,7 @@ void OpNode::setExplicitAccessModifier(AccessWidth aw){
 }
 
 
-void OpNode::setLineNumber(int line){
-	m_line  = line;
 
-}
-
-int OpNode::getLineNumber(){
-	return m_line;
-
-}
 /*===========================================================*/
 ControlNode::ControlNode(char* e, Operand* i){
 	label = std::string(e+1);
@@ -146,7 +154,7 @@ std::string& ControlNode::getKey(){
 Operand* ControlNode::getValue(){
 	return imm;
 }
-/*==========================================================*/
+/*==========================================================
 CommentNode::CommentNode(char* pContent){
  cmt = std::string(pContent);
 }
@@ -168,7 +176,9 @@ void CommentNode::repr(int indentlevel){
 	clog << indenter << "\t<content>" << cmt << "</content>" << endl;
 	clog << indenter << "<comment>" << endl;
 }
+*/
 
+//=============================================================
 LabelNode::LabelNode(char* a){
 	m_label = std::string(a);
 }

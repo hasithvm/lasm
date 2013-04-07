@@ -1,11 +1,11 @@
 #ifndef _P86ASSEMBLER_H_
 #define _P86ASSEMBLER_H_
+#include <stdexcept>      // std::out_of_range
 #include "data.h"
 #include "Nodes.h"
 #include "symtable.h"
 #include "common.h"
 #include "BinarySegment.hpp"
-
 
 void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMem[]);
 

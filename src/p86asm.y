@@ -1,5 +1,4 @@
 %{
-	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
 	#include <cstddef>
@@ -7,88 +6,32 @@
 	#include "data.h"
 	#include "symtable.h"
 	#include "Nodes.h"
-	#include "common.h"
-	#include "p86Assembler.h"
-	#include <iostream>
-	#include <fstream>
-	#include "preprocessor.h"
-	#include "VirgoWriter.h"
-	#include "version.h"
-	ExpressionList list;		
-	using namespace std;
-    extern "C"
+	ExpressionList* pList;
+	extern "C"
 	{
 		extern FILE *yyin;
 		extern int yylineno;
 		int yyparse(void);
-		string strOutputFile;
-
+		void yyerror(const char *str);
 		int yylex(void);
-		//extern int yydebug;
-		int yywrap()
-		{
-			return 1;
-		}
+		int yywrap(){
 
-	}    
+		return 1;
+		}
+	}
+
+
+	
+
 	void yyerror(const char *str)
 	{
 		cerr << endl << "ERROR: lasm-parser (" << yylineno << ")\t" << str << endl;
 	}
-	
 
+	void setExpressionList(ExpressionList* l){
 
-
-
-	main(int argc, char **argv)
-	{
-	cout << "Libra-8086 Emulator -- Assembler\n" << "Built on " << __DATE__  << " : " << __TIME__  << endl;
-	  streambuf *psbuf, *backup;
-	//	yydebug =1;
-		ofstream toFile;
-		toFile.open("log.txt");
-		backup = clog.rdbuf();
-		psbuf = toFile.rdbuf();
-		clog.rdbuf(psbuf);
-
-		list.reserve(80);
-		FILE *myfile = fopen(argv[1], "r");
-		if (myfile)
-			strOutputFile = string(argv[2]);
-		yyin = myfile;
-	
-	if (!myfile) {
-		yyerror("No inputfile specified\nSwitching to interactive mode....");
-	yyin = stdin;
-	strOutputFile = "a.obj";
-		cout << "============\nInteractive Mode"<< endl;
+	 	pList = l;
 	}
-		
-		do {
-		yyparse();
-	} while (!feof(yyin));
-
-
-
-
-
-	preprocess(list);
-
-for (int i = 0; i< list.size();i++)
-{
-	list[i]->repr(0);
-}
-clog << "assembly started!" << endl;
-	p86Assembler asmgen;
-	asmgen.parse(list);
-	writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
-cout << "Output file " << strOutputFile << " created" << endl;
-		clog.rdbuf(backup);  
-		toFile.close();
-
-	}
-
-
 %}
 %union
 {
@@ -97,42 +40,34 @@ cout << "Output file " << strOutputFile << " created" << endl;
 	BaseExpressionNode* pExpr;
 	uint8_t* pAccessWidth;
 }
-//%debug
+%debug
 %error-verbose
-%token COLON  END COMMA WORDPTR BYTEPTR LSQBR RSQBR PLUS
+%token COLON  END COMMA WORDPTR BYTEPTR LSQBR RSQBR PLUS NEWLN
 
 %token <pStr> OPCODE HEX_PRE HEX_SUFF DEC BIN_PRE BIN_SUFF
 %token <pStr> CMTSTR LABEL
-%token <pStr> LITERAL TEXT
+%token <pStr> LITERAL TEXT DIRECTIVE_KEY
 %token <pStr> DIRECTIVE
-%glr-parser
+
+
 %% 		
 	statements:	|
 				statements statement
 				{
-					list.push_back($<pExpr>2);
+					pList->push_back($<pExpr>2);
 				};
-
+ 
 	statement: 	program_expr
 				;
-				
-				
+
+
 	program_expr:code
 				|
 				label
 				|
 				directive
-				|
-				comment
 				;
 
-
-	comment:	CMTSTR
-				{
-					BaseExpressionNode* pComment = new CommentNode($<pStr>1);
-
-					$<pExpr>$ = pComment;
-				};
 
 	directive:	directive_key DIRECTIVE directive_value
 				{
@@ -149,7 +84,7 @@ cout << "Output file " << strOutputFile << " created" << endl;
 
 	directive_key:
 				|
-				TEXT
+				DIRECTIVE_KEY
 				{
 					$<pStr>$ = $<pStr>1; 
 				}

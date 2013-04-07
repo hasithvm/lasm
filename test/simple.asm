@@ -22,3 +22,4 @@ int 0
 hlt
 
 .end main
+;this is a comment which ends without and enl

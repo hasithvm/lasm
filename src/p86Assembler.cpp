@@ -49,7 +49,14 @@ void p86Assembler::_postpass(){
 
 	for (int i = 0; i < segs.size();i++){
 	if (segs[i]->getUpdateFlag()){
+		try{
 		loc_target = LocationMap.at(segs[i]->getConstant()->getName()); 
+		}
+		
+		catch (std::out_of_range& e){
+		cerr << "ERROR: Undefined label " << segs[i]->getConstant()->getName() << endl;
+		continue;
+		}
 		loc_addr = segs[i]->getCounter() + segs[i]->size();
 		addrStart = segs[i]->getAddrStartIndex();
 	
@@ -86,6 +93,11 @@ void p86Assembler::_postpass(){
 }
 
 void p86Assembler::_handleLabelNode(LabelNode* label){
+	if (LocationMap.count(label->getContent())){
+		//this label has been predefined
+		cerr << "ERROR: Multiply-defined label " << label->getContent() << "on line" << label->getLineNumber() << endl;
+	}
+		
 	LocationMap[label->getContent()] = counter;
 	clog << "Location " << label->getContent() << " maps to counter: " << counter << endl;
 }
