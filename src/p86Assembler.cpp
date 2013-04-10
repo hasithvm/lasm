@@ -128,7 +128,8 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		}
 		for (int i = 0;i < immVal->size();i++)
 			binseg->push_back(immVal->getBinEncoding()[i]);
-		segs.push_back(binseg);
+			binseg->setStringData(immVal->getSourceRepr());
+			segs.push_back(binseg);
 		counter = counter + binseg->size();
 		break;
 	//TODO: Implement DW 

@@ -14,7 +14,7 @@
 #include <fstream>
 #include "preprocessor.h"
 #include "VirgoWriter.h"
-#include "boost/program_options.hpp"
+//#include "boost/program_options.hpp"
 
 
 
@@ -22,7 +22,7 @@ string strOutputFile;
 
 ExpressionList list;		
 using namespace std;
-namespace opt = boost::program_options;
+//namespace opt = boost::program_options;
 
 
 extern "C"

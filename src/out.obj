@@ -1,64 +1,80 @@
-3 63 97 134   
+3 79 176 168   
 0000150push AX20
-0001152push DX20
-00024C7C2E904mov DX, 04e920
-00063C6C00Amov AL, 0a20
-00091EEout DX, AL20
-000A3C6C00Dmov AL, 0d20
+0001156push SI20
+0002152push DX20
+00034C7C2E904mov DX, 04e920
+000728A04mov AL, [SI]20
+000923C24cmp AL, $20
+000B27406je quitPS20
 000D1EEout DX, AL20
-000E15Apop DX20
-000F158pop AX20
-00101C3ret20
-0011150push AX20
-0012156push SI20
-0013152push DX20
-00144C7C2E904mov DX, 04e920
-001828A04mov AL, [SI]20
-001A23C24cmp AL, $20
-001C27406je quitPS20
-001E1EEout DX, AL20
-001F2FFC6inc SI20
-00213E9F4FFjmp LoopPS20
-002415Apop DX20
-002515Epop SI20
-0026158pop AX20
-00271C3ret20
-0028152push DX20
-00294C7C26400mov DX, 6420
-002D1ECin AL, DX20
-002E23C00cmp AL, 0020
-0030274F7jz GCWait20
-00324C7C26000mov DX, 6020
-00361ECin AL, DX20
-003715Apop DX20
+000E2FFC6inc SI20
+00103E9F4FFjmp LoopPS20
+001315Apop DX20
+001415Epop SI20
+0015158pop AX20
+00161C3ret20
+0017150push AX20
+0018151push CX20
+0019152push DX20
+001A4C7C2E904mov DX, 04e920
+001E3C6C10Amov CL, 0a20
+002123C10cmp AL, 1020
+002327C0Djl printLast20
+00253C6C400mov AH, 0020
+00282F6F1div CL20
+002A3E80C00call printDigit20
+002D288E0mov AL, AH20
+002F3E9EFFFjmp LoopPI20
+00323E80400call printDigit20
+003515Apop DX20
+0036159pop CX20
+0037158pop AX20
 00381C3ret20
 0039150push AX20
-003A156push SI20
-003B152push DX20
-003C4C7C2E904mov DX, 04e920
-004028A04mov AL, [SI]20
-004223C24cmp AL, $20
-004427408je quitP2S20
-00461EEout DX, AL20
-0047481C60200add SI, 0220
-004B3E9F2FFjmp LoopP2S20
-004E15Apop DX20
-004F15Epop SI20
-0050158pop AX20
-00511C3ret20
-005215456E746572206120737472696E672420
-00614C7C65200mov SI, Message120
-00653E8A9FFcall printStr20
-00683E895FFcall newLine20
-006B3C6C400mov AH, 0020
-006E3C6C024mov AL, $20
-0071150push AX20
-00723E8B3FFcall getChar20
-007523C0Acmp AL, 0a20
-007727404je gsPrint20
-0079150push AX20
-007A3E9F5FFjmp gsAgain20
-007D289E6mov SI, SP20
-007F3E8B7FFcall print2Str20
-00823E87BFFcall newLine20
-00851F4hlt20
+003A152push DX20
+003B4C7C2E904mov DX, 04e920
+003F20430add AL, 020
+00411EEout DX, AL20
+004215Apop DX20
+0043158pop AX20
+00441C3ret20
+004552C3030302420
+004A12420
+004B150push AX20
+004C152push DX20
+004D156push SI20
+004E4C7C2E904mov DX, 04e920
+0052288C4mov AH, AL20
+005448A064A00mov AL, [s_dollars]20
+00581EEout DX, AL20
+0059288E0mov AL, AH20
+005B3E8B9FFcall printInt20
+005E4C7C64500mov SI, s_thousands20
+00623E89BFFcall printStr20
+006515Epop SI20
+006615Apop DX20
+0067158pop AX20
+00681C3ret20
+0069150push AX20
+006A152push DX20
+006B4C7C2E904mov DX, 04e920
+006F3C6C00Amov AL, 0a20
+00721EEout DX, AL20
+00733C6C00Dmov AL, 0d20
+00761EEout DX, AL20
+007715Apop DX20
+0078158pop AX20
+00791C3ret20
+00A01348656C6C6F20576F726C64212420
+00AD14220
+00AE13220
+00B04C7C6A000mov SI, str120
+00B43E849FFcall printStr20
+00B73E8AFFFcall newLine20
+00BA48A06AD00mov AL, [num1]20
+00BE3E856FFcall printInt20
+00C13E8A5FFcall newLine20
+00C448A06AE00mov AL, [sal1]20
+00C83E880FFcall printSalary20
+00CB3E89BFFcall newLine20
+00CE1F4hlt20

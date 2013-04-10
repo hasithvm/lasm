@@ -23,133 +23,6 @@
 	<value>
 <control>
 <label>
-	<name>newLine</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>push</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>push</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>04E9</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>0A</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>out</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>0D</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>out</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>pop</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>pop</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>ret</opcode>
-	<params>
-	</params>
-</statement>
-<label>
 	<name>printStr</name>
 <label>
 <statement>
@@ -319,144 +192,8 @@
 	<params>
 	</params>
 </statement>
-<control>
-	<name>equ</name>
-	<value>
-	<Immediate>
-		<value>64</value>
-	</Immediate>
-	<value>
-<control>
-<control>
-	<name>equ</name>
-	<value>
-	<Immediate>
-		<value>60</value>
-	</Immediate>
-	<value>
-<control>
 <label>
-	<name>getChar</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>push</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<label>
-	<name>GCWait</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>64</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>in</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>cmp</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>00</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>jz</opcode>
-	<params>
-		<Constant>
-			<name>GCWait</name>
-		</Constant>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>60</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>in</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<label>
-	<name>GCDone</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>pop</opcode>
-	<params>
-		<Register>
-			<address>02</address>
-			<name>DX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>ret</opcode>
-	<params>
-	</params>
-</statement>
-<label>
-	<name>print2Str</name>
+	<name>printInt</name>
 <label>
 <statement>
 	<type>opcode</type>
@@ -474,9 +211,9 @@
 	<opcode>push</opcode>
 	<params>
 		<Register>
-			<address>06</address>
-			<name>SI</name>
-			<type>special</type>
+			<address>01</address>
+			<name>CX</name>
+			<type>general purpose</type>
 		</Register>
 	</params>
 </statement>
@@ -505,25 +242,23 @@
 		</Immediate>
 	</params>
 </statement>
-<label>
-	<name>LoopP2S</name>
-<label>
 <statement>
 	<type>opcode</type>
 	<opcode>mov</opcode>
 	<params>
 		<Register>
-			<address>00</address>
-			<name>AL</name>
+			<address>01</address>
+			<name>CL</name>
 			<type>general purpose</type>
 		</Register>
-		<Register>
-			<address>06</address>
-			<name>SI</name>
-			<type>special</type>
-		</Register>
+		<Immediate>
+			<value>0A</value>
+		</Immediate>
 	</params>
 </statement>
+<label>
+	<name>LoopPI</name>
+<label>
 <statement>
 	<type>opcode</type>
 	<opcode>cmp</opcode>
@@ -534,47 +269,67 @@
 			<type>general purpose</type>
 		</Register>
 		<Immediate>
-			<value>24</value>
+			<value>10</value>
 		</Immediate>
 	</params>
 </statement>
 <statement>
 	<type>opcode</type>
-	<opcode>je</opcode>
+	<opcode>jl</opcode>
 	<params>
 		<Constant>
-			<name>quitP2S</name>
+			<name>printLast</name>
 		</Constant>
 	</params>
 </statement>
 <statement>
 	<type>opcode</type>
-	<opcode>out</opcode>
+	<opcode>mov</opcode>
 	<params>
 		<Register>
-			<address>02</address>
-			<name>DX</name>
+			<address>04</address>
+			<name>AH</name>
 			<type>general purpose</type>
 		</Register>
+		<Immediate>
+			<value>00</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>div</opcode>
+	<params>
 		<Register>
-			<address>00</address>
-			<name>AL</name>
+			<address>01</address>
+			<name>CL</name>
 			<type>general purpose</type>
 		</Register>
 	</params>
 </statement>
 <statement>
 	<type>opcode</type>
-	<opcode>add</opcode>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printDigit</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
 	<params>
 		<Register>
-			<address>06</address>
-			<name>SI</name>
-			<type>special</type>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
 		</Register>
-		<Immediate>
-			<value>02</value>
-		</Immediate>
+		<Register>
+			<address>04</address>
+			<name>AH</name>
+			<type>general purpose</type>
+		</Register>
 	</params>
 </statement>
 <statement>
@@ -582,13 +337,22 @@
 	<opcode>jmp</opcode>
 	<params>
 		<Constant>
-			<name>LoopP2S</name>
+			<name>LoopPI</name>
 		</Constant>
 	</params>
 </statement>
 <label>
-	<name>quitP2S</name>
+	<name>printLast</name>
 <label>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printDigit</name>
+		</Constant>
+	</params>
+</statement>
 <statement>
 	<type>opcode</type>
 	<opcode>pop</opcode>
@@ -605,9 +369,9 @@
 	<opcode>pop</opcode>
 	<params>
 		<Register>
-			<address>06</address>
-			<name>SI</name>
-			<type>special</type>
+			<address>01</address>
+			<name>CX</name>
+			<type>general purpose</type>
 		</Register>
 	</params>
 </statement>
@@ -629,13 +393,480 @@
 	</params>
 </statement>
 <label>
-	<name>Message1</name>
+	<name>printDigit</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>add</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>30</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<label>
+	<name>s_thousands</name>
 <label>
 <control>
 	<name>db</name>
 	<value>
 	<Immediate>
-		<value>24676E697274732061207265746E45</value>
+		<value>243030302C</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>s_dollars</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>24</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>printSalary</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>04</address>
+			<name>AH</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Constant>
+			<name>s_dollars</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>04</address>
+			<name>AH</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printInt</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+		<Constant>
+			<name>s_thousands</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printStr</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<label>
+	<name>newLine</name>
+<label>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>push</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>04E9</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0A</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Immediate>
+			<value>0D</value>
+		</Immediate>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>out</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>02</address>
+			<name>DX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>pop</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>ret</opcode>
+	<params>
+	</params>
+</statement>
+<control>
+	<name>org</name>
+	<value>
+	<Immediate>
+		<value>00A0</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>str1</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>2421646C726F57206F6C6C6548</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>num1</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>42</value>
+	</Immediate>
+	<value>
+<control>
+<label>
+	<name>sal1</name>
+<label>
+<control>
+	<name>db</name>
+	<value>
+	<Immediate>
+		<value>32</value>
+	</Immediate>
+	<value>
+<control>
+<control>
+	<name>org</name>
+	<value>
+	<Immediate>
+		<value>00B0</value>
 	</Immediate>
 	<value>
 <control>
@@ -652,7 +883,7 @@
 			<type>special</type>
 		</Register>
 		<Constant>
-			<name>Message1</name>
+			<name>str1</name>
 		</Constant>
 	</params>
 </statement>
@@ -679,112 +910,13 @@
 	<opcode>mov</opcode>
 	<params>
 		<Register>
-			<address>04</address>
-			<name>AH</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>00</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
 			<address>00</address>
 			<name>AL</name>
 			<type>general purpose</type>
 		</Register>
-		<Immediate>
-			<value>24</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>push</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<label>
-	<name>gsAgain</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>call</opcode>
-	<params>
 		<Constant>
-			<name>getChar</name>
+			<name>num1</name>
 		</Constant>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>cmp</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AL</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>0A</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>je</opcode>
-	<params>
-		<Constant>
-			<name>gsPrint</name>
-		</Constant>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>push</opcode>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>jmp</opcode>
-	<params>
-		<Constant>
-			<name>gsAgain</name>
-		</Constant>
-	</params>
-</statement>
-<label>
-	<name>gsPrint</name>
-<label>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<params>
-		<Register>
-			<address>06</address>
-			<name>SI</name>
-			<type>special</type>
-		</Register>
-		<Register>
-			<address>04</address>
-			<name>SP</name>
-			<type>special</type>
-		</Register>
 	</params>
 </statement>
 <statement>
@@ -792,7 +924,7 @@
 	<opcode>call</opcode>
 	<params>
 		<Constant>
-			<name>print2Str</name>
+			<name>printInt</name>
 		</Constant>
 	</params>
 </statement>
@@ -805,9 +937,38 @@
 		</Constant>
 	</params>
 </statement>
-<label>
-	<name>gsDone</name>
-<label>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AL</name>
+			<type>general purpose</type>
+		</Register>
+		<Constant>
+			<name>sal1</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>printSalary</name>
+		</Constant>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>call</opcode>
+	<params>
+		<Constant>
+			<name>newLine</name>
+		</Constant>
+	</params>
+</statement>
 <statement>
 	<type>opcode</type>
 	<opcode>hlt</opcode>
@@ -823,82 +984,98 @@
 	<value>
 <control>
 assembly started!
-Location newLine maps to counter: 0
-Location printStr maps to counter: 17
-Location LoopPS maps to counter: 24
-Location quitPS maps to counter: 36
-Location getChar maps to counter: 40
-Location GCWait maps to counter: 41
-Location GCDone maps to counter: 55
-Location print2Str maps to counter: 57
-Location LoopP2S maps to counter: 64
-Location quitP2S maps to counter: 78
-Location Message1 maps to counter: 82
-Location main maps to counter: 97
-Location gsAgain maps to counter: 114
-Location gsPrint maps to counter: 125
-Location gsDone maps to counter: 133
+Location printStr maps to counter: 0
+Location LoopPS maps to counter: 7
+Location quitPS maps to counter: 19
+Location printInt maps to counter: 23
+Location LoopPI maps to counter: 33
+Location printLast maps to counter: 50
+Location printDigit maps to counter: 57
+Location s_thousands maps to counter: 69
+Location s_dollars maps to counter: 74
+Location printSalary maps to counter: 75
+Location newLine maps to counter: 105
+Location str1 maps to counter: 160
+Location num1 maps to counter: 173
+Location sal1 maps to counter: 174
+Location main maps to counter: 176
 Computed word: 50 PC = 0
-Computed word: 52 PC = 1
-Computed word: 04E9C2C7 PC = 2
-Computed word: 0AC0C6 PC = 6
-Computed word: EE PC = 9
-Computed word: 0DC0C6 PC = 10
+Computed word: 56 PC = 1
+Computed word: 52 PC = 2
+Computed word: 04E9C2C7 PC = 3
+Computed word: 048A PC = 7
+Computed word: 243C PC = 9
+Computed word: 0674 PC = 11
 Computed word: EE PC = 13
-Computed word: 5A PC = 14
-Computed word: 58 PC = 15
-Computed word: C3 PC = 16
-Computed word: 50 PC = 17
-Computed word: 56 PC = 18
-Computed word: 52 PC = 19
-Computed word: 04E9C2C7 PC = 20
-Computed word: 048A PC = 24
-Computed word: 243C PC = 26
-Computed word: 0674 PC = 28
-Computed word: EE PC = 30
-Computed word: C6FF PC = 31
-Computed word: FFF4E9 PC = 33
-Computed word: 5A PC = 36
-Computed word: 5E PC = 37
-Computed word: 58 PC = 38
-Computed word: C3 PC = 39
-Computed word: 52 PC = 40
-Computed word: 0064C2C7 PC = 41
-Computed word: EC PC = 45
-Computed word: 003C PC = 46
-Computed word: F774 PC = 48
-Computed word: 0060C2C7 PC = 50
-Computed word: EC PC = 54
-Computed word: 5A PC = 55
+Computed word: C6FF PC = 14
+Computed word: FFF4E9 PC = 16
+Computed word: 5A PC = 19
+Computed word: 5E PC = 20
+Computed word: 58 PC = 21
+Computed word: C3 PC = 22
+Computed word: 50 PC = 23
+Computed word: 51 PC = 24
+Computed word: 52 PC = 25
+Computed word: 04E9C2C7 PC = 26
+Computed word: 0AC1C6 PC = 30
+Computed word: 103C PC = 33
+Computed word: 0D7C PC = 35
+Computed word: 00C4C6 PC = 37
+Computed word: F1F6 PC = 40
+Computed word: 000CE8 PC = 42
+Computed word: E088 PC = 45
+Computed word: FFEFE9 PC = 47
+Computed word: 0004E8 PC = 50
+Computed word: 5A PC = 53
+Computed word: 59 PC = 54
+Computed word: 58 PC = 55
 Computed word: C3 PC = 56
 Computed word: 50 PC = 57
-Computed word: 56 PC = 58
-Computed word: 52 PC = 59
-Computed word: 04E9C2C7 PC = 60
-Computed word: 048A PC = 64
-Computed word: 243C PC = 66
-Computed word: 0874 PC = 68
-Computed word: EE PC = 70
-Computed word: 0002C681 PC = 71
-Computed word: FFF2E9 PC = 75
-Computed word: 5A PC = 78
-Computed word: 5E PC = 79
-Computed word: 58 PC = 80
-Computed word: C3 PC = 81
-Computed word: 24676E697274732061207265746E45 PC = 82
-Computed word: 0052C6C7 PC = 97
-Computed word: FFA9E8 PC = 101
-Computed word: FF95E8 PC = 104
-Computed word: 00C4C6 PC = 107
-Computed word: 24C0C6 PC = 110
-Computed word: 50 PC = 113
-Computed word: FFB3E8 PC = 114
-Computed word: 0A3C PC = 117
-Computed word: 0474 PC = 119
-Computed word: 50 PC = 121
-Computed word: FFF5E9 PC = 122
-Computed word: E689 PC = 125
-Computed word: FFB7E8 PC = 127
-Computed word: FF7BE8 PC = 130
-Computed word: F4 PC = 133
+Computed word: 52 PC = 58
+Computed word: 04E9C2C7 PC = 59
+Computed word: 3004 PC = 63
+Computed word: EE PC = 65
+Computed word: 5A PC = 66
+Computed word: 58 PC = 67
+Computed word: C3 PC = 68
+Computed word: 243030302C PC = 69
+Computed word: 24 PC = 74
+Computed word: 50 PC = 75
+Computed word: 52 PC = 76
+Computed word: 56 PC = 77
+Computed word: 04E9C2C7 PC = 78
+Computed word: C488 PC = 82
+Computed word: 004A068A PC = 84
+Computed word: EE PC = 88
+Computed word: E088 PC = 89
+Computed word: FFB9E8 PC = 91
+Computed word: 0045C6C7 PC = 94
+Computed word: FF9BE8 PC = 98
+Computed word: 5E PC = 101
+Computed word: 5A PC = 102
+Computed word: 58 PC = 103
+Computed word: C3 PC = 104
+Computed word: 50 PC = 105
+Computed word: 52 PC = 106
+Computed word: 04E9C2C7 PC = 107
+Computed word: 0AC0C6 PC = 111
+Computed word: EE PC = 114
+Computed word: 0DC0C6 PC = 115
+Computed word: EE PC = 118
+Computed word: 5A PC = 119
+Computed word: 58 PC = 120
+Computed word: C3 PC = 121
+Computed word: 2421646C726F57206F6C6C6548 PC = 160
+Computed word: 42 PC = 173
+Computed word: 32 PC = 174
+Computed word: 00A0C6C7 PC = 176
+Computed word: FF49E8 PC = 180
+Computed word: FFAFE8 PC = 183
+Computed word: 00AD068A PC = 186
+Computed word: FF56E8 PC = 190
+Computed word: FFA5E8 PC = 193
+Computed word: 00AE068A PC = 196
+Computed word: FF80E8 PC = 200
+Computed word: FF9BE8 PC = 203
+Computed word: F4 PC = 206
 Starting object-write process!

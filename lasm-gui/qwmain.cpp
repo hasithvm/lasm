@@ -80,7 +80,7 @@ void QWMain::on_pbAssemble_clicked()
     if (!sFilename.isNull())
     {QStringList args;
     QString sOutName = sFilename;
-    sOutName.replace(sOutName.lastIndexOf("."),-1,".obj");
+    sOutName.replace(sOutName.lastIndexOf("."),sOutName.size(),".obj");
     args.append(sFilename);
     args.append(sOutName);
     ui->taConsole->append("===============================");
