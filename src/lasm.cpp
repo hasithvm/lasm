@@ -5,6 +5,9 @@
 int main(int argc, char **argv)
 	{
 
+#ifdef WIN32
+		yydebug = 1;
+#endif
 	/* opt::options_description desc("Options"); 
     	desc.add_options() 
       ("help", "Prints this message") 

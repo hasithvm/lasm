@@ -1,4 +1,10 @@
 #include "data.h"
+
+#ifdef WIN32
+#define snprintf _snprintf
+#else
+#define _toupper(a) std::toupper(a)
+#endif
 //string lookup table for register types.
 char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
 char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
@@ -80,7 +86,7 @@ void Register::repr(int indentlevel){
 uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
 for (int i=0;i<str.size();i++)
-		str[i] = std::toupper(str[i]);
+		str[i] = _toupper(str[i]);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
 if (m_regmap.find(str) == m_regmap.end())
 {
@@ -173,21 +179,10 @@ std::string& Constant::getName(){
 	return m_name;
 }
 
-
-
-
-
-
-
-
-
-
 void catOperands(Operands* ptr1, Operands* ptr2)
 {
 	ptr1->insert(ptr1->end(), ptr2->begin(), ptr2->end());
 }
-
-
 
 std::string hex2str(uint8_t* bytes, int count)
 {

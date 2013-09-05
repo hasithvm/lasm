@@ -96,13 +96,22 @@ ControlNode::ControlNode(char* e, Operand* i){
 ControlNode::CtrlTypeLookupMap ControlNode::tlm(ControlNode::_populate());
 
 ControlNode::CtrlTypeLookupMap  ControlNode::_populate(){
+#ifdef WIN32
+	ControlNode::CtrlTypeLookupMap ret;
+	ret["db"] = ControlNodeType::CONTROL_DB;
+	ret["dw"] = ControlNodeType::CONTROL_DW;
+	ret["equ"] = ControlNodeType::CONTROL_EQU;
+	ret["org"] = ControlNodeType::CONTROL_ORG;
+	ret["end"] = ControlNodeType::CONTROL_END;
+	return ret;
+#else
 	return{
 	{"db", ControlNodeType::CONTROL_DB},
 	{"dw", ControlNodeType::CONTROL_DW},
 	{"equ", ControlNodeType::CONTROL_EQU},
 	{"org", ControlNodeType::CONTROL_ORG},
 	{"end", ControlNodeType::CONTROL_END}};
-
+#endif
 }
 
 ExpressionType ControlNode::getType(){

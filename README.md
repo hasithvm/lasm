@@ -5,15 +5,19 @@ Alpha build of revised assembler.
 
 ##Missing features
 * Register-based addressing mode is not supported.
-* Selectable file output, currently hardcoded to dump "out.obj".
 
 
-*Currently compiles only with GCC, requires C++11 support.* 
+*Currently compiles with GCC, and Visual Studio 2010*
 
 **Usage**
 ```bash
     lasm [filename] [outputfile]
 ```
+
+**Notes for building with Visual Studio**
+[GnuWin32](http://gnuwin32.sourceforge.net/) is required to compile lasm,
+due to it's dependency on Flex and Bison. The location of gnuwin32's bin
+directory must be stored in the ```GNUBINDIR``` environment variable.
 
 ##License
 Copyright (C) 2012 Hasith Vidanamadura, contributing authors Robert Nelson and Darren Stahl.

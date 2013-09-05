@@ -1,15 +1,21 @@
 %{
 
-#include <stdio.h>
+	#ifdef WIN32
+	#define DUP _strdup
+	#define fileno _fileno
+	#else
+	#define DUP strdup
+	#endif
+
+	#include <stdio.h>
 	#include <vector>
 	#include "data.h"
 	#include "symtable.h"
 	#include "Nodes.h"
 	SymTable st;
-  
+
 extern "C"{
 	int yylex(void);
-
 }
 
 
@@ -32,11 +38,11 @@ This block takes care of removing comments from the input stream*/
 <CMT>\n				 {BEGIN(INITIAL);}
 <CMT><<EOF>>			{BEGIN(INITIAL); yyterminate();}
 
-:																	return COLON;			
+:																	return COLON;
 [A-Za-z][A-Za-z]{1,}	{
 								if (st.exists(std::string(yytext)))
 									{
-									yylval.pStr=strdup(yytext);
+									yylval.pStr=DUP(yytext);
 									BEGIN(PARAM);
 									return OPCODE;
 									}
@@ -48,29 +54,27 @@ This block takes care of removing comments from the input stream*/
 
 "word"																return WORDPTR;
 "byte"																return BYTEPTR;
-"0x"[A-Fa-f0-9]{1,}			yylval.pStr=strdup(yytext);				return HEX_PRE;				
-[0-9][A-Fa-f0-9]{1,}/[Hh]	yylval.pStr=strdup(yytext);				return HEX_SUFF;				
-"0b"[0-1]{1,}				yylval.pStr=strdup(yytext);				return BIN_PRE;
-[0-1]{1,}/[Bb]				yylval.pStr=strdup(yytext);				return BIN_SUFF;
-"-"*[0-9]{1,}				yylval.pStr=strdup(yytext);				return DEC;
+"0x"[A-Fa-f0-9]{1,}			yylval.pStr=DUP(yytext);				return HEX_PRE;
+[0-9][A-Fa-f0-9]{1,}/[Hh]	yylval.pStr=DUP(yytext);				return HEX_SUFF;
+"0b"[0-1]{1,}				yylval.pStr=DUP(yytext);				return BIN_PRE;
+[0-1]{1,}/[Bb]				yylval.pStr=DUP(yytext);				return BIN_SUFF;
+"-"*[0-9]{1,}				yylval.pStr=DUP(yytext);				return DEC;
 
-([A-Za-z][A-Za-z0-9\_]+)/:	yylval.pStr=strdup(yytext); BEGIN(PARAM);	return LABEL;	
-\"(\\.|[^\\"])*\"			yylval.pStr=strdup(yytext);				return LITERAL;
-\'(\\.|[^\\'])*\'			yylval.pStr=strdup(yytext);				return LITERAL; 
+([A-Za-z][A-Za-z0-9\_]+)/:	yylval.pStr=DUP(yytext); BEGIN(PARAM);	return LABEL;
+\"(\\.|[^\\"])*\"			yylval.pStr=DUP(yytext);				return LITERAL;
+\'(\\.|[^\\'])*\'			yylval.pStr=DUP(yytext);				return LITERAL;
 ,																	return COMMA;
-<PARAM>[A-Za-z][A-Za-z0-9\_]+		yylval.pStr=strdup(yytext); 	return TEXT;
+<PARAM>[A-Za-z][A-Za-z0-9\_]+		yylval.pStr=DUP(yytext); 	return TEXT;
 
 
-[A-Za-z][A-Za-z0-9\_]+		yylval.pStr=strdup(yytext); 			return DIRECTIVE_KEY;
-
+[A-Za-z][A-Za-z0-9\_]+		yylval.pStr=DUP(yytext); 			return DIRECTIVE_KEY;
 
 
 "."[A-Za-z]{2,}				{
-								yylval.pStr=strdup(yytext);	
+								yylval.pStr=DUP(yytext);	
 								BEGIN(PARAM);
 								return DIRECTIVE;
 							}
-
 
 \[																	return LSQBR;
 \]																	return RSQBR;

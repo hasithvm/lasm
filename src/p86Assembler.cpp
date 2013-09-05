@@ -266,6 +266,12 @@ int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
 			cerr << "ERROR: opcode "<< op->getContent() << " does not require operands!" << endl;
 			return -1;
 		}
+
+		// Add translation and all fixed bytes to the command
+		for(int i = opcodeIndex; i < pattern.size(); i++) {
+			binseg->push_back(pattern[i]);
+		}
+
 		binseg->push_back(pattern[opcodeIndex]);
 		_addSeg(binseg);
 		return 0;
@@ -858,6 +864,7 @@ paramStr =((Immediate*) ops[i])->getSourceRepr();
 break;
 case (AccessMode::IMMEDIATE_ADDR):
 paramStr ="[" + ((Immediate*) ops[i])->getSourceRepr() + "]";
+break;
 case (AccessMode::CONST):
 paramStr = ((Constant*) ops[i])->getName();
 break;
