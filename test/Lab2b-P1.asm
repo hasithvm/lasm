@@ -176,7 +176,7 @@ sal1: .DB 0x32h				; Should print as '$34,000'
 .ORG 00B0h
 
 main:
-
+ random text here
 	; Print a string. Use str1
 	MOV SI, str1				; FIX ME
 	CALL printStr

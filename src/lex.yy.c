@@ -800,7 +800,10 @@ YY_DECL
     
 #line 26 "p86asm.l"
 
-#line 804 "lex.yy.c"
+/*
+This block takes care of removing comments from the input stream*/
+
+#line 807 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -904,32 +907,32 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 27 "p86asm.l"
+#line 30 "p86asm.l"
 {BEGIN(CMT);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 28 "p86asm.l"
+#line 31 "p86asm.l"
 {/*eat comment text*/;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 29 "p86asm.l"
+#line 32 "p86asm.l"
 {BEGIN(INITIAL);}
 	YY_BREAK
 case YY_STATE_EOF(CMT):
-#line 30 "p86asm.l"
+#line 33 "p86asm.l"
 {BEGIN(INITIAL); yyterminate();}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 32 "p86asm.l"
+#line 35 "p86asm.l"
 return COLON;			
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 33 "p86asm.l"
+#line 36 "p86asm.l"
 {
 								if (st.exists(std::string(yytext)))
 									{
@@ -943,17 +946,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 46 "p86asm.l"
+#line 49 "p86asm.l"
 return WORDPTR;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 47 "p86asm.l"
+#line 50 "p86asm.l"
 return BYTEPTR;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 48 "p86asm.l"
+#line 51 "p86asm.l"
 yylval.pStr=strdup(yytext);				return HEX_PRE;				
 	YY_BREAK
 case 9:
@@ -961,12 +964,12 @@ case 9:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 49 "p86asm.l"
+#line 52 "p86asm.l"
 yylval.pStr=strdup(yytext);				return HEX_SUFF;				
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 50 "p86asm.l"
+#line 53 "p86asm.l"
 yylval.pStr=strdup(yytext);				return BIN_PRE;
 	YY_BREAK
 case 11:
@@ -974,12 +977,12 @@ case 11:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 51 "p86asm.l"
+#line 54 "p86asm.l"
 yylval.pStr=strdup(yytext);				return BIN_SUFF;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 52 "p86asm.l"
+#line 55 "p86asm.l"
 yylval.pStr=strdup(yytext);				return DEC;
 	YY_BREAK
 case 13:
@@ -987,94 +990,98 @@ case 13:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 54 "p86asm.l"
+#line 57 "p86asm.l"
 yylval.pStr=strdup(yytext); BEGIN(PARAM);	return LABEL;	
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 55 "p86asm.l"
+#line 58 "p86asm.l"
 yylval.pStr=strdup(yytext);				return LITERAL;
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 56 "p86asm.l"
+#line 59 "p86asm.l"
 yylval.pStr=strdup(yytext);				return LITERAL; 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 57 "p86asm.l"
+#line 60 "p86asm.l"
 return COMMA;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 58 "p86asm.l"
+#line 61 "p86asm.l"
 yylval.pStr=strdup(yytext); 	return TEXT;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 61 "p86asm.l"
+#line 64 "p86asm.l"
 yylval.pStr=strdup(yytext); 			return DIRECTIVE_KEY;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 63 "p86asm.l"
-yylval.pStr=strdup(yytext);	BEGIN(PARAM);	return DIRECTIVE;
+#line 68 "p86asm.l"
+{
+								yylval.pStr=strdup(yytext);	
+								BEGIN(PARAM);
+								return DIRECTIVE;
+							}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 64 "p86asm.l"
+#line 75 "p86asm.l"
 return LSQBR;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 65 "p86asm.l"
+#line 76 "p86asm.l"
 return RSQBR;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 66 "p86asm.l"
+#line 77 "p86asm.l"
 return PLUS;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 68 "p86asm.l"
+#line 79 "p86asm.l"
 /*whitespace*/
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 69 "p86asm.l"
-BEGIN(INITIAL);						/*ignore these*/
+#line 80 "p86asm.l"
+BEGIN(INITIAL);							/*ignore these*/
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 70 "p86asm.l"
+#line 81 "p86asm.l"
 /*and this*/
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 71 "p86asm.l"
+#line 82 "p86asm.l"
 /*leftover suffixes*/
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 72 "p86asm.l"
+#line 83 "p86asm.l"
 printf("bad input character '%s' at line %d\n", yytext, yylineno);
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(PARAM):
-#line 73 "p86asm.l"
+#line 84 "p86asm.l"
 yyterminate();
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 74 "p86asm.l"
+#line 85 "p86asm.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1078 "lex.yy.c"
+#line 1085 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2056,7 +2063,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "p86asm.l"
+#line 85 "p86asm.l"
 
 
 

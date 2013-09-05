@@ -8,6 +8,7 @@ ASSERT_EQ(pReg->getBinEncoding(),0x00);
 delete pReg;
 pReg = new Register("DP",AccessMode::REG_DIRECT);
 ASSERT_EQ(pReg->getBinEncoding(),0xFF);
+ASSERT_FALSE(Register::exists("AXI"));
 
 }
 

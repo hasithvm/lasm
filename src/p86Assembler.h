@@ -24,8 +24,8 @@ class p86Assembler{
 		void _handleOpNode(OpNode* op);
 		void _handleControlNode(ControlNode* ctl);
 		void _handleLabelNode(LabelNode* ctl);
-		void _postpass();
-
+		bool _postpass();
+		void updateLocationMap(unsigned int startFrom, int increment);
 		int _construct(OpType pattern,OpNode* op, Operands& ops);
  		void _addSeg(BinarySegment* binseg);
 		SymTable st;

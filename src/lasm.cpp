@@ -49,7 +49,6 @@ int main(int argc, char **argv)
 
 		
 	  streambuf *psbuf, *backup;
-	//	yydebug =1;
 		ofstream toFile;
 		toFile.open("log.txt");
 		backup = clog.rdbuf();
@@ -69,9 +68,9 @@ int main(int argc, char **argv)
 		cout << "============\nInteractive Mode"<< endl;
 	}
 		
-		do {
 		yyparse();
-	} while (!feof(yyin));
+
+
 
 
 
@@ -90,5 +89,5 @@ clog << "assembly started!" << endl;
 cout << "Output file " << strOutputFile << " created" << endl;
 		clog.rdbuf(backup);  
 		toFile.close();
-
+		return 0;
 	}

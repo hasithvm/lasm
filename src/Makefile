@@ -5,13 +5,13 @@ CXXFLAGS=-std=gnu++0x -g
 all:$(TARGET)
 
 lasm: $(OBJ) 
-		g++ -g $(CXXFLAGS) $(OBJ) -o $(TARGET) 
+	$(CXX) $(CXXFLAGS) -O0 $(OBJ) -o $(TARGET) 
 				
 %.o : %.cpp
 	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $<
 
 %.o : %.c
-	$(CC) -c $(CCFLAGS) -c $<
+	$(CC) -c $(CCFLAGS) $<
 
 lex.yy.c :p86asm.l
 	flex p86asm.l

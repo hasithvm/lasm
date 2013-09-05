@@ -1,4 +1,4 @@
-3 79 176 168   
+3 69 0 137   
 0000150push AX20
 0001156push SI20
 0002152push DX20
@@ -38,8 +38,8 @@
 004215Apop DX20
 0043158pop AX20
 00441C3ret20
-004552C3030302420
-004A12420
+004552C30303024,000$20
+004A124$20
 004B150push AX20
 004C152push DX20
 004D156push SI20
@@ -65,16 +65,6 @@
 007715Apop DX20
 0078158pop AX20
 00791C3ret20
-00A01348656C6C6F20576F726C64212420
-00AD14220
-00AE13220
-00B04C7C6A000mov SI, str120
-00B43E849FFcall printStr20
-00B73E8AFFFcall newLine20
-00BA48A06AD00mov AL, [num1]20
-00BE3E856FFcall printInt20
-00C13E8A5FFcall newLine20
-00C448A06AE00mov AL, [sal1]20
-00C83E880FFcall printSalary20
-00CB3E89BFFcall newLine20
-00CE1F4hlt20
+00A01348656C6C6F20576F726C642124Hello World!$20
+00AD1424220
+00AE1323220

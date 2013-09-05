@@ -24,6 +24,9 @@ extern "C"{
 %option yylineno
 %option nodefault
 %%
+%{/*
+This block takes care of removing comments from the input stream*/
+%}
 ";"						{BEGIN(CMT);}
 <CMT>[^\n]+			{/*eat comment text*/;}
 <CMT>\n				 {BEGIN(INITIAL);}
@@ -60,14 +63,22 @@ extern "C"{
 
 [A-Za-z][A-Za-z0-9\_]+		yylval.pStr=strdup(yytext); 			return DIRECTIVE_KEY;
 
-"."[A-Za-z]{2,}				yylval.pStr=strdup(yytext);	BEGIN(PARAM);	return DIRECTIVE;
+
+
+"."[A-Za-z]{2,}				{
+								yylval.pStr=strdup(yytext);	
+								BEGIN(PARAM);
+								return DIRECTIVE;
+							}
+
+
 \[																	return LSQBR;
 \]																	return RSQBR;
 \+																	return PLUS;
 
 [ \t\r]+															/*whitespace*/
-<PARAM>\n							BEGIN(INITIAL);						/*ignore these*/
-\n																		/*and this*/
+<PARAM>\n					BEGIN(INITIAL);							/*ignore these*/
+\n																	/*and this*/
 [HhBb]																/*leftover suffixes*/
 .																printf("bad input character '%s' at line %d\n", yytext, yylineno);
 <<EOF>>						yyterminate();

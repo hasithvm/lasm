@@ -7,6 +7,7 @@
 	#include "symtable.h"
 	#include "Nodes.h"
 	ExpressionList* pList;
+	
 	extern "C"
 	{
 		extern FILE *yyin;
@@ -24,8 +25,8 @@
 	
 
 	void yyerror(const char *str)
-	{
-		cerr << endl << "ERROR: lasm-parser (" << yylineno << ")\t" << str << endl;
+	{ 
+		cerr << endl << "ERROR: lasm-parser (" << yylineno << ") " << str << endl;
 	}
 
 	void setExpressionList(ExpressionList* l){
@@ -68,6 +69,9 @@
 				directive
 				;
 
+
+
+						
 
 	directive:	directive_key DIRECTIVE directive_value
 				{
