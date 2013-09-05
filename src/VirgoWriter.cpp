@@ -35,6 +35,11 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 
 }
 
+
+
+/**
+TODO: ew, really? clean this up!
+**/
 std::string hexdump(unsigned int a){
 return hexdump((uint8_t*)&a, 2);
 

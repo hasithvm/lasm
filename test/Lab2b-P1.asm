@@ -169,14 +169,14 @@ newLine:
 
 str1: .DB 'Hello World!$'		; Should print as 'Hello World!'
 num1: .DB 0x42h					; Should print as decimal 86
-sal1: .DB 0x32h				; Should print as '$34,000'
+sal1: .DB 32			; Should print as '$34,000'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 ; main: Main function to test all subroutines
 .ORG 00B0h
 
 main:
- random text here
+ 	;random text here
 	; Print a string. Use str1
 	MOV SI, str1				; FIX ME
 	CALL printStr

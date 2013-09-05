@@ -1,6 +1,8 @@
 #include "p86Assembler.h"
 
 
+#define IS_REG_DIRECT(r) (r->getAccessMode()==AccessMode::REG_DIRECT)
+
 
 
 p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0){
@@ -167,9 +169,8 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		}
 		else if (immVal){
 			for (int i = 0;i < immVal->size();i+=2){
-				int16_t tmp =(int16_t) immVal->getBinEncoding()[0];
-				binseg->push_back(tmp & 0xFF);
-				binseg->push_back((tmp >> 8) & 0xFF);
+				binseg->push_back(immVal->getBinEncoding()[i]);
+				binseg->push_back(immVal->getBinEncoding()[i+1]);
 			}
 			segs.push_back(binseg);
 
@@ -607,7 +608,7 @@ int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
 				}
 
 			}
-			if (isMem[0] && (pattern[arg0] & MEM)){
+	if (isMem[0] && (pattern[arg0] & MEM)){
 /*
 Acceptable memory operations:
 R->Mem
@@ -626,14 +627,6 @@ if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT){
 
 if(consts[0]){
 
-	/*This is redundant, schedule for cleanup
-	if (consts[0]->getAccessMode() == AccessMode::CONST){
-
-		cerr << "ERROR: Destination must be constant address" << endl;
-		return -1;
-
-
-	}*/
 		if (reg[1] && (pattern[arg1] & REG)){
 			if( (pattern[arg1] & 0x01) != (uint8_t) reg[1]->getAccessWidth())
 				return 1;
@@ -695,7 +688,9 @@ if(consts[0]){
 
 
 	else if (reg[0]){
-
+		hasDisp = false;
+		bool hasImm = false;
+		bool isWordAccess = false;
 		if( reg[0]->getAccessMode() == AccessMode::REG_ADDR){
 			if (reg[0]->isIndexable()){ 
 				switch (reg[0]->getBinEncoding()){
@@ -723,9 +718,42 @@ if(consts[0]){
 				cerr << "ERROR: Undefined register-addressing mode!" << endl;
 				return -1;
 			}
-		}
-		
 
+		}
+		else
+			cerr << "ERROR: Unimplemented register addressing mode!" << endl;
+
+		if (reg[1] && IS_REG_DIRECT(reg[1]) && (pattern[arg1] & REG))
+			modrm |= reg[1]->getBinEncoding() <<  3;
+		else if (imm[1] && imm[1]->getAccessMode() == AccessMode::IMMEDIATE)
+			hasImm = true;
+		else{
+			cerr << "ERROR: Unsupported source for operation" << endl;
+			return -1;
+		}
+		binseg->push_back(pattern[opcodeIndex]);
+		binseg->push_back(modrm);
+		if (hasImm){
+			if (op->getExplicitAccessModifier() == AW_UNSPECIFIED){
+				cerr << "ERROR: Ambiguous operand sizes. Use \"byte\" or \"word\" modifier" << endl;
+				return -1;
+			}
+
+			int len = ((int) op->getExplicitAccessModifier()) + 1;
+			
+			if (imm[1]->size() < len){
+				binseg->push_back(imm[1]->getBinEncoding()[0]);
+				binseg->push_back(0);
+			}
+			else
+				for (int i = 0;i < len;i++)
+					binseg->push_back(imm[1]->getBinEncoding()[i]);	
+
+
+		}
+
+
+		return 0;
 	}
 
 	/*//immediates specify absolute addresses

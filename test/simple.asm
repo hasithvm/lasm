@@ -1,5 +1,7 @@
+	.dw 3000h
+	.dw 3000h
 num1:
-	.db 40h
+	.db 4040h
 	.db 00h
 	.dw main
 	.dw 0
@@ -14,8 +16,9 @@ main:
 ;mov BX, 0x9000
 ;mov CX, 0x4000
 
-;mov SI, num1
+mov SI, num1
 mov [num1], CL
+mov word [SI], 4000
 ;int 0
 ;div word  [num1]
 ;neg byte  [num1]
