@@ -10,6 +10,14 @@ Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 	Operand::setAccessMode(am);
 	m_orig = std::string(pValue);
 	m_data = Immediate::parse(m_orig,base);
+	switch(base) {
+		case ImmediateEncoding::BASE_HEX:
+			m_orig = "0x" + m_orig;
+			break;
+		case ImmediateEncoding::BASE_BIN:
+			m_orig = "0b" + m_orig;
+			break;
+	}
 }
 
 void Immediate::repr(int indentlevel){
