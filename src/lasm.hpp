@@ -25,10 +25,19 @@ using namespace std;
 //namespace opt = boost::program_options;
 
 
-extern "C"
-	{
+#ifdef WIN32
 		extern FILE *yyin;
 		extern int yylineno;
+		extern int yydebug;
+#endif
+
+extern "C"
+	{
+#ifndef WIN32
+		FILE *yyin;
+		int yylineno;
+		int yydebug;
+#endif
 		int yyparse(void);
 		void yyerror(const char *str);
 	}

@@ -1,5 +1,9 @@
 #include "VirgoWriter.h"
 
+#ifdef WIN32
+#define snprintf _snprintf
+#endif
+
 std::string hexdump(uint8_t* bytes, int count);
 std::string hexdump(unsigned int a);
 std::string hexdump_reverse(unsigned int a);
