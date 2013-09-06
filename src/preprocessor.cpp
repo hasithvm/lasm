@@ -8,16 +8,16 @@ void preprocess(ExpressionList& pExprList){
 vector<ControlNode*> equ_defs;
 vector<Constant**> pConstants;
 for (int i =0;i < pExprList.size();i++){
-		if (pExprList[i]->getType() == ExpressionType::EXPR_OP){
+		if (pExprList[i]->getType() == EXPR_OP){
 			Operands& op = ((OpNode*) pExprList[i])->getOperands();
 			for (int j = 0;j < op.size();j++){
-			if (op[j]->getAccessMode() == AccessMode::CONST){
+			if (op[j]->getAccessMode() == CONST){
 				pConstants.push_back((Constant**)&op[j]);
 			}
 			}
 		}
-		else if (pExprList[i]->getType() == ExpressionType::EXPR_CONTROL){
-			if (((ControlNode*) pExprList[i])->getControlType() == ControlNodeType::CONTROL_EQU)		
+		else if (pExprList[i]->getType() == EXPR_CONTROL){
+			if (((ControlNode*) pExprList[i])->getControlType() == CONTROL_EQU)		
 			equ_defs.push_back((ControlNode*) pExprList[i]);
 
 
@@ -31,9 +31,9 @@ for (int i=0;i< equ_defs.size();i++){
 	for (int j=0;j<pConstants.size();j++){
 		std::string& const_name = (*(pConstants[j]))->getName();
 		if (equ_key.compare(const_name)==0){
-				if ((*pConstants[j])->getAccessMode() == AccessMode::CONST_ADDR){
+				if ((*pConstants[j])->getAccessMode() == CONST_ADDR){
 					Immediate* pNew = ((Immediate*)equ_defs[i]->getValue())->clone();
-					pNew->setAccessMode(AccessMode::IMMEDIATE_ADDR);
+					pNew->setAccessMode(IMMEDIATE_ADDR);
 					(*pConstants[j]) = (Constant*)pNew; 
 				}
 				else

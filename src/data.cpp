@@ -10,7 +10,7 @@
 char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
 char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
 
-Operand::Operand():m_am(AccessMode::UNINITIALIZED){
+Operand::Operand():m_am(UNINITIALIZED){
 
 }
 
@@ -69,7 +69,7 @@ void Register::repr(int indentlevel){
 	clog << indenter << "\t<address>"<< hex2str(&reg,1) << "</address>" << endl;
 	clog << indenter << "\t<name>" << m_regname << "</name>" <<  endl;
 	//clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)Operand::getAccessMode()] << "</accessmode>" << endl;
-	if (Operand::getAccessMode() == AccessMode::REG_OFFSET)
+	if (Operand::getAccessMode() == REG_OFFSET)
 	{
 		clog << indenter << "\t<offset>" << endl;
 		Operands* ops =  getOffsetPtr();
@@ -102,9 +102,9 @@ else
 	m_regtype = REG_GP;
 
 if (str.at(1) == 'H' || (str.at(1) == 'L' ))
-	m_aw = AccessWidth::AW_8BIT;
+	m_aw = AW_8BIT;
 else
-	m_aw = AccessWidth::AW_16BIT;
+	m_aw = AW_16BIT;
 if ((m_regtype == REG_SP) &&( m_regmap[str] > 0x04) || (str.compare("BX") == 0))
 	m_isIndexBase = true;
 

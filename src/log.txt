@@ -12,7 +12,7 @@
 <control>
 	<name>dw</name>
 	<key>
-B
+p‚A
 	<key>
 	<value>
 	<Immediate>
@@ -26,7 +26,7 @@
 <control>
 	<name>db</name>
 	<key>
-–
+0‚A
 	<key>
 	<value>
 	<Immediate>
@@ -37,7 +37,7 @@
 <control>
 	<name>db</name>
 	<key>
-B
+p‚A
 	<key>
 	<value>
 	<Immediate>
@@ -48,7 +48,7 @@
 <control>
 	<name>dw</name>
 	<key>
-B
+p‚A
 	<key>
 	<value>
 	<Constant>
@@ -59,7 +59,7 @@
 <control>
 	<name>dw</name>
 	<key>
-B
+p‚A
 	<key>
 	<value>
 	<Immediate>
@@ -170,7 +170,7 @@
 <control>
 	<name>end</name>
 	<key>
-PB
+∞‚A
 	<key>
 	<value>
 	<Constant>

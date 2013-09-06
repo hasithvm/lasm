@@ -3,7 +3,7 @@ BinarySegment::BinarySegment()
 :m_data(),
 m_updateAddress(false),
 m_addr(NULL),
-m_addrSize(AccessWidth::AW_UNSPECIFIED),
+m_addrSize(AW_UNSPECIFIED),
 m_addrStartIndex(0),
 m_counter(0),
 m_stringData(){

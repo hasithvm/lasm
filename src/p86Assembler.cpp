@@ -1,7 +1,7 @@
 #include "p86Assembler.h"
 
 
-#define IS_REG_DIRECT(r) (r->getAccessMode()==AccessMode::REG_DIRECT)
+#define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 
 
 
@@ -25,13 +25,13 @@ void p86Assembler::parse(ExpressionList& pExprList){
 		currentExpr = pExprList[i];
 		switch(currentExpr->getType()){
 
-			case(ExpressionType::EXPR_OP):
+			case(EXPR_OP):
 			_handleOpNode((OpNode*)currentExpr);
 			break;
-			case(ExpressionType::EXPR_CONTROL):
+			case(EXPR_CONTROL):
 			_handleControlNode((ControlNode*)currentExpr);
 			break;
-			case(ExpressionType::EXPR_LABEL):
+			case(EXPR_LABEL):
 			_handleLabelNode((LabelNode*)currentExpr);
 			default:
 			break;
@@ -71,13 +71,13 @@ bool p86Assembler::_postpass(){
 			switch (segs[i]->getAddrSize()){
 
 
-				case (AccessWidth::AW_8BIT):		
+				case (AW_8BIT):		
 
 				if (finalAddress < -128 || finalAddress > 127){
 					clog << "WARNING: Jump offset is longer than 8 bits!" << endl;
 				//set the 16-bit bit field.
 					(*segs[i])[0] |= 0x01;
-					segs[i]->setAddrSize(AccessWidth::AW_16BIT);
+					segs[i]->setAddrSize(AW_16BIT);
 					segs[i]->push_back(0);
 					updateLocationMap(loc_addr, 1);
 					rerunPass = true;
@@ -86,7 +86,7 @@ bool p86Assembler::_postpass(){
 					(*segs[i])[addrStart] = (int8_t)(finalAddress & 0x00FF);
 
 				break;
-				case (AccessWidth::AW_16BIT):
+				case (AW_16BIT):
 
 				(*segs[i])[addrStart] = (finalAddress & 0x00FF);
 				(*segs[i])[addrStart + 1] = (finalAddress & 0xFF00) >> 8;
@@ -132,16 +132,16 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 	Immediate* immVal = NULL;
 	Constant* constVal = NULL;
 
-	if (ctrl->getValue()->getAccessMode() == AccessMode::IMMEDIATE)
+	if (ctrl->getValue()->getAccessMode() == IMMEDIATE)
 		immVal = (Immediate*) ctrl->getValue();
 
-	else if (ctrl->getValue()->getAccessMode() == AccessMode::CONST)
+	else if (ctrl->getValue()->getAccessMode() == CONST)
 		constVal = (Constant*) ctrl->getValue();
 
 	switch(ctrl->getControlType()){
 
 
-		case (ControlNodeType::CONTROL_DB):
+		case (CONTROL_DB):
 
 
 		
@@ -157,12 +157,12 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		counter = counter + binseg->size();
 		break;
 	//TODO: Implement DW 
-		case (ControlNodeType::CONTROL_DW):
+		case (CONTROL_DW):
 		binseg->setCounter(counter);
 		if (constVal){
 			binseg->setUpdateFlag(false);
 			binseg->setConstant(constVal);
-			binseg->setAddrSize(AccessWidth::AW_16BIT);
+			binseg->setAddrSize(AW_16BIT);
 			binseg->push_back(0);
 			binseg->push_back(0);
 			segs.push_back(binseg);
@@ -181,7 +181,7 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		counter = counter + binseg->size();
 		break;
 
-		case (ControlNodeType::CONTROL_ORG):
+		case (CONTROL_ORG):
 
 		if (immVal->size() != 2){
 			cout << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
@@ -190,7 +190,7 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 		counter = (immVal->getBinEncoding()[1] << 8) | immVal->getBinEncoding()[0];
 		break;
 
-		case (ControlNodeType::CONTROL_END):
+		case (CONTROL_END):
 
 		m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
 
@@ -281,11 +281,11 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 			binseg->setConstant(consts[0]);
 
 	//default to 8-bit offset
-			binseg->setAddrSize(AccessWidth::AW_8BIT);
+			binseg->setAddrSize(AW_8BIT);
 			binseg->push_back(0);
 
 			if (pattern[arg0] & 0x01){
-				binseg->setAddrSize(AccessWidth::AW_16BIT);
+				binseg->setAddrSize(AW_16BIT);
 				binseg->push_back(0);
 			}
 
@@ -325,7 +325,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 		//source isn't a memory location
 		if (!isMem[1]){
 		//first afg isn't a reg
-			if (!reg[0] || ! (reg[0]->getAccessMode() == AccessMode::REG_DIRECT))
+			if (!reg[0] || ! (reg[0]->getAccessMode() == REG_DIRECT))
 				return 1;
 		//arguments are inherent to the opcode
 			if (pattern[0] & OP_NO_MODRM){
@@ -495,7 +495,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 				binseg->push_back(modrm);
 				binseg->setUpdateFlag(false);
 				binseg->setConstant(consts[1]);
-				binseg->setAddrSize(AccessWidth::AW_16BIT);
+				binseg->setAddrSize(AW_16BIT);
 				binseg->push_back(0);
 				binseg->push_back(0);
 				_addSeg(binseg);
@@ -531,17 +531,17 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 					modrm |= pattern[1];
 
 				}
-				if (imm[1] && imm[1]->getAccessMode() == AccessMode::IMMEDIATE_ADDR){
+				if (imm[1] && imm[1]->getAccessMode() == IMMEDIATE_ADDR){
 					//addressing mode is disp16
 					hasDisp = true;
 					modrm = 0x06;
 				}
-				else if (consts[1] && consts[1]->getAccessMode() == AccessMode::CONST_ADDR){
+				else if (consts[1] && consts[1]->getAccessMode() == CONST_ADDR){
 					//addressing mode is disp16
 					hasDisp = true;
 					modrm = 0x06;
 				}
-				else if (reg[1] && reg[1]->getAccessMode() == AccessMode::REG_ADDR){
+				else if (reg[1] && reg[1]->getAccessMode() == REG_ADDR){
 					if (reg[1]->isIndexable()){ 
 
 
@@ -568,7 +568,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 					}
 				}
-				else if (reg[1] && reg[1]->getAccessMode() == AccessMode::REG_OFFSET){
+				else if (reg[1] && reg[1]->getAccessMode() == REG_OFFSET){
 					if (reg[1]->isIndexable()){ 
 
 						Operands* offsets = reg[1]->getOffsetPtr();
@@ -594,7 +594,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 						if (consts[1]){
 							binseg->setUpdateFlag(false);
 							binseg->setConstant(consts[1]);
-							binseg->setAddrSize(AccessWidth::AW_16BIT);
+							binseg->setAddrSize(AW_16BIT);
 						}
 						binseg->push_back(0);
 						binseg->push_back(0);
@@ -665,7 +665,7 @@ if(consts[0]){
 
 
 	//addr is 16-bit offset
-		binseg->setAddrSize(AccessWidth::AW_16BIT);
+		binseg->setAddrSize(AW_16BIT);
 		binseg->push_back(0);
 		binseg->push_back(0);
 		if (immSz){
@@ -693,7 +693,7 @@ if(consts[0]){
 		hasDisp = false;
 		bool hasImm = false;
 		bool isWordAccess = false;
-		if( reg[0]->getAccessMode() == AccessMode::REG_ADDR){
+		if( reg[0]->getAccessMode() == REG_ADDR){
 			if (reg[0]->isIndexable()){ 
 				switch (reg[0]->getBinEncoding()){
 					case (ENC_REG_BP):
@@ -727,7 +727,7 @@ if(consts[0]){
 
 		if (reg[1] && IS_REG_DIRECT(reg[1]) && (pattern[arg1] & REG))
 			modrm |= reg[1]->getBinEncoding() <<  3;
-		else if (imm[1] && imm[1]->getAccessMode() == AccessMode::IMMEDIATE)
+		else if (imm[1] && imm[1]->getAccessMode() == IMMEDIATE)
 			hasImm = true;
 		else{
 			cerr << "ERROR: Unsupported source for operation" << endl;
@@ -805,26 +805,26 @@ void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** c
 		AccessMode& am = ops[i]->getAccessMode();
 
 		switch (am){
-			case (AccessMode::REG_DIRECT):
-			case (AccessMode::REG_ADDR):
-			case (AccessMode::REG_OFFSET):
+			case (REG_DIRECT):
+			case (REG_ADDR):
+			case (REG_OFFSET):
 			rs[i] =(Register*) ops[i]; 
 			break;
 
-			case (AccessMode::IMMEDIATE):
-			case (AccessMode::IMMEDIATE_ADDR):
+			case (IMMEDIATE):
+			case (IMMEDIATE_ADDR):
 			imms[i] = (Immediate*) ops[i];
 			break;
-			case (AccessMode::CONST):
-			case (AccessMode::CONST_ADDR):
+			case (CONST):
+			case (CONST_ADDR):
 			consts[i] =(Constant*) ops[i];
 			break;
 
 		}
 		switch (am){
-			case (AccessMode::IMMEDIATE_ADDR):
-			case (AccessMode::CONST_ADDR):
-			case (AccessMode::REG_ADDR):
+			case (IMMEDIATE_ADDR):
+			case (CONST_ADDR):
+			case (REG_ADDR):
 			isMemory[i] = true;
 			break;
 			default:
@@ -844,23 +844,23 @@ static std::string getSourceRepr(OpNode* ptr){
 	{
 		paramStr = "";
 		switch (ops[i]->getAccessMode()){
-			case (AccessMode::REG_DIRECT):
+			case (REG_DIRECT):
 			paramStr =((Register*) ops[i])->getRegName();
 			break;
-			case (AccessMode::REG_ADDR):
+			case (REG_ADDR):
 			paramStr = "[" + ((Register*) ops[i])->getRegName() + "]";
 			break;
-			case (AccessMode::CONST_ADDR):
+			case (CONST_ADDR):
 			paramStr = "[";
 				paramStr+=((Constant*) ops[i])->getName();
 				paramStr += "]";
 break;
-case (AccessMode::IMMEDIATE):
+case (IMMEDIATE):
 paramStr =((Immediate*) ops[i])->getSourceRepr();
 break;
-case (AccessMode::IMMEDIATE_ADDR):
+case (IMMEDIATE_ADDR):
 paramStr ="[" + ((Immediate*) ops[i])->getSourceRepr() + "]";
-case (AccessMode::CONST):
+case (CONST):
 paramStr = ((Constant*) ops[i])->getName();
 break;
 default:

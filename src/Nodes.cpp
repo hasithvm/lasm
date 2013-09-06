@@ -30,11 +30,11 @@ OpNode::OpNode(char* pOpName, Operands* op)
 	ops = *op;
 	opstr = std::string(pOpName);
 	strToLowerCase(opstr);
-	m_aw = AccessWidth::AW_UNSPECIFIED;
+	m_aw = AW_UNSPECIFIED;
 }
 
 ExpressionType OpNode::getType(){
-	return ExpressionType::EXPR_OP;
+	return EXPR_OP;
 }
 
 void OpNode::setContent(std::string a)
@@ -101,26 +101,19 @@ ControlNode::ControlNode(char* e, Operand* i){
 ControlNode::CtrlTypeLookupMap ControlNode::tlm(ControlNode::_populate());
 
 ControlNode::CtrlTypeLookupMap  ControlNode::_populate(){
-#ifndef VS2010
-	return{
-	{"db", ControlNodeType::CONTROL_DB},
-	{"dw", ControlNodeType::CONTROL_DW},
-	{"equ", ControlNodeType::CONTROL_EQU},
-	{"org", ControlNodeType::CONTROL_ORG},
-	{"end", ControlNodeType::CONTROL_END}};
-#else
+
 	ControlNode::CtrlTypeLookupMap ret;
-	ret["db"] = ControlNodeType::CONTROL_DB;
-	ret["dw"] = ControlNodeType::CONTROL_DW;
-	ret["equ"] = ControlNodeType::CONTROL_EQU;
-	ret["org"] = ControlNodeType::CONTROL_ORG;
-	ret["end"] = ControlNodeType::CONTROL_END;
+	ret["db"] = CONTROL_DB;
+	ret["dw"] = CONTROL_DW;
+	ret["equ"] = CONTROL_EQU;
+	ret["org"] = CONTROL_ORG;
+	ret["end"] = CONTROL_END;
 	return ret;
-#endif
+
 }
 
 ExpressionType ControlNode::getType(){
-	return ExpressionType::EXPR_CONTROL;
+	return EXPR_CONTROL;
 }
 
 ControlNodeType ControlNode::getControlType(){
@@ -216,6 +209,6 @@ void LabelNode::repr(int indentlevel){
 }
 
 ExpressionType LabelNode::getType(){
-	return ExpressionType::EXPR_LABEL;
+	return EXPR_LABEL;
 }
 

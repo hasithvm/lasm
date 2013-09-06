@@ -26,12 +26,12 @@ typedef struct {
 	char* pStr;
 } parser_opcode;
 
-enum AccessWidth : std::uint8_t{
+enum AccessWidth{
 AW_UNSPECIFIED=0xFF,
 AW_8BIT=0,
 AW_16BIT=1,
 };
-enum AccessMode : std::uint8_t{
+enum AccessMode {
 	UNINITIALIZED=0,
 	REG_DIRECT=4,				//use register as direct access.
 	REG_ADDR=6,					//register contains address of operand.

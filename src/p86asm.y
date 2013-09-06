@@ -88,7 +88,7 @@
 					ControlNode* pControl = new ControlNode($2,$<pListOperands>3->at(0));
 					
 					free($<pStr>2);
-					if ($<pStr>1 != nullptr)
+					if ($<pStr>1)
 				 	pControl->setKey($<pStr>1);
 					$<pExpr>$ = pControl;
 
@@ -128,20 +128,20 @@
 
 	modifier:	
 				{
-					$<pAccessWidth>$ = nullptr;			
+					$<pAccessWidth>$ = NULL;			
 				}
 				|
 				WORDPTR
 				{
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
-					*p = (uint8_t)AccessWidth::AW_16BIT;
+					*p = (uint8_t)AW_16BIT;
 					$<pAccessWidth>$ = p;
 				}
 				|
 				BYTEPTR
 				{
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
-					*p = (uint8_t)AccessWidth::AW_8BIT;
+					*p = (uint8_t)AW_8BIT;
 					$<pAccessWidth>$ = p;
 					clog << "byte ptr" << endl;
 				
@@ -178,14 +178,14 @@
 					{
 					
 					Operand* op = $<pListOperands>2->at(0);
-					if (op->getAccessMode() == AccessMode::REG_DIRECT)
-						op->setAccessMode(AccessMode::REG_ADDR);
+					if (op->getAccessMode() == REG_DIRECT)
+						op->setAccessMode(REG_ADDR);
 					
-					if (op->getAccessMode() == AccessMode::IMMEDIATE)
-						op->setAccessMode(AccessMode::IMMEDIATE_ADDR);
+					if (op->getAccessMode() == IMMEDIATE)
+						op->setAccessMode(IMMEDIATE_ADDR);
 					
-					if (op->getAccessMode() == AccessMode::CONST)
-						op->setAccessMode(AccessMode::CONST_ADDR);
+					if (op->getAccessMode() == CONST)
+						op->setAccessMode(CONST_ADDR);
 					$<pListOperands>$ = $<pListOperands>2;
 					}
 					
@@ -195,19 +195,19 @@
 				{
 					Operand* op1 = $<pListOperands>2->at(0);
 					Operand* op2 = $<pListOperands>4->at(0);
-					if (op1->getAccessMode() == AccessMode::REG_DIRECT)
+					if (op1->getAccessMode() == REG_DIRECT)
 						{
 							((Register*)op1)->setOffsetPtr($<pListOperands>4);
 							$<pListOperands>$ = $<pListOperands>2;
 						}
-					else if (op2->getAccessMode()== AccessMode::REG_DIRECT)
+					else if (op2->getAccessMode()== REG_DIRECT)
 						{
 							((Register*)op2)->setOffsetPtr($<pListOperands>2);
 							$<pListOperands>$ = $<pListOperands>4;
 						}
 					else
 						yyerror("indexed mode must have at least one valid register!");
-							$<pListOperands>$->at(0)->setAccessMode(AccessMode::REG_OFFSET);
+							$<pListOperands>$->at(0)->setAccessMode(REG_OFFSET);
 				}
  				|
 				LSQBR operand PLUS operand PLUS operand RSQBR
@@ -215,20 +215,20 @@
 					Operand* op1 = $<pListOperands>2->at(0);
 					Operand* op2 = $<pListOperands>4->at(0);
 					Operand* op3 = $<pListOperands>6->at(0);
-					if (op1->getAccessMode() == AccessMode::REG_DIRECT)
+					if (op1->getAccessMode() == REG_DIRECT)
 						{
 							catOperands($<pListOperands>4,$<pListOperands>6);
 							((Register*)op1)->setOffsetPtr($<pListOperands>4);
 							
 							$<pListOperands>$ = $<pListOperands>2;
 						}
-					else if (op2->getAccessMode()== AccessMode::REG_DIRECT)
+					else if (op2->getAccessMode()== REG_DIRECT)
 						{
 							catOperands($<pListOperands>2,$<pListOperands>6);
 							((Register*)op2)->setOffsetPtr($<pListOperands>2);
 							$<pListOperands>$ = $<pListOperands>4;
 						}
-					else if (op3->getAccessMode()== AccessMode::REG_DIRECT)
+					else if (op3->getAccessMode()== REG_DIRECT)
 						{
 							catOperands($<pListOperands>2,$<pListOperands>4);
 							((Register*)op3)->setOffsetPtr($<pListOperands>6);
@@ -250,7 +250,7 @@
 	reg_and_lookup_type:TEXT
 						{
 							if (Register::exists($<pStr>1)){
-							Register *reg = new Register($1, AccessMode::REG_DIRECT);
+							Register *reg = new Register($1, REG_DIRECT);
 							free ($<pStr>1);
 							Operands* ptr = new std::vector<Operand*>;
 							ptr->push_back(reg);
@@ -258,7 +258,7 @@
 							}
 							else{
 								Constant* cnst = new Constant($1);
-								cnst->setAccessMode(AccessMode::CONST);
+								cnst->setAccessMode(CONST);
 								free($<pStr>1);
 								Operands* ptr = new std::vector<Operand*>;
 								ptr->push_back(cnst);
@@ -275,7 +275,7 @@
 					|
 					LITERAL
 					{
-						Immediate *i = new Immediate($<pStr>1,BASE_ASC,AccessMode::IMMEDIATE);
+						Immediate *i = new Immediate($<pStr>1,BASE_ASC,IMMEDIATE);
 						free($<pStr>1);
 						Operands* ptr = new std::vector<Operand*>;
 						ptr->push_back(i);
@@ -284,7 +284,7 @@
 
 	binary_type:BIN_PRE
 				{
-					Immediate *i = new Immediate($<pStr>1,BASE_BIN,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1,BASE_BIN,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -293,7 +293,7 @@
 				|
 				BIN_SUFF
 				{
-					Immediate *i = new Immediate($<pStr>1,BASE_BIN,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1,BASE_BIN,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -303,7 +303,7 @@
 
 	hex_type:	HEX_PRE
 				{
-					Immediate *i = new Immediate($<pStr>1 + 2,BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1 + 2,BASE_HEX,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -312,7 +312,7 @@
 				|
 				HEX_SUFF
 				{
-					Immediate *i = new Immediate($<pStr>1,BASE_HEX,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1,BASE_HEX,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
@@ -322,7 +322,7 @@
 
 	decimal_type:	DEC
 					{
-					Immediate *i = new Immediate($<pStr>1,BASE_DEC,AccessMode::IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1,BASE_DEC,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);

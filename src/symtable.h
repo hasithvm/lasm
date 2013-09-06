@@ -139,10 +139,7 @@ class SymTable{
 						uint8_t get(std::string opcode);
 						void repr();
 						auto_ptr<OpVars> at(int index); 
-		private:
-					typedef map<std::string, OpVars > SymMap;
-						static SymMap m_opmap;
-};
+		};
 
 
 
