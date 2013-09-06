@@ -6,6 +6,7 @@ num1:
 	.dw main
 	.dw 0
 main: 
+jmp testing
 mov BX, 0x0001
 mov AX, [BX]
 ;mov AL,[num1]
@@ -24,6 +25,7 @@ mov word [SI], 4000
 ;int 0
 ;div word  [num1]
 ;neg byte  [num1]
+testing:
 hlt
 
 .end main

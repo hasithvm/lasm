@@ -86,6 +86,12 @@ clog << "assembly started!" << endl;
 	p86Assembler asmgen;
 	asmgen.parse(list);
 	writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+
+for (int i = 0; i< list.size();i++)
+{
+	delete list[i];
+}
+
 cout << "Output file " << strOutputFile << " created" << endl;
 		clog.rdbuf(backup);  
 		toFile.close();

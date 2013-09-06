@@ -204,18 +204,18 @@ void p86Assembler::_handleControlNode(ControlNode* ctrl){
 void p86Assembler::_handleOpNode(OpNode* op){
 	int match = 1;
 	Operands& operands = op->getOperands();
-	OpVars& opv = st.at(op->getContent());
-	if (opv.size() == 0){
+	auto_ptr<OpVars> opv = st.at(op->getID());
+	if (opv->size() == 0){
 		cerr << "ERROR: Unimplemented mnemonic " << op->getContent()  << " on line " << op->getLineNumber() << endl;
 		return;			
 	}
 
-	for (int j = 0;j < opv.size();j++)
+	for (int j = 0;j < opv->size();j++)
 	{
-		uint8_t op_prop = opv[j][0];
+		uint8_t op_prop = (*opv->get(j))[0];
 		int opcode_offset = 1;
 			//if ((op_prop & OP_OPERANDS) == operands.size()){
-		match = _construct(opv[j], op, operands);
+		match = _construct(opv->get(j), op, operands);
 		if (match == 0){
 			segs[segs.size()-1]->setStringData(getSourceRepr(op));
 			break;
@@ -238,13 +238,16 @@ void p86Assembler::_handleOpNode(OpNode* op){
 *@param ops source operands specified in code
 *@return None
 */
-int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
+int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops){
 
 	BinarySegment* binseg = new BinarySegment();
 	Register  *reg[3] = {NULL,NULL,NULL};
 	Immediate* imm[3]= {NULL};
 	Constant* consts[3] = {NULL};
 	bool isMem[3] = {false, false};
+
+
+	OpType pattern = *pPattern.release();
 
 	int operandCount = pattern[0] & OP_OPERANDS;
 	int arg0 = pattern.size() - operandCount;
@@ -256,10 +259,9 @@ int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
 	vector<uint8_t> immediateData;
 	unsigned int immSz = 0;
 
-//break out the operands correctly
+//break out the operands correctlyp
 	decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
 //single byte operands
-
 	if ((pattern[0] & OP_NO_MODRM)  &&  ((pattern[0] & OP_OPERANDS) == 0)){
 			//don't need operands!
 		if (ops.size() != 0){

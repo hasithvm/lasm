@@ -112,6 +112,7 @@
 					}
 						pCode->setID($<pOpcode>1->instrID);
 						pCode->setLineNumber(yylineno);
+						free($<pOpcode>1->pStr);
 						free($<pOpcode>1);
 						$<pExpr>$ = pCode;
 						

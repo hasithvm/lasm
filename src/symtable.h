@@ -4,8 +4,9 @@
 #include <map>
 #include <stdint.h>
 #include <iostream>
+#include <memory>
 #include "data.h"
-#include <initializer_list>
+
 #include "symtable-generated.hpp"
 using namespace std;
 
@@ -101,42 +102,34 @@ using namespace std;
 
 
 
-typedef std::vector<uint8_t> 	OpType;
-typedef std::vector< OpType > 	OpVars;
+//typedef std::vector<uint8_t> 	OpType;
+//typedef std::vector< OpType > 	OpVars;
 
 
 
 //single byte opcodes supported only!
 //OpType format: [future implementation, 0x00] opcode modRM (optional) operand1 operand2
-/*class OpType{
+class OpType{
 public:
-		OpType* instance();
+		OpType();
 		unsigned char& operator[](int index);
 		int size();
 		void realign(inst_variant* ptr);
 private:
-		OpType();
-		OpType(OpType const&){};			// copy constructor is private
-		OpType& operator=(OpType const&){}; // assignment operator is private
 		inst_variant* m_ptr;
-		static OpType* m_pInstance;
 };	
 
 class OpVars{
 	public:		
-				OpVars* instance();
-				OpType& operator[](int index);
+				OpVars();
+				auto_ptr<OpType> get (int index);
 				int size();
 				void realign(int index);
 	private:
-			OpVars();
-			OpVars(OpVars const&){};			// copy constructor is private
-			OpVars& operator=(OpVars const&){}; // assignment operator is private
 			int m_index;
-			static OpVars* m_pInstance;
 
 };
-*/
+
 
 
 
@@ -147,7 +140,7 @@ class SymTable{
 						void repr();
 						bool exists(std::string opcode);
 						OpVars& at(std::string search); 
-						OpVars& at(int index); 
+						auto_ptr<OpVars> at(int index); 
 		private:
 					typedef map<std::string, OpVars > SymMap;
 						static SymMap m_opmap;

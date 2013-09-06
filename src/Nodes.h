@@ -103,7 +103,7 @@ class OpNode : public BaseExpressionNode{
 					void repr(int indentlevel);
 					std::string getSourceRepr();
 					void setID(int ID);
-
+					int getID() {return m_id;}
 		private:
 					Operands ops;
 					std::string opstr;

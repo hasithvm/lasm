@@ -485,9 +485,9 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    58,    58,    59,    64,    68,    70,    72,    79,    92,
-      94,    99,   101,   104,   122,   126,   133,   143,   147,   156,
-     162,   167,   186,   205,   236,   238,   242,   262,   264,   266,
-     268,   277,   286,   296,   305,   315,   325
+      94,    99,   101,   104,   123,   127,   134,   144,   148,   157,
+     163,   168,   187,   206,   237,   239,   243,   263,   265,   267,
+     269,   278,   287,   297,   306,   316,   326
 };
 #endif
 
@@ -1489,6 +1489,7 @@ yyreduce:
 					}
 						pCode->setID((yyvsp[(1) - (3)].pOpcode)->instrID);
 						pCode->setLineNumber(yylineno);
+						free((yyvsp[(1) - (3)].pOpcode)->pStr);
 						free((yyvsp[(1) - (3)].pOpcode));
 						(yyval.pExpr) = pCode;
 						
@@ -1498,7 +1499,7 @@ yyreduce:
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 122 "p86asm.y"
+#line 123 "p86asm.y"
     {
 					(yyval.pAccessWidth) = nullptr;			
 				}
@@ -1507,7 +1508,7 @@ yyreduce:
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 127 "p86asm.y"
+#line 128 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_16BIT;
@@ -1518,7 +1519,7 @@ yyreduce:
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 134 "p86asm.y"
+#line 135 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_8BIT;
@@ -1531,7 +1532,7 @@ yyreduce:
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 143 "p86asm.y"
+#line 144 "p86asm.y"
     {
 					(yyval.pListOperands)= new Operands();
 				}
@@ -1540,7 +1541,7 @@ yyreduce:
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 148 "p86asm.y"
+#line 149 "p86asm.y"
     {
 					Operands* p1 =(yyvsp[(1) - (3)].pListOperands);
 					Operands* p2 =(yyvsp[(3) - (3)].pListOperands);
@@ -1553,7 +1554,7 @@ yyreduce:
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 157 "p86asm.y"
+#line 158 "p86asm.y"
     {
 					(yyval.pListOperands) = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1562,7 +1563,7 @@ yyreduce:
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 163 "p86asm.y"
+#line 164 "p86asm.y"
     {
 					(yyval.pListOperands)  = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1571,7 +1572,7 @@ yyreduce:
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 168 "p86asm.y"
+#line 169 "p86asm.y"
     {
 					if ((yyvsp[(2) - (3)].pListOperands)->size() != 0)
 					{
@@ -1594,7 +1595,7 @@ yyreduce:
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 187 "p86asm.y"
+#line 188 "p86asm.y"
     {
 					Operand* op1 = (yyvsp[(2) - (5)].pListOperands)->at(0);
 					Operand* op2 = (yyvsp[(4) - (5)].pListOperands)->at(0);
@@ -1617,7 +1618,7 @@ yyreduce:
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 206 "p86asm.y"
+#line 207 "p86asm.y"
     {
 					Operand* op1 = (yyvsp[(2) - (7)].pListOperands)->at(0);
 					Operand* op2 = (yyvsp[(4) - (7)].pListOperands)->at(0);
@@ -1650,7 +1651,7 @@ yyreduce:
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 243 "p86asm.y"
+#line 244 "p86asm.y"
     {
 							if (Register::exists((yyvsp[(1) - (1)].pStr))){
 							Register *reg = new Register((yyvsp[(1) - (1)].pStr), AccessMode::REG_DIRECT);
@@ -1673,7 +1674,7 @@ yyreduce:
   case 30:
 
 /* Line 1806 of yacc.c  */
-#line 269 "p86asm.y"
+#line 270 "p86asm.y"
     {
 						Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_ASC,AccessMode::IMMEDIATE);
 						free((yyvsp[(1) - (1)].pStr));
@@ -1686,7 +1687,7 @@ yyreduce:
   case 31:
 
 /* Line 1806 of yacc.c  */
-#line 278 "p86asm.y"
+#line 279 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1699,7 +1700,7 @@ yyreduce:
   case 32:
 
 /* Line 1806 of yacc.c  */
-#line 287 "p86asm.y"
+#line 288 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1712,7 +1713,7 @@ yyreduce:
   case 33:
 
 /* Line 1806 of yacc.c  */
-#line 297 "p86asm.y"
+#line 298 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr) + 2,BASE_HEX,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1725,7 +1726,7 @@ yyreduce:
   case 34:
 
 /* Line 1806 of yacc.c  */
-#line 306 "p86asm.y"
+#line 307 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_HEX,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1738,7 +1739,7 @@ yyreduce:
   case 35:
 
 /* Line 1806 of yacc.c  */
-#line 316 "p86asm.y"
+#line 317 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_DEC,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1752,7 +1753,7 @@ yyreduce:
   case 36:
 
 /* Line 1806 of yacc.c  */
-#line 326 "p86asm.y"
+#line 327 "p86asm.y"
     {
 					LabelNode* pLabel = new LabelNode((yyvsp[(1) - (2)].pStr));
 					free((yyvsp[(1) - (2)].pStr));
@@ -1763,7 +1764,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1767 "p86asm.tab.c"
+#line 1768 "p86asm.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1994,6 +1995,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 332 "p86asm.y"
+#line 333 "p86asm.y"
 
 
