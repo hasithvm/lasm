@@ -144,7 +144,6 @@ class SymTable{
 		private:
 					typedef map<std::string, OpVars > SymMap;
 						static SymMap m_opmap;
-						static SymMap generate();
 };
 
 

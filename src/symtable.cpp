@@ -2,6 +2,9 @@
 #include <iostream>
 #include <iomanip>
 
+
+SymTable::SymMap SymTable::m_opmap;
+
 void SymTable::repr(){
 
 clog << "p86asm supported opcodes:" << endl;

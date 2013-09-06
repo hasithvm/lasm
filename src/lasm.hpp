@@ -24,11 +24,17 @@ ExpressionList list;
 using namespace std;
 //namespace opt = boost::program_options;
 
+#ifdef VS2010
+extern FILE* yyin;
+extern int yylineno;
+#endif
 
 extern "C"
 	{
+#ifndef VS2010
 		extern FILE *yyin;
 		extern int yylineno;
+#endif
 		int yyparse(void);
 		void yyerror(const char *str);
 	}

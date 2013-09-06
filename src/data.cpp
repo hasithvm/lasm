@@ -1,4 +1,11 @@
 #include "data.h"
+
+#ifndef VS2010
+#define _toupper std::toupper
+#else
+#define snprintf(a, b, c, ...) _snprintf_s(a, b, b, c, __VA_ARGS__)
+#endif
+
 //string lookup table for register types.
 char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
 char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
@@ -80,7 +87,7 @@ void Register::repr(int indentlevel){
 uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
 for (int i=0;i<str.size();i++)
-		str[i] = std::toupper(str[i]);
+		str[i] = _toupper(str[i]);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
 if (m_regmap.find(str) == m_regmap.end())
 {
