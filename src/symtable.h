@@ -138,8 +138,6 @@ class SymTable{
 						SymTable();
 						uint8_t get(std::string opcode);
 						void repr();
-						bool exists(std::string opcode);
-						OpVars& at(std::string search); 
 						auto_ptr<OpVars> at(int index); 
 		private:
 					typedef map<std::string, OpVars > SymMap;

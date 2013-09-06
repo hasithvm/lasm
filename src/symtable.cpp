@@ -25,22 +25,6 @@ clog << "p86asm supported opcodes:" << endl;
 */
 }
 
-bool SymTable::exists(std::string opcode){
-/*	//clog << "SymTable: matching " << opcode << endl;
-	strToLowerCase(opcode);
-	if (m_opmap.count(opcode) > 0){
-	//	clog << "SymTable: match found!" << endl;
-		return true;
-	}
-	//clog << "SymTable: not an opcode" << endl;
-	return false;
-}*/
-}
-OpVars& SymTable::at(std::string search){
-	//return m_opmap.at(search);;
-}
-
-
 auto_ptr<OpVars> SymTable::at(int index){
 	auto_ptr<OpVars> pOp(new OpVars());
 	pOp->realign(index);
