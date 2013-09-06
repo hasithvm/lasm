@@ -26,7 +26,7 @@ LoopPS:
 	MOV AL, [SI]	; Load the next char to be printed - USING INPUT PARAMETER BX
 	CMP AL, '$'		; Compare the char to '$'
 	JE quitPS		; If it is equal, then quit subroutine and return to calling code
-	OUT DX,AL		; If it is not equal to '$', then print it
+	OUT DX, AL		; If it is not equal to '$', then print it
 	INC SI			; Point to the next char to be printed
 	jmp LoopPS		; Jump back to the top of the loop
 quitPS:

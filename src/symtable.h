@@ -6,6 +6,7 @@
 #include <iostream>
 #include "data.h"
 #include <initializer_list>
+#include "symtable-generated.hpp"
 using namespace std;
 
 #define OPCODE(op,bin)	ret[std::string(op)] = bin
@@ -107,6 +108,36 @@ typedef std::vector< OpType > 	OpVars;
 
 //single byte opcodes supported only!
 //OpType format: [future implementation, 0x00] opcode modRM (optional) operand1 operand2
+/*class OpType{
+public:
+		OpType* instance();
+		unsigned char& operator[](int index);
+		int size();
+		void realign(inst_variant* ptr);
+private:
+		OpType();
+		OpType(OpType const&){};			// copy constructor is private
+		OpType& operator=(OpType const&){}; // assignment operator is private
+		inst_variant* m_ptr;
+		static OpType* m_pInstance;
+};	
+
+class OpVars{
+	public:		
+				OpVars* instance();
+				OpType& operator[](int index);
+				int size();
+				void realign(int index);
+	private:
+			OpVars();
+			OpVars(OpVars const&){};			// copy constructor is private
+			OpVars& operator=(OpVars const&){}; // assignment operator is private
+			int m_index;
+			static OpVars* m_pInstance;
+
+};
+*/
+
 
 
 class SymTable{
@@ -116,10 +147,14 @@ class SymTable{
 						void repr();
 						bool exists(std::string opcode);
 						OpVars& at(std::string search); 
+						OpVars& at(int index); 
 		private:
 					typedef map<std::string, OpVars > SymMap;
 						static SymMap m_opmap;
 						static SymMap generate();
 };
+
+
+
 
 #endif

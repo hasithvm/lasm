@@ -102,12 +102,13 @@ class OpNode : public BaseExpressionNode{
 					AccessWidth getExplicitAccessModifier();
 					void repr(int indentlevel);
 					std::string getSourceRepr();
+					void setID(int ID);
 
 		private:
 					Operands ops;
 					std::string opstr;
 					AccessWidth m_aw;
-	
+					int m_id;
 };
 
 

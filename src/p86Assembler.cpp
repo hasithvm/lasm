@@ -585,7 +585,7 @@ int p86Assembler::_construct(OpType pattern,OpNode* op, Operands& ops){
 
 				}
 
-					modrm |= reg[0]->getBinEncoding();
+					modrm |= reg[0]->getBinEncoding() << 3;
 					binseg->push_back(pattern[opcodeIndex]);
 					binseg->push_back(modrm);
 					if (hasDisp){

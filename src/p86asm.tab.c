@@ -76,7 +76,8 @@
 	#include "symtable.h"
 	#include "Nodes.h"
 	ExpressionList* pList;
-	
+	using namespace std;
+
 	extern "C"
 	{
 		extern FILE *yyin;
@@ -85,6 +86,7 @@
 		void yyerror(const char *str);
 		int yylex(void);
 		int yywrap(){
+
 
 		return 1;
 		}
@@ -105,7 +107,7 @@
 
 
 /* Line 268 of yacc.c  */
-#line 109 "p86asm.tab.c"
+#line 111 "p86asm.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -133,26 +135,24 @@
       know about them.  */
    enum yytokentype {
      COLON = 258,
-     END = 259,
-     COMMA = 260,
-     WORDPTR = 261,
-     BYTEPTR = 262,
-     LSQBR = 263,
-     RSQBR = 264,
-     PLUS = 265,
-     NEWLN = 266,
-     OPCODE = 267,
-     HEX_PRE = 268,
-     HEX_SUFF = 269,
-     DEC = 270,
-     BIN_PRE = 271,
-     BIN_SUFF = 272,
-     CMTSTR = 273,
-     LABEL = 274,
-     LITERAL = 275,
-     TEXT = 276,
-     DIRECTIVE_KEY = 277,
-     DIRECTIVE = 278
+     COMMA = 259,
+     WORDPTR = 260,
+     BYTEPTR = 261,
+     LSQBR = 262,
+     RSQBR = 263,
+     PLUS = 264,
+     NEWLN = 265,
+     OPCODE = 266,
+     HEX_PRE = 267,
+     HEX_SUFF = 268,
+     DEC = 269,
+     BIN_PRE = 270,
+     BIN_SUFF = 271,
+     LABEL = 272,
+     LITERAL = 273,
+     TEXT = 274,
+     DIRECTIVE_KEY = 275,
+     DIRECTIVE = 276
    };
 #endif
 
@@ -163,17 +163,18 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 38 "p86asm.y"
+#line 40 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* pExpr;
 	uint8_t* pAccessWidth;
+	parser_opcode* pOpcode;
 
 
 
 /* Line 293 of yacc.c  */
-#line 177 "p86asm.tab.c"
+#line 178 "p86asm.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -185,7 +186,7 @@ typedef union YYSTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 189 "p86asm.tab.c"
+#line 190 "p86asm.tab.c"
 
 #ifdef short
 # undef short
@@ -404,10 +405,10 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   36
+#define YYLAST   34
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  24
+#define YYNTOKENS  22
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  18
 /* YYNRULES -- Number of rules.  */
@@ -417,7 +418,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   278
+#define YYMAXUTOK   276
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -452,7 +453,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23
+      15,    16,    17,    18,    19,    20,    21
 };
 
 #if YYDEBUG
@@ -469,24 +470,24 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      25,     0,    -1,    -1,    25,    26,    -1,    27,    -1,    31,
-      -1,    41,    -1,    28,    -1,    29,    23,    30,    -1,    -1,
-      22,    -1,    36,    -1,    37,    -1,    12,    32,    33,    -1,
-      -1,     6,    -1,     7,    -1,    -1,    34,     5,    34,    -1,
-      34,    -1,    35,    -1,     8,    35,     9,    -1,     8,    35,
-      10,    35,     9,    -1,     8,    35,    10,    35,    10,    35,
-       9,    -1,    36,    -1,    37,    -1,    21,    -1,    39,    -1,
-      38,    -1,    40,    -1,    20,    -1,    16,    -1,    17,    -1,
-      13,    -1,    14,    -1,    15,    -1,    19,     3,    -1
+      23,     0,    -1,    -1,    23,    24,    -1,    25,    -1,    29,
+      -1,    39,    -1,    26,    -1,    27,    21,    28,    -1,    -1,
+      20,    -1,    34,    -1,    35,    -1,    11,    30,    31,    -1,
+      -1,     5,    -1,     6,    -1,    -1,    32,     4,    32,    -1,
+      32,    -1,    33,    -1,     7,    33,     8,    -1,     7,    33,
+       9,    33,     8,    -1,     7,    33,     9,    33,     9,    33,
+       8,    -1,    34,    -1,    35,    -1,    19,    -1,    37,    -1,
+      36,    -1,    38,    -1,    18,    -1,    15,    -1,    16,    -1,
+      12,    -1,    13,    -1,    14,    -1,    17,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    55,    55,    56,    61,    65,    67,    69,    76,    89,
-      91,    96,    98,   101,   118,   122,   129,   139,   143,   152,
-     158,   163,   182,   201,   232,   234,   238,   258,   260,   262,
-     264,   273,   282,   292,   301,   311,   321
+       0,    58,    58,    59,    64,    68,    70,    72,    79,    92,
+      94,    99,   101,   104,   122,   126,   133,   143,   147,   156,
+     162,   167,   186,   205,   236,   238,   242,   262,   264,   266,
+     268,   277,   286,   296,   305,   315,   325
 };
 #endif
 
@@ -495,14 +496,13 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "COLON", "END", "COMMA", "WORDPTR",
-  "BYTEPTR", "LSQBR", "RSQBR", "PLUS", "NEWLN", "OPCODE", "HEX_PRE",
-  "HEX_SUFF", "DEC", "BIN_PRE", "BIN_SUFF", "CMTSTR", "LABEL", "LITERAL",
-  "TEXT", "DIRECTIVE_KEY", "DIRECTIVE", "$accept", "statements",
-  "statement", "program_expr", "directive", "directive_key",
-  "directive_value", "code", "modifier", "params", "param", "operand",
-  "reg_and_lookup_type", "immediate_type", "binary_type", "hex_type",
-  "decimal_type", "label", 0
+  "$end", "error", "$undefined", "COLON", "COMMA", "WORDPTR", "BYTEPTR",
+  "LSQBR", "RSQBR", "PLUS", "NEWLN", "OPCODE", "HEX_PRE", "HEX_SUFF",
+  "DEC", "BIN_PRE", "BIN_SUFF", "LABEL", "LITERAL", "TEXT",
+  "DIRECTIVE_KEY", "DIRECTIVE", "$accept", "statements", "statement",
+  "program_expr", "directive", "directive_key", "directive_value", "code",
+  "modifier", "params", "param", "operand", "reg_and_lookup_type",
+  "immediate_type", "binary_type", "hex_type", "decimal_type", "label", 0
 };
 #endif
 
@@ -513,17 +513,17 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278
+     275,   276
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    24,    25,    25,    26,    27,    27,    27,    28,    29,
-      29,    30,    30,    31,    32,    32,    32,    33,    33,    33,
-      34,    34,    34,    34,    35,    35,    36,    37,    37,    37,
-      37,    38,    38,    39,    39,    40,    41
+       0,    22,    23,    23,    24,    25,    25,    25,    26,    27,
+      27,    28,    28,    29,    30,    30,    30,    31,    31,    31,
+      32,    32,    32,    32,    33,    33,    34,    35,    35,    35,
+      35,    36,    36,    37,    37,    38,    39
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -559,18 +559,18 @@ static const yytype_int8 yydefgoto[] =
 #define YYPACT_NINF -18
 static const yytype_int8 yypact[] =
 {
-     -18,     1,   -18,    -3,     9,   -18,   -18,   -18,   -18,    -5,
-     -18,   -18,   -18,   -18,    -6,   -18,    14,    14,   -18,   -18,
-     -18,   -18,   -18,   -18,   -18,   -18,    16,   -18,   -18,   -18,
-     -18,   -18,   -18,   -18,   -18,   -18,    -4,    -6,   -18,    14,
-     -18,     7,   -18,    14,    10,   -18
+     -18,     1,   -18,    -2,    14,   -18,   -18,   -18,   -18,    -1,
+     -18,   -18,   -18,   -18,    -5,   -18,    15,    15,   -18,   -18,
+     -18,   -18,   -18,   -18,   -18,   -18,    19,   -18,   -18,   -18,
+     -18,   -18,   -18,   -18,   -18,   -18,    -3,    -5,   -18,    15,
+     -18,     7,   -18,    15,    11,   -18
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,   -18,
-     -13,   -17,    17,    20,   -18,   -18,   -18,   -18
+     -13,   -17,     9,    16,   -18,   -18,   -18,   -18
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -580,9 +580,9 @@ static const yytype_int8 yypgoto[] =
 static const yytype_uint8 yytable[] =
 {
       36,     2,    17,    12,    13,    38,    39,    18,    19,    20,
-      21,    22,    15,     3,    23,    24,    42,    43,    16,    45,
-       4,    37,    41,     5,    40,     0,    44,    18,    19,    20,
-      21,    22,     0,    34,    23,    24,    35
+      21,    22,     3,    23,    24,    42,    43,    15,     4,    45,
+      16,     5,    41,    37,    40,    34,    44,    18,    19,    20,
+      21,    22,    35,    23,    24
 };
 
 #define yypact_value_is_default(yystate) \
@@ -591,23 +591,23 @@ static const yytype_uint8 yytable[] =
 #define yytable_value_is_error(yytable_value) \
   YYID (0)
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      17,     0,     8,     6,     7,     9,    10,    13,    14,    15,
-      16,    17,     3,    12,    20,    21,     9,    10,    23,     9,
-      19,     5,    39,    22,    37,    -1,    43,    13,    14,    15,
-      16,    17,    -1,    16,    20,    21,    16
+      17,     0,     7,     5,     6,     8,     9,    12,    13,    14,
+      15,    16,    11,    18,    19,     8,     9,     3,    17,     8,
+      21,    20,    39,     4,    37,    16,    43,    12,    13,    14,
+      15,    16,    16,    18,    19
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    25,     0,    12,    19,    22,    26,    27,    28,    29,
-      31,    41,     6,     7,    32,     3,    23,     8,    13,    14,
-      15,    16,    17,    20,    21,    33,    34,    35,    36,    37,
-      38,    39,    40,    30,    36,    37,    35,     5,     9,    10,
-      34,    35,     9,    10,    35,     9
+       0,    23,     0,    11,    17,    20,    24,    25,    26,    27,
+      29,    39,     5,     6,    30,     3,    21,     7,    12,    13,
+      14,    15,    16,    18,    19,    31,    32,    33,    34,    35,
+      36,    37,    38,    28,    34,    35,    33,     4,     8,     9,
+      32,    33,     8,     9,    33,     8
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1444,7 +1444,7 @@ yyreduce:
         case 3:
 
 /* Line 1806 of yacc.c  */
-#line 57 "p86asm.y"
+#line 60 "p86asm.y"
     {
 					pList->push_back((yyvsp[(2) - (2)].pExpr));
 				}
@@ -1453,7 +1453,7 @@ yyreduce:
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 77 "p86asm.y"
+#line 80 "p86asm.y"
     {
 					ControlNode* pControl = new ControlNode((yyvsp[(2) - (3)].pStr),(yyvsp[(3) - (3)].pListOperands)->at(0));
 					
@@ -1469,7 +1469,7 @@ yyreduce:
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 92 "p86asm.y"
+#line 95 "p86asm.y"
     {
 					(yyval.pStr) = (yyvsp[(1) - (1)].pStr); 
 				}
@@ -1478,17 +1478,18 @@ yyreduce:
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 102 "p86asm.y"
+#line 105 "p86asm.y"
     {
 					
-					OpNode* pCode = new OpNode((yyvsp[(1) - (3)].pStr), (yyvsp[(3) - (3)].pListOperands));
+					OpNode* pCode = new OpNode((yyvsp[(1) - (3)].pOpcode)->pStr, (yyvsp[(3) - (3)].pListOperands));
 					if ((yyvsp[(2) - (3)].pAccessWidth))
 					{
 						pCode->setExplicitAccessModifier((AccessWidth)*(yyvsp[(2) - (3)].pAccessWidth));
 						free((yyvsp[(2) - (3)].pAccessWidth));					
 					}
+						pCode->setID((yyvsp[(1) - (3)].pOpcode)->instrID);
 						pCode->setLineNumber(yylineno);
-						free((yyvsp[(1) - (3)].pStr));
+						free((yyvsp[(1) - (3)].pOpcode));
 						(yyval.pExpr) = pCode;
 						
 				}
@@ -1497,7 +1498,7 @@ yyreduce:
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 118 "p86asm.y"
+#line 122 "p86asm.y"
     {
 					(yyval.pAccessWidth) = nullptr;			
 				}
@@ -1506,7 +1507,7 @@ yyreduce:
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 123 "p86asm.y"
+#line 127 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_16BIT;
@@ -1517,7 +1518,7 @@ yyreduce:
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 130 "p86asm.y"
+#line 134 "p86asm.y"
     {
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AccessWidth::AW_8BIT;
@@ -1530,7 +1531,7 @@ yyreduce:
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 139 "p86asm.y"
+#line 143 "p86asm.y"
     {
 					(yyval.pListOperands)= new Operands();
 				}
@@ -1539,7 +1540,7 @@ yyreduce:
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 144 "p86asm.y"
+#line 148 "p86asm.y"
     {
 					Operands* p1 =(yyvsp[(1) - (3)].pListOperands);
 					Operands* p2 =(yyvsp[(3) - (3)].pListOperands);
@@ -1552,7 +1553,7 @@ yyreduce:
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 153 "p86asm.y"
+#line 157 "p86asm.y"
     {
 					(yyval.pListOperands) = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1561,7 +1562,7 @@ yyreduce:
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 159 "p86asm.y"
+#line 163 "p86asm.y"
     {
 					(yyval.pListOperands)  = (yyvsp[(1) - (1)].pListOperands);
 				}
@@ -1570,7 +1571,7 @@ yyreduce:
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 164 "p86asm.y"
+#line 168 "p86asm.y"
     {
 					if ((yyvsp[(2) - (3)].pListOperands)->size() != 0)
 					{
@@ -1593,7 +1594,7 @@ yyreduce:
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 183 "p86asm.y"
+#line 187 "p86asm.y"
     {
 					Operand* op1 = (yyvsp[(2) - (5)].pListOperands)->at(0);
 					Operand* op2 = (yyvsp[(4) - (5)].pListOperands)->at(0);
@@ -1616,7 +1617,7 @@ yyreduce:
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 202 "p86asm.y"
+#line 206 "p86asm.y"
     {
 					Operand* op1 = (yyvsp[(2) - (7)].pListOperands)->at(0);
 					Operand* op2 = (yyvsp[(4) - (7)].pListOperands)->at(0);
@@ -1649,7 +1650,7 @@ yyreduce:
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 239 "p86asm.y"
+#line 243 "p86asm.y"
     {
 							if (Register::exists((yyvsp[(1) - (1)].pStr))){
 							Register *reg = new Register((yyvsp[(1) - (1)].pStr), AccessMode::REG_DIRECT);
@@ -1672,7 +1673,7 @@ yyreduce:
   case 30:
 
 /* Line 1806 of yacc.c  */
-#line 265 "p86asm.y"
+#line 269 "p86asm.y"
     {
 						Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_ASC,AccessMode::IMMEDIATE);
 						free((yyvsp[(1) - (1)].pStr));
@@ -1685,7 +1686,7 @@ yyreduce:
   case 31:
 
 /* Line 1806 of yacc.c  */
-#line 274 "p86asm.y"
+#line 278 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1698,7 +1699,7 @@ yyreduce:
   case 32:
 
 /* Line 1806 of yacc.c  */
-#line 283 "p86asm.y"
+#line 287 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_BIN,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1711,7 +1712,7 @@ yyreduce:
   case 33:
 
 /* Line 1806 of yacc.c  */
-#line 293 "p86asm.y"
+#line 297 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr) + 2,BASE_HEX,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1724,7 +1725,7 @@ yyreduce:
   case 34:
 
 /* Line 1806 of yacc.c  */
-#line 302 "p86asm.y"
+#line 306 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_HEX,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1737,7 +1738,7 @@ yyreduce:
   case 35:
 
 /* Line 1806 of yacc.c  */
-#line 312 "p86asm.y"
+#line 316 "p86asm.y"
     {
 					Immediate *i = new Immediate((yyvsp[(1) - (1)].pStr),BASE_DEC,AccessMode::IMMEDIATE);
 					free((yyvsp[(1) - (1)].pStr));
@@ -1751,10 +1752,9 @@ yyreduce:
   case 36:
 
 /* Line 1806 of yacc.c  */
-#line 322 "p86asm.y"
+#line 326 "p86asm.y"
     {
 					LabelNode* pLabel = new LabelNode((yyvsp[(1) - (2)].pStr));
-
 					free((yyvsp[(1) - (2)].pStr));
 					(yyval.pExpr) = pLabel;
 				}
@@ -1994,6 +1994,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 329 "p86asm.y"
+#line 332 "p86asm.y"
 
 

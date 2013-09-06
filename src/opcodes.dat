@@ -1,0 +1,229 @@
+#Instruction listing for lasm -- please run 'update-opcodes.py' after changing this file!
+#Hasith Vidanamadura, h@vidanamadura.net
+#
+
+
+
+#there is no modRM byte
+!def NO_MODRM 4
+#ump-type operation, uses displacement (16-bit?)
+!def IS_JMP 8
+
+#used only in the PUSH. OR the dst register together with the opcode 
+!def REG_ADD 16
+
+
+#next byte after has base value of the mod/rm byte. all mod/rms are ORed with it.
+!def MODRM_EXT 32
+
+
+!def REG_PRESET 16
+
+
+!def AX	0x00
+!def CX	0x01
+!def DX	0x02
+!def BX	0x03
+
+!def SP	0x04
+!def BP	0x05
+!def SI	0x06
+!def DI	0x07
+
+!def AL	0x00
+!def CL	0x01
+!def DL	0x02
+!def BL	0x03
+!def AH	0x04
+!def CH	0x05
+!def DH	0x06
+!def BH	0x07
+
+!def r8 2
+!def m8 4
+!def i8 8
+!def r16 3
+!def m16 5
+!def i16 9
+
+
+#table format:
+#
+#<lowercase name>,<options separated by spaces>, opcode bytes separated by spaces [hex], <modrm extension>, r|m[8|16]@<preset reg if applicable>,r|m|i[8|16]
+#empty lines start new opcode
+!begin
+
+"add"	, NO_MODRM, 0x04, r8 @ AL,i8
+	 	, NO_MODRM,0x05 ,r16 @ AX, i16
+	 	,, 0x00, r8|m8, r8
+	 	,, 0x01, r16|m16, r16
+	 	, MODRM_EXT, 0x00,0x80, r8|m8, i8
+	 	, MODRM_EXT, 0x00,0x81, r16|m16, i16
+	 	,, 0x02, r8, r8|m8
+	 	,, 0x03, r16, r16|i16
+
+"and"	, NO_MODRM ,0x24 ,r8 @ AL, i8
+	 	, NO_MODRM ,0x25 ,r16 @ AX, i16
+	 	,, 0x20, r8|m8, r8
+	 	,, 0x21, r16|m16, r16
+	 	, MODRM_EXT, 0x04,0x80, r8|m8, i8
+	 	, MODRM_EXT, 0x03,0x81, r16|m16, i16
+	 	,, 0x22, r8, r8|m8
+	 	,, 0x23, r16, r16|i16		
+
+"call"	,NO_MODRM,0xE8,i16
+
+
+"cli" 	, NO_MODRM, 0xFA
+
+"cmp"	, NO_MODRM ,0x3C, r8  @  AL, i8
+		, NO_MODRM ,0x3D ,r16 @  AX, i16
+		,, 0x38, r8|m8, r8
+		,, 0x39, r16|m16, r16
+		, MODRM_EXT, 0x07, 0x80, r8|m8, i8
+		, MODRM_EXT, 0x07, 0x81, r16|m16, i16
+		,, 0x3A, r8, r8|m8
+		,, 0x3B, r16, r16|i16
+
+"dec"	, MODRM_EXT, 0x01,0xFE, r8|m8
+		, MODRM_EXT, 0x01,0xFF, r16|m16
+			
+	
+"div"	, MODRM_EXT, 0x06, 0xF6, r8|m8
+		, MODRM_EXT, 0x06, 0xF7, r16|m16
+
+"hlt"	,NO_MODRM, 0xF4
+
+"in"	,NO_MODRM, 0xEC, r8 @ AL, r16 @ DX
+
+"inc"	, MODRM_EXT, 0x00,0xFE, r8|m8
+		, MODRM_EXT, 0x00,0xFF, r16|m16
+			
+"int"	, NO_MODRM,0xCD, i8
+
+"iret"	, NO_MODRM, 0xCF
+			
+"ja"	, NO_MODRM IS_JMP, 0x77, i8
+			
+"jae"	, NO_MODRM IS_JMP, 0x73, i8
+			
+"jb"	, NO_MODRM IS_JMP, 0x72, i8
+			
+"jbe"	, NO_MODRM IS_JMP, 0x76, i8
+			
+"jc"	, NO_MODRM IS_JMP,0x72, i8
+			
+"je"	, NO_MODRM IS_JMP,0x74, i8
+			
+"jg"	, NO_MODRM IS_JMP,0x7f, i8
+			
+"jge"	, NO_MODRM IS_JMP,0x7d, i8
+			
+"jl"	, NO_MODRM IS_JMP,0x7C, i8
+
+"jle"	, NO_MODRM IS_JMP,0x7E, i8
+			
+"jnc"	, NO_MODRM IS_JMP,0x73, i8
+
+"jne"	, NO_MODRM IS_JMP,0x75, i8
+		
+"jno"	, NO_MODRM IS_JMP,0x71, i8
+			
+"jns"	, NO_MODRM IS_JMP,0x79, i8
+			
+"jnz"	, NO_MODRM IS_JMP,0x75, i8
+
+"jo"	, NO_MODRM IS_JMP,0x70, i8
+			
+"js"	, NO_MODRM IS_JMP,0x78, i8
+			
+"jz"	, NO_MODRM IS_JMP,0x74, i8
+
+"jmp"	, NO_MODRM IS_JMP, 0xE9, i16
+			
+"mov"	,, 0x88, r8|m8, r8
+		,, 0x89, r16|m16, r16
+		, MODRM_EXT, 0x00,0xC6, r8|m8, i8
+		, MODRM_EXT, 0x00,0xC7, r16|m16, i16
+		,, 0x8A, r8, m8
+		,, 0x8B, r16, m16
+			
+"mul"	, MODRM_EXT, 0x04, 0xF6, r8|m8
+		, MODRM_EXT, 0x04, 0xF7, r16|m16
+			
+"neg"	, MODRM_EXT, 0x03, 0xF6, r8|m8
+		, MODRM_EXT, 0x03, 0xF7, r16|m16
+			
+"nop"	, NO_MODRM, 0x90
+		
+"not"	, MODRM_EXT, 0x02, 0xF6, r8|m8
+		, MODRM_EXT, 0x02, 0xF7, r16|m16
+			
+"or"	, NO_MODRM ,0x0C ,r8  @ AL, i8
+		, NO_MODRM ,0x0D ,r16 @ AX, i16
+		,, 0x08, r8|m8, r8
+		,, 0x09, r16|i16, r16
+		, MODRM_EXT, 0x01,0x80, r8|m8, i8
+		, MODRM_EXT, 0x01,0x81, r16|m16, i16
+		,, 0x08, r8, r8|m8
+		,, 0x09, r16, r16|i16
+			
+	
+"out"	, NO_MODRM, 0xEE, r16 @ DX, r8 @ AL
+				
+"pop"	, NO_MODRM REG_ADD, 0x58, r16
+			
+"push"	, NO_MODRM REG_ADD, 0x50, r16
+			
+
+
+"rcl"	, MODRM_EXT ,0x02, 0xD2, r8|m8, r8 @ CL
+		, MODRM_EXT ,0x02, 0xD3, r16|m16, r8  @ CL 
+		, MODRM_EXT ,0x02, 0xC0, r8|m8,  i8
+		, MODRM_EXT ,0x02, 0xC1, r16|m16,  i8
+
+"rcr"	, MODRM_EXT ,0x03, 0xD2, r8|m8, r8 @ CL
+		, MODRM_EXT ,0x03, 0xD3, r16|m16, r8  @ CL		
+		, MODRM_EXT ,0x03, 0xC0, r8|m8,  i8
+		, MODRM_EXT ,0x03, 0xC1, r16|m16,  i8
+
+"ret"	, NO_MODRM, 0xC3
+		
+"rol"	, MODRM_EXT ,0x00, 0xD2, r8|m8, r8 @ CL 
+		, MODRM_EXT ,0x00, 0xD3, r16|m16, r8 @ CL 
+		, MODRM_EXT ,0x00, 0xC0, r8|m8,  i8
+		, MODRM_EXT ,0x00, 0xC1, r16|m16,  i8
+
+"ror"	, MODRM_EXT ,0x01, 0xD2, r8|m8, r8  @ CL
+		, MODRM_EXT ,0x01, 0xD3, r16|m16, r8 @ CL 
+		, MODRM_EXT ,0x01, 0xC0, r8|m8,  i8
+		, MODRM_EXT ,0x01, 0xC1, r16|m16,  i8
+
+"sti"	, NO_MODRM, 0xFB
+			
+"shl"	, MODRM_EXT ,0x04, 0xD2, r8|m8, r8 @ CL
+	 	, MODRM_EXT ,0x04, 0xD3, r8|m16, r8 @ CL  
+
+"shr"	, MODRM_EXT ,0x05, 0xD2, r8|m8, r8  @ CL
+		, MODRM_EXT ,0x05, 0xD3, r16|m16, r8  @ CL 
+			
+"sub"	, NO_MODRM  ,0x2C ,r8 @ AL, i8
+		, NO_MODRM ,0x2D ,r16 @ AX, i16
+		,, 0x28, r8|m8, r8
+		,, 0x29, r16|i16, r16
+		, MODRM_EXT, 0x05,0x80, r8|m8, i8
+		, MODRM_EXT, 0x03,0x81, r16|m16, i16
+
+"test"	,, 0x84, r8|m8, r8
+		,, 0x85, r16|m16, r16
+
+"xor"	, NO_MODRM ,0x34 ,r8 @ AL, i8
+		, NO_MODRM ,0x35 ,r16  @ AX, i16
+		,, 0x30, r8|m8, r8
+		,, 0x31, r16|i16, r16
+		, MODRM_EXT, 0x06,0x80, r8|m8, i8
+		, MODRM_EXT, 0x06,0x81, r16|m16, i16
+		,, 0x32,r8, r8|m8
+		,, 0x33,r16, r16|i16
+
+			

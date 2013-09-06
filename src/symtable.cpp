@@ -1,4 +1,9 @@
 #include "symtable.h"
+#include <iostream>
+#include <iomanip>
+
+//OpVars* OpVars::m_pInstance = NULL;
+//OpType* OpType::m_pInstance = NULL;
 
 SymTable::SymMap SymTable::m_opmap(SymTable::generate());
 
@@ -9,7 +14,7 @@ SymTable::SymMap SymTable::generate(){
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x04 ,REG8 | REG_PRESET | REG_AL, IMM8},
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x05 ,REG16 | REG_PRESET | REG_AX, IMM16},
 			{OP_TWO_OPERANDS, 0x00, REG8|MEM8, REG8},
-			{OP_TWO_OPERANDS, 0x01, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS, 0x01, REG16|MEM16, REG16},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0x80, REG8|MEM8, IMM8},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0x81, REG16|MEM16, IMM16},
 			{OP_TWO_OPERANDS, 0x02, REG8, REG8|MEM8},
@@ -21,7 +26,7 @@ SymTable::SymMap SymTable::generate(){
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x24 ,REG8 | REG_PRESET | REG_AL, IMM8},
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x25 ,REG16 | REG_PRESET | REG_AX, IMM16},
 			{OP_TWO_OPERANDS, 0x20, REG8|MEM8, REG8},
-			{OP_TWO_OPERANDS, 0x21, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS, 0x21, REG16|MEM16, REG16},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x04 << 3,0x80, REG8|MEM8, IMM8},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x03 << 3,0x81, REG16|MEM16, IMM16},
 			{OP_TWO_OPERANDS, 0x22, REG8, REG8|MEM8},
@@ -45,7 +50,7 @@ SymTable::SymMap SymTable::generate(){
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3C, REG8 | REG_PRESET | REG_AL, IMM8},
 			{OP_TWO_OPERANDS | OP_NO_MODRM ,0x3D ,REG16 | REG_PRESET | REG_AX, IMM16},
 			{OP_TWO_OPERANDS, 0x38, REG8|MEM8, REG8},
-			{OP_TWO_OPERANDS, 0x39, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS, 0x39, REG16|MEM16, REG16},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x07 << 3,0x80, REG8|MEM8, IMM8},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x07 << 3,0x81, REG16|MEM16, IMM16},
 			{OP_TWO_OPERANDS, 0x3A, REG8, REG8|MEM8},
@@ -237,11 +242,11 @@ SymTable::SymMap SymTable::generate(){
 	{"mov",
 			{
 			{OP_TWO_OPERANDS, 0x88, REG8|MEM8, REG8},
-			{OP_TWO_OPERANDS, 0x89, REG16|IMM16, REG16},
+			{OP_TWO_OPERANDS, 0x89, REG16|MEM16, REG16},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0xC6, REG8|MEM8, IMM8},
 			{OP_TWO_OPERANDS | OP_MODRM_EXT, 0x00,0xC7, REG16|MEM16, IMM16},
 			{OP_TWO_OPERANDS ,0x8A, REG8, MEM8},
-			{OP_TWO_OPERANDS ,0x8B, REG8, MEM16},
+			{OP_TWO_OPERANDS ,0x8B, REG16, MEM16},
 			}
 	
 	
@@ -401,13 +406,22 @@ SymTable::SymMap SymTable::generate(){
 
 void SymTable::repr(){
 
-//clog << "p86asm supported opcodes:" << endl;
-for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
+clog << "p86asm supported opcodes:" << endl;
+/*for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
 {
-//clog << "\t opcode: " <<it->first <<" encoding:  " << hex2str(&it->second,1)<<  endl;
-}
-clog << endl;
+	clog << "\t opcode: " <<it->first << endl;
+		for (OpVars::iterator it2 = it->second.begin(); it2 != it->second.end();it2++){
+			for (OpType::iterator it3 = it2->begin(); it3 != it2->end(); it3++){
+				std::string a[4];
+				clog << (int)*it3;
+				clog << ",";
+			}
+			clog << endl;
+		}
 
+	clog << "\t end" << endl;
+	}
+*/
 }
 
 bool SymTable::exists(std::string opcode){
@@ -420,11 +434,74 @@ bool SymTable::exists(std::string opcode){
 	//clog << "SymTable: not an opcode" << endl;
 	return false;
 }
-OpVars& SymTable::at(std::string search){
 
-	return m_opmap.at(search);
+OpVars& SymTable::at(std::string search){
+	return m_opmap.at(search);;
 }
+
 SymTable::SymTable(){
 }
 
 
+
+/*
+
+
+
+OpVars::OpVars() {
+	m_index = 0;
+
+}
+
+OpVars* OpVars::instance(){
+	if (!m_pInstance)
+		m_pInstance = new OpVars();
+	return m_pInstance;
+}
+
+void OpVars::realign(int index){
+	m_index = index;
+
+
+}
+
+int OpVars::size(){
+	return instr[m_index].varCount;
+}
+
+OpType& OpVars::operator[](int index){
+	OpType::instance()->realign(instr[m_index].ptr);
+	return *o;
+}
+
+OpType::OpType(){
+
+	m_ptr = NULL;
+
+}
+
+OpType* OpType::instance(){
+	if (!m_pInstance)
+		m_pInstance = new OpType();
+	return m_pInstance;
+}
+
+int OpType::size(){
+	if (m_ptr)
+		return m_ptr->szVariant;
+	else 
+		return -1;
+}
+
+void OpType::realign(inst_variant* ptr){
+
+	m_ptr = ptr;
+}
+
+
+unsigned char& OpType::operator[](int index){
+	if (m_ptr)
+		return m_ptr->pStart[index];
+
+}
+*/

@@ -7,7 +7,8 @@
 	#include "symtable.h"
 	#include "Nodes.h"
 	ExpressionList* pList;
-	
+	using namespace std;
+
 	extern "C"
 	{
 		extern FILE *yyin;
@@ -16,6 +17,7 @@
 		void yyerror(const char *str);
 		int yylex(void);
 		int yywrap(){
+
 
 		return 1;
 		}
@@ -40,13 +42,14 @@
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* pExpr;
 	uint8_t* pAccessWidth;
+	parser_opcode* pOpcode;
 }
 %debug
 %error-verbose
-%token COLON  END COMMA WORDPTR BYTEPTR LSQBR RSQBR PLUS NEWLN
-
-%token <pStr> OPCODE HEX_PRE HEX_SUFF DEC BIN_PRE BIN_SUFF
-%token <pStr> CMTSTR LABEL
+%token COLON  COMMA WORDPTR BYTEPTR LSQBR RSQBR PLUS NEWLN
+%token <pOpcode> OPCODE
+%token <pStr> HEX_PRE HEX_SUFF DEC BIN_PRE BIN_SUFF
+%token <pStr> LABEL
 %token <pStr> LITERAL TEXT DIRECTIVE_KEY
 %token <pStr> DIRECTIVE
 
@@ -101,14 +104,15 @@
 	code:		 OPCODE modifier params
 				{
 					
-					OpNode* pCode = new OpNode($<pStr>1, $<pListOperands>3);
+					OpNode* pCode = new OpNode($<pOpcode>1->pStr, $<pListOperands>3);
 					if ($<pAccessWidth>2)
 					{
 						pCode->setExplicitAccessModifier((AccessWidth)*$<pAccessWidth>2);
 						free($<pAccessWidth>2);					
 					}
+						pCode->setID($<pOpcode>1->instrID);
 						pCode->setLineNumber(yylineno);
-						free($<pStr>1);
+						free($<pOpcode>1);
 						$<pExpr>$ = pCode;
 						
 				}
@@ -321,7 +325,6 @@
 	label:		LABEL COLON
 				{
 					LabelNode* pLabel = new LabelNode($<pStr>1);
-
 					free($<pStr>1);
 					$<pExpr>$ = pLabel;
 				};

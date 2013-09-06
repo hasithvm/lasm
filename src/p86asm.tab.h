@@ -38,26 +38,24 @@
       know about them.  */
    enum yytokentype {
      COLON = 258,
-     END = 259,
-     COMMA = 260,
-     WORDPTR = 261,
-     BYTEPTR = 262,
-     LSQBR = 263,
-     RSQBR = 264,
-     PLUS = 265,
-     NEWLN = 266,
-     OPCODE = 267,
-     HEX_PRE = 268,
-     HEX_SUFF = 269,
-     DEC = 270,
-     BIN_PRE = 271,
-     BIN_SUFF = 272,
-     CMTSTR = 273,
-     LABEL = 274,
-     LITERAL = 275,
-     TEXT = 276,
-     DIRECTIVE_KEY = 277,
-     DIRECTIVE = 278
+     COMMA = 259,
+     WORDPTR = 260,
+     BYTEPTR = 261,
+     LSQBR = 262,
+     RSQBR = 263,
+     PLUS = 264,
+     NEWLN = 265,
+     OPCODE = 266,
+     HEX_PRE = 267,
+     HEX_SUFF = 268,
+     DEC = 269,
+     BIN_PRE = 270,
+     BIN_SUFF = 271,
+     LABEL = 272,
+     LITERAL = 273,
+     TEXT = 274,
+     DIRECTIVE_KEY = 275,
+     DIRECTIVE = 276
    };
 #endif
 
@@ -68,17 +66,18 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 38 "p86asm.y"
+#line 40 "p86asm.y"
 
 	char* pStr;
 	std::vector<Operand*>* pListOperands;
 	BaseExpressionNode* pExpr;
 	uint8_t* pAccessWidth;
+	parser_opcode* pOpcode;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 82 "p86asm.tab.h"
+#line 81 "p86asm.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

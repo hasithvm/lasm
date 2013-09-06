@@ -13,8 +13,12 @@ lasm: $(OBJ)
 %.o : %.c
 	$(CC) -c $(CCFLAGS) $<
 
+
+p86asm.l: p86asm.l.inc opcodes.dat
+	python update-opcodes.py
+
 lex.yy.c :p86asm.l
-	flex p86asm.l
+	flex -i p86asm.l
 
 		
 p86asm.tab.c:p86asm.y

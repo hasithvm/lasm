@@ -51,6 +51,9 @@ Operands& OpNode::getOperands(){
 	return ops;
 }
 
+void OpNode::setID(int id){
+	m_id = id;
+}
 int OpNode::getOperandCount(){
 	int tmp_len =0;
 	for (int i = 0; i < ops.size();i++)
@@ -63,6 +66,8 @@ void OpNode::repr(int indentlevel){
 	clog << indenter << "<statement>" << endl;
 	clog << indenter << "\t<type>opcode</type>" << endl;
 	clog << indenter << "\t<opcode>" << opstr << "</opcode>" << endl;
+		clog << indenter << "\t<id>" << m_id << "</id>" << endl;
+
 	clog << indenter << "\t<params>" << endl;
 	for (int i = 0; i < ops.size();i++)
 	{
@@ -122,6 +127,9 @@ void ControlNode::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');	
 	clog << indenter << "<control>" << endl;
 	clog << indenter << "\t<name>" << label << "</name>" << endl;
+	clog << indenter << "\t<key>" << endl;
+	clog << indenter << m_key << endl;
+		clog << indenter << "\t<key>" << endl;
 	clog << indenter << "\t<value>" << endl;
 	imm->repr(indentlevel + 1);
 		clog << indenter << "\t<value>" << endl;

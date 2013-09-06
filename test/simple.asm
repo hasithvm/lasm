@@ -1,4 +1,4 @@
-	.dw 3000h
+	.org 3000h
 	.dw 3000h
 num1:
 	.db 4040h
@@ -6,6 +6,8 @@ num1:
 	.dw main
 	.dw 0
 main: 
+mov BX, 0x0001
+mov AX, [BX]
 ;mov AL,[num1]
 ;cmp AL, 0x00
 ;add SI, 0x02

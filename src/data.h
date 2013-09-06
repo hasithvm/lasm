@@ -15,6 +15,11 @@
 
 using namespace std;
 
+typedef struct {
+	unsigned char instrID;
+	char* pStr;
+} parser_opcode;
+
 enum AccessWidth : std::uint8_t{
 AW_UNSPECIFIED=0xFF,
 AW_8BIT=0,
