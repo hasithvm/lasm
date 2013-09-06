@@ -2,9 +2,15 @@
 #define _DATA_H_
 //defines for assembler information
 #include <string>
+#ifdef VS2010
+#include <cstdint>
+#include <cstdlib>
+#include <cstdio>
+#else
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#endif
 #include <iostream>
 #include <map>
 #include <vector>
@@ -25,7 +31,7 @@ AW_UNSPECIFIED=0xFF,
 AW_8BIT=0,
 AW_16BIT=1,
 };
-enum class AccessMode : std::uint8_t{
+enum AccessMode : std::uint8_t{
 	UNINITIALIZED=0,
 	REG_DIRECT=4,				//use register as direct access.
 	REG_ADDR=6,					//register contains address of operand.
