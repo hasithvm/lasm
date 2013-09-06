@@ -1,5 +1,9 @@
 #include "VirgoWriter.h"
 
+#ifdef VS2010
+#define snprintf(a, b, c, ...) _snprintf_s(a, b, b, c, __VA_ARGS__)
+#endif
+
 std::string hexdump(uint8_t* bytes, int count);
 std::string hexdump(unsigned int a);
 std::string hexdump_reverse(unsigned int a);

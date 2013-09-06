@@ -9,10 +9,17 @@
 	ExpressionList* pList;
 	using namespace std;
 
+	#ifdef VS2010
+	extern FILE* yyin;
+	extern int yylineno;
+	#endif
+
 	extern "C"
 	{
+	#ifndef VS2010
 		extern FILE *yyin;
 		extern int yylineno;
+	#endif
 		int yyparse(void);
 		void yyerror(const char *str);
 		int yylex(void);
