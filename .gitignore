@@ -20,3 +20,6 @@ src/symtable-generated.hpp
 src/lex.yy.c
 *.tab.c
 *.tab.h
+*.ilk
+*.pdb
+log.txt
