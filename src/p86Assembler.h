@@ -16,14 +16,14 @@ class p86Assembler{
 	public:
 
 		p86Assembler();
-		void parse(ExpressionList& pExprList);
+		int parse(ExpressionList& pExprList);
 		unsigned int getStartingAddress();
 		vector<BinarySegment*>& getSegments();
 
 	private:
-		void _handleOpNode(OpNode* op);
-		void _handleControlNode(ControlNode* ctl);
-		void _handleLabelNode(LabelNode* ctl);
+		int _handleOpNode(OpNode* op);
+		int _handleControlNode(ControlNode* ctl);
+		int _handleLabelNode(LabelNode* ctl);
 		bool _postpass();
 		void updateLocationMap(unsigned int startFrom, int increment);
 		int _construct(auto_ptr<OpType> pattern,OpNode* op, Operands& ops);

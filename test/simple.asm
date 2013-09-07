@@ -15,21 +15,20 @@ main:
 ;mov SI, 2
 ;mov DI, 1
 ;mov [BP + 2], AX
-;mov AX, [BP + 3]
-;mov AX, [BX + 4]
-;mov AX, [SI + 256]
-;mov AX, [DI + 1]
+mov AX, [BP + 3]
+mov AX, [BX + 4]
+mov AX, [SI + 256]
+mov AX, [DI + 1]
 ;MOV SI, 10
 ;mov BX, 15
 ;mov BP, 5
-
-;mov BX, [BP + SI]
+mov BX, [BP + SI + 3]
 ;mov BX, 5
 ;mov BP, [BX + SI]
 ;mov BP, 0
 ;mov BX, 1
 
-;mov [BX + SI + 1], AX
+mov [BX + SI + 1], AX
 ;mov AL,[num1]
 ;cmp AL, 0x00
 ;add SI, 0x02

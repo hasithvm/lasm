@@ -15,7 +15,7 @@
 <control>
 	<name>db</name>
 	<key>
-PB
+–'B
 	<key>
 	<value>
 	<Immediate>
@@ -26,7 +26,7 @@ PB
 <control>
 	<name>db</name>
 	<key>
-êB
+(B
 	<key>
 	<value>
 	<Immediate>
@@ -37,7 +37,7 @@ PB
 <control>
 	<name>dw</name>
 	<key>
-êB
+(B
 	<key>
 	<value>
 	<Constant>
@@ -48,7 +48,7 @@ PB
 <control>
 	<name>dw</name>
 	<key>
-êB
+(B
 	<key>
 	<value>
 	<Immediate>
@@ -62,7 +62,149 @@ PB
 <statement>
 	<type>opcode</type>
 	<opcode>mov</opcode>
-	<id>31</id>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>05</address>
+			<name>BP</name>
+			<offset>
+			<Immediate>
+				<value>03</value>
+			</Immediate>
+			</offset>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>03</address>
+			<name>BX</name>
+			<offset>
+			<Immediate>
+				<value>04</value>
+			</Immediate>
+			</offset>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>06</address>
+			<name>SI</name>
+			<offset>
+			<Immediate>
+				<value>0100</value>
+			</Immediate>
+			</offset>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>07</address>
+			<name>DI</name>
+			<offset>
+			<Immediate>
+				<value>01</value>
+			</Immediate>
+			</offset>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>03</address>
+			<name>BX</name>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>05</address>
+			<name>BP</name>
+			<offset>
+			<Register>
+				<address>06</address>
+				<name>SI</name>
+				<type>special</type>
+			</Register>
+			<Immediate>
+				<value>03</value>
+			</Immediate>
+			</offset>
+			<type>special</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
+	<params>
+		<Register>
+			<address>03</address>
+			<name>BX</name>
+			<offset>
+			<Register>
+				<address>06</address>
+				<name>SI</name>
+				<type>special</type>
+			</Register>
+			<Immediate>
+				<value>01</value>
+			</Immediate>
+			</offset>
+			<type>general purpose</type>
+		</Register>
+		<Register>
+			<address>00</address>
+			<name>AX</name>
+			<type>general purpose</type>
+		</Register>
+	</params>
+</statement>
+<statement>
+	<type>opcode</type>
+	<opcode>mov</opcode>
+	<id>68</id>
 	<params>
 		<Register>
 			<address>06</address>
@@ -77,7 +219,7 @@ PB
 <statement>
 	<type>opcode</type>
 	<opcode>mov</opcode>
-	<id>31</id>
+	<id>68</id>
 	<params>
 		<Register>
 			<address>06</address>
@@ -95,14 +237,14 @@ PB
 <statement>
 	<type>opcode</type>
 	<opcode>hlt</opcode>
-	<id>7</id>
+	<id>21</id>
 	<params>
 	</params>
 </statement>
 <control>
 	<name>end</name>
 	<key>
-–B
+P(B
 	<key>
 	<value>
 	<Constant>
@@ -113,13 +255,19 @@ PB
 assembly started!
 Location num1 maps to counter: 2
 Location main maps to counter: 9
-Location testing maps to counter: 17
+Location testing maps to counter: 36
 Computed word: 30FF PC = 0
 Computed word: 4040 PC = 2
 Computed word: 00 PC = 4
 Computed word: 0009 PC = 5
 Computed word: 0000 PC = 7
-Computed word: 0002C6C7 PC = 9
-Computed word: 0FA004C7 PC = 13
-Computed word: F4 PC = 17
+Computed word: 0346B8 PC = 9
+Computed word: 0447B8 PC = 12
+Computed word: 010084B8 PC = 15
+Computed word: 0145B8 PC = 19
+Computed word: 035AB8 PC = 22
+Computed word: 014088 PC = 25
+Computed word: 0002C6C7 PC = 28
+Computed word: 0FA004C7 PC = 32
+Computed word: F4 PC = 36
 Starting object-write process!

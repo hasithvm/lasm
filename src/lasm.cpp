@@ -84,15 +84,21 @@ for (int i = 0; i< list.size();i++)
 }
 clog << "assembly started!" << endl;
 	p86Assembler asmgen;
-	asmgen.parse(list);
-	writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+	
+	int errs;
+	errs = asmgen.parse(list);
+	if (errs > 0)
+		cerr << errs << " errors encountered during assembly!" << endl;
+	else{
+		writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+		cout << "Output file " << strOutputFile << " created" << endl;
+	}
 
 for (int i = 0; i< list.size();i++)
 {
 	delete list[i];
 }
 
-cout << "Output file " << strOutputFile << " created" << endl;
 		clog.rdbuf(backup);  
 		toFile.close();
 		return 0;
