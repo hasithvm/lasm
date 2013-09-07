@@ -127,10 +127,10 @@
     <CustomBuild Include="..\src\p86asm.l">
       <FileType>Document</FileType>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating lexical parser...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(GNUBINDIR)\flex.exe -o"%(RootDir)%(Directory)\lex.yy.c" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(GNUBINDIR)\flex.exe" -o"%(RootDir)%(Directory)\lex.yy.c" "%(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\lex.yy.c</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(GNUBINDIR)\flex.exe</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(GNUBINDIR)\flex.exe -o"%(RootDir)%(Directory)\lex.yy.c" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(GNUBINDIR)\flex.exe" -o"%(RootDir)%(Directory)\lex.yy.c" "%(FullPath)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating lexical parser...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\lex.yy.c</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(GNUBINDIR)\flex.exe</AdditionalInputs>
@@ -138,11 +138,11 @@
     <None Include="..\src\p86asm.l.inc" />
     <CustomBuild Include="..\src\p86asm.y">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(GNUBINDIR)\bison.exe -d "%(FullPath)" -o "%(RootDir)%(Directory)\p86asm.tab.c"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(GNUBINDIR)\bison.exe" -d "%(FullPath)" -o "%(RootDir)%(Directory)\p86asm.tab.c"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating grammar engine...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\p86asm.tab.c;%(RootDir)%(Directory)\p86asm.tab.h</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(GNUBINDIR)\bison.exe</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(GNUBINDIR)\bison.exe -d "%(FullPath)" -o "%(RootDir)%(Directory)\p86asm.tab.c"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(GNUBINDIR)\bison.exe" -d "%(FullPath)" -o "%(RootDir)%(Directory)\p86asm.tab.c"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating grammar engine...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\p86asm.tab.c;%(RootDir)%(Directory)\p86asm.tab.h</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(GNUBINDIR)\bison.exe</AdditionalInputs>
