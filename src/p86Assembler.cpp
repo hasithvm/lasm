@@ -270,6 +270,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 			return -1;
 		}
 		binseg->push_back(pattern[opcodeIndex]);
+
+		for(int i = opcodeIndex + 1; i < pattern.size(); i++)
+			binseg->push_back(pattern[i]);
+
 		_addSeg(binseg);
 		return 0;
 	}
@@ -1053,6 +1057,7 @@ paramStr =((Immediate*) ops[i])->getSourceRepr();
 break;
 case (IMMEDIATE_ADDR):
 paramStr ="[" + ((Immediate*) ops[i])->getSourceRepr() + "]";
+break;
 case (CONST):
 paramStr = ((Constant*) ops[i])->getName();
 break;
