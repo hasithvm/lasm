@@ -195,19 +195,19 @@
 				{
 					Operand* op1 = $<pListOperands>2->at(0);
 					Operand* op2 = $<pListOperands>4->at(0);
-					if (op1->getAccessMode() == REG_DIRECT)
-						{
-							((Register*)op1)->setOffsetPtr($<pListOperands>4);
-							$<pListOperands>$ = $<pListOperands>2;
-						}
-					else if (op2->getAccessMode()== REG_DIRECT)
-						{
-							((Register*)op2)->setOffsetPtr($<pListOperands>2);
-							$<pListOperands>$ = $<pListOperands>4;
-						}
-					else
-						yyerror("indexed mode must have at least one valid register!");
-							$<pListOperands>$->at(0)->setAccessMode(REG_OFFSET);
+
+					vector<Operand*>* pList = 	sortOperands(op1, op2);
+					vector<Operand*>* pOffsetList = new vector<Operand*>();
+					free($<pListOperands>2);
+					free($<pListOperands>4);
+					if (pList->at(0)->getAccessMode() == REG_DIRECT)
+						pList->at(0)->setAccessMode(REG_OFFSET);
+					
+					pOffsetList->push_back(pList->at(1));
+					((Register*) pList->at(0))->setOffsetPtr(pOffsetList);
+					pList->pop_back();
+					
+					$<pListOperands>$ = pList;
 				}
  				|
 				LSQBR operand PLUS operand PLUS operand RSQBR
@@ -215,27 +215,27 @@
 					Operand* op1 = $<pListOperands>2->at(0);
 					Operand* op2 = $<pListOperands>4->at(0);
 					Operand* op3 = $<pListOperands>6->at(0);
-					if (op1->getAccessMode() == REG_DIRECT)
-						{
-							catOperands($<pListOperands>4,$<pListOperands>6);
-							((Register*)op1)->setOffsetPtr($<pListOperands>4);
-							
-							$<pListOperands>$ = $<pListOperands>2;
-						}
-					else if (op2->getAccessMode()== REG_DIRECT)
-						{
-							catOperands($<pListOperands>2,$<pListOperands>6);
-							((Register*)op2)->setOffsetPtr($<pListOperands>2);
-							$<pListOperands>$ = $<pListOperands>4;
-						}
-					else if (op3->getAccessMode()== REG_DIRECT)
-						{
-							catOperands($<pListOperands>2,$<pListOperands>4);
-							((Register*)op3)->setOffsetPtr($<pListOperands>6);
-							$<pListOperands>$ = $<pListOperands>6;
-						}
-					else
-						yyerror("indexed mode must have at least one valid register!");
+					
+					vector<Operand*>* pList = 	sortOperands(op1, op2, op3);
+					vector<Operand*>* pOffsetList = new vector<Operand*>();
+					free($<pListOperands>2);
+					free($<pListOperands>4);
+					free($<pListOperands>6);
+
+					if (pList->at(0)->getAccessMode() == REG_DIRECT)
+						pList->at(0)->setAccessMode(REG_OFFSET);
+					
+					pOffsetList->push_back(pList->at(1));
+					pOffsetList->push_back(pList->at(2));
+
+					
+					((Register*) pList->at(0))->setOffsetPtr(pOffsetList);
+					pList->pop_back();
+					pList->pop_back();
+
+					
+					$<pListOperands>$ = pList;
+
 
 				}
 

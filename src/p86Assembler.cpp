@@ -3,7 +3,8 @@
 
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 
-
+#define ERROR(e)	{cerr << "ERROR:" << e << endl;\
+					return -1;}
 
 p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0){
 
@@ -512,9 +513,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 	}
 	else {
-		if ((pattern[arg1] & MEM) == 0)
-			return 1;
-
 			//REG <--MEM
 		if ((pattern[arg0] & 0x01) != (uint8_t) reg[0]->getAccessWidth()){
 
@@ -570,35 +568,110 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 				}
 				else if (reg[1] && reg[1]->getAccessMode() == REG_OFFSET){
 					if (reg[1]->isIndexable()){ 
+						
 
 						Operands* offsets = reg[1]->getOffsetPtr();
-						switch (reg[1]->getBinEncoding()){
-							case (REG_BP):
-							//if (offsets->at(0)->
-							break;
+						
+						bool twoOffsetRegs = (offsets->size() >= 1) &&\
+						 offsets->at(0)->getAccessMode() == REG_DIRECT;
+						
+						if ((twoOffsetRegs) & (offsets->size() == 2) &&\
+							offsets->at(1)->getAccessMode() != IMMEDIATE)
+						{
+							ERROR("invalid indexed addressing mode!")
+						}	
 
-
-							case (REG_BX):
-							modrm = 0x07;
-							break;
+						if (offsets->back()->getAccessMode() == IMMEDIATE){
+							hasDisp = true;
+							imm[1] = (Immediate*) offsets->back();
+							modrm |= (imm[1]->size() % 3) << 6;
 						}
 
+						switch (reg[1]->getBinEncoding()){
+							case (ENC_REG_BP):
+							modrm |= 0x46;
+							break;
+							case (ENC_REG_SI):
+							modrm |= 0x04;
+							break;
+							case (ENC_REG_DI):
+							modrm |= 0x05;
+							break;
+							case (ENC_REG_BX):
+							modrm |= 0x07;
+							break;
+							default:
+							cerr << "ERROR: Undefined register-addressing mode!" << endl;
+							return -1;
+							break;
+				
+						}
+
+
+						if (twoOffsetRegs){
+							modrm &= 0xF8;
+							uint8_t binEnc = reg[1]->getBinEncoding();
+							if (binEnc == ENC_REG_BX)
+								modrm = 0x00;
+							else if (binEnc == ENC_REG_BP)
+								modrm = 0x02;
+							else
+								ERROR("Undefined register addressing mode")
+							
+							binEnc = ((Register*)offsets->at(0))->getBinEncoding();
+							if (binEnc == ENC_REG_SI)
+								modrm |= 0x00;
+							else if (binEnc == ENC_REG_DI)
+								modrm |= 0x01;
+							else
+								ERROR("Undefined register addressing mode")							
+
+							if (offsets->size() == 2){
+
+								//last one has to be an immediate.
+								uint8_t mod = imm[1]->size() % 3;
+								modrm |= mod << 6;
+								hasDisp = true;
+
+							}
+						}
+							//if (offsets->at(0)->getBinEncoding() == ENC_REG_SI)
 					}
+					else
+						{
+							ERROR("Invalid register for addressing")
+						}
+		
 
 				}
 
 					modrm |= reg[0]->getBinEncoding() << 3;
 					binseg->push_back(pattern[opcodeIndex]);
-					binseg->push_back(modrm);
 					if (hasDisp){
+
+						binseg->push_back(modrm);
+					
 						if (consts[1]){
 							binseg->setUpdateFlag(false);
 							binseg->setConstant(consts[1]);
 							binseg->setAddrSize(AW_16BIT);
+						
+						binseg->push_back(0);
+						binseg->push_back(0);
 						}
-						binseg->push_back(0);
-						binseg->push_back(0);
+						else if (zeroDisp){
+							binseg->push_back(0);
+						}
+						else{
+							binseg->push_back(imm[1]->getBinEncoding()[0]);
+							if (imm[1]->getBinEncoding().size() > 1)
+								binseg->push_back(imm[1]->getBinEncoding()[1]);
+						}
+
 					}
+					else
+						binseg->push_back(modrm);
+
 					_addSeg(binseg);
 					return 0;
 
@@ -689,7 +762,17 @@ if(consts[0]){
 	}
 
 
-	else if (reg[0]){
+else if (reg[0]){
+		if (imm[1]){
+			if (imm[1]->size() > ((pattern[arg1] & 0x01) + 1))
+				return 1;
+			if (!(pattern[arg1] & IMM))
+				return 1;
+		}
+		if (imm[1] )
+		if (reg[1] && (reg[1]->getAccessWidth() != (pattern[arg1] & 0x01)))
+			return 1;
+
 		hasDisp = false;
 		bool hasImm = false;
 		bool isWordAccess = false;
@@ -722,11 +805,90 @@ if(consts[0]){
 			}
 
 		}
+		
+		else if (reg[0]->getAccessMode() == REG_OFFSET){
+					if (reg[0]->isIndexable()){ 
+						Operands* offsets = reg[0]->getOffsetPtr();
+						bool twoOffsetRegs = (offsets->size() >= 1) &&\
+						 offsets->at(0)->getAccessMode() == REG_DIRECT;
+						
+						if ((twoOffsetRegs) & (offsets->size() == 2) &&\
+							offsets->at(1)->getAccessMode() != IMMEDIATE)
+						{
+							ERROR("invalid indexed addressing mode!")
+						}	
+
+						if (offsets->back()->getAccessMode() == IMMEDIATE){
+							hasDisp = true;
+							imm[0] = (Immediate*) offsets->back();
+							modrm |= (imm[0]->size() % 3) << 6;
+						}
+
+						switch (reg[0]->getBinEncoding()){
+							case (ENC_REG_BP):
+							modrm |= 0x46;
+							break;
+							case (ENC_REG_SI):
+							modrm |= 0x04;
+							break;
+							case (ENC_REG_DI):
+							modrm |= 0x05;
+							break;
+							case (ENC_REG_BX):
+							modrm |= 0x07;
+							break;
+							default:
+							cerr << "ERROR: Undefined register-addressing mode!" << endl;
+							return -1;
+							break;
+				
+						}
+
+
+						if (twoOffsetRegs){
+							modrm &= 0xF8;
+							uint8_t binEnc = reg[0]->getBinEncoding();
+							if (binEnc == ENC_REG_BX)
+								modrm |= 0x00;
+							else if (binEnc == ENC_REG_BP)
+								modrm |= 0x02;
+							else
+								ERROR("Undefined register addressing mode")
+							
+							binEnc = ((Register*)offsets->at(0))->getBinEncoding();
+							if (binEnc == ENC_REG_SI)
+								modrm |= 0x00;
+							else if (binEnc == ENC_REG_DI)
+								modrm |= 0x01;
+							else
+								ERROR("Undefined register addressing mode")							
+
+							if (offsets->size() == 2){
+
+								//last one has to be an immediate.
+								uint8_t mod = imm[0]->size() % 3;
+								modrm |= mod << 6;
+								hasDisp = true;
+
+							}
+						}
+							//if (offsets->at(0)->getBinEncoding() == ENC_REG_SI)
+					}
+					else
+						{
+							ERROR("Invalid register for addressing")
+						}
+		
+
+				}
+
 		else
 			cerr << "ERROR: Unimplemented register addressing mode!" << endl;
 
-		if (reg[1] && IS_REG_DIRECT(reg[1]) && (pattern[arg1] & REG))
+		if (reg[1] && IS_REG_DIRECT(reg[1]) && (pattern[arg1] & REG)){
 			modrm |= reg[1]->getBinEncoding() <<  3;
+			op->setExplicitAccessModifier(reg[1]->getAccessWidth());
+		}
 		else if (imm[1] && imm[1]->getAccessMode() == IMMEDIATE)
 			hasImm = true;
 		else{
@@ -735,6 +897,16 @@ if(consts[0]){
 		}
 		binseg->push_back(pattern[opcodeIndex]);
 		binseg->push_back(modrm);
+		if (hasDisp){
+			if (zeroDisp){
+				binseg->push_back(0);
+			}
+			else{
+				binseg->push_back(imm[0]->getBinEncoding()[0]);
+				if (imm[0]->getBinEncoding().size() > 1)
+					binseg->push_back(imm[0]->getBinEncoding()[1]);
+						}
+		}
 		if (hasImm){
 			if (op->getExplicitAccessModifier() == AW_UNSPECIFIED){
 				cerr << "ERROR: Ambiguous operand sizes. Use \"byte\" or \"word\" modifier" << endl;
@@ -754,7 +926,7 @@ if(consts[0]){
 
 		}
 
-
+		_addSeg(binseg);
 		return 0;
 	}
 
@@ -825,6 +997,7 @@ void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** c
 			case (IMMEDIATE_ADDR):
 			case (CONST_ADDR):
 			case (REG_ADDR):
+			case (REG_OFFSET):
 			isMemory[i] = true;
 			break;
 			default:
@@ -840,6 +1013,7 @@ static std::string getSourceRepr(OpNode* ptr){
 	std::string paramStr;
 	returnStr = ptr->getContent();
 	Operands& ops = ptr->getOperands();
+	Operands* offsets;
 	for (int i = 0; i < ops.size();i++)
 	{
 		paramStr = "";
@@ -849,6 +1023,25 @@ static std::string getSourceRepr(OpNode* ptr){
 			break;
 			case (REG_ADDR):
 			paramStr = "[" + ((Register*) ops[i])->getRegName() + "]";
+			break;
+			case (REG_OFFSET):
+			paramStr = "[" + ((Register*) ops[i])->getRegName();
+			offsets = ((Register*)ops[i])->getOffsetPtr();
+			for (int k = 0;k < offsets->size();k++){
+				switch (offsets->at(k)->getAccessMode()){
+
+					case(REG_DIRECT):
+						paramStr = " + " + ((Register*) offsets->at(k))->getRegName() + " ";
+						break;
+					case(IMMEDIATE):
+						paramStr += " + " + ((Immediate*) offsets->at(k))->getSourceRepr() + " ";
+						break;
+					default:
+						break;
+				}
+
+			}
+			paramStr += "]";
 			break;
 			case (CONST_ADDR):
 			paramStr = "[";

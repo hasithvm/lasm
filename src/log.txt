@@ -1,22 +1,11 @@
 <control>
-	<name>org</name>
+	<name>dw</name>
 	<key>
 
 	<key>
 	<value>
 	<Immediate>
-		<value>3000</value>
-	</Immediate>
-	<value>
-<control>
-<control>
-	<name>dw</name>
-	<key>
-p‚A
-	<key>
-	<value>
-	<Immediate>
-		<value>3000</value>
+		<value>30FF</value>
 	</Immediate>
 	<value>
 <control>
@@ -26,7 +15,7 @@ p‚A
 <control>
 	<name>db</name>
 	<key>
-0‚A
+PB
 	<key>
 	<value>
 	<Immediate>
@@ -37,7 +26,7 @@ p‚A
 <control>
 	<name>db</name>
 	<key>
-p‚A
+êB
 	<key>
 	<value>
 	<Immediate>
@@ -48,7 +37,7 @@ p‚A
 <control>
 	<name>dw</name>
 	<key>
-p‚A
+êB
 	<key>
 	<value>
 	<Constant>
@@ -59,7 +48,7 @@ p‚A
 <control>
 	<name>dw</name>
 	<key>
-p‚A
+êB
 	<key>
 	<value>
 	<Immediate>
@@ -70,48 +59,6 @@ p‚A
 <label>
 	<name>main</name>
 <label>
-<statement>
-	<type>opcode</type>
-	<opcode>jmp</opcode>
-	<id>30</id>
-	<params>
-		<Constant>
-			<name>testing</name>
-		</Constant>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<id>31</id>
-	<params>
-		<Register>
-			<address>03</address>
-			<name>BX</name>
-			<type>general purpose</type>
-		</Register>
-		<Immediate>
-			<value>0001</value>
-		</Immediate>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<id>31</id>
-	<params>
-		<Register>
-			<address>00</address>
-			<name>AX</name>
-			<type>general purpose</type>
-		</Register>
-		<Register>
-			<address>03</address>
-			<name>BX</name>
-			<type>general purpose</type>
-		</Register>
-	</params>
-</statement>
 <statement>
 	<type>opcode</type>
 	<opcode>mov</opcode>
@@ -125,21 +72,6 @@ p‚A
 		<Constant>
 			<name>num1</name>
 		</Constant>
-	</params>
-</statement>
-<statement>
-	<type>opcode</type>
-	<opcode>mov</opcode>
-	<id>31</id>
-	<params>
-		<Constant>
-			<name>num1</name>
-		</Constant>
-		<Register>
-			<address>01</address>
-			<name>CL</name>
-			<type>general purpose</type>
-		</Register>
 	</params>
 </statement>
 <statement>
@@ -170,7 +102,7 @@ p‚A
 <control>
 	<name>end</name>
 	<key>
-∞‚A
+–B
 	<key>
 	<value>
 	<Constant>
@@ -179,18 +111,15 @@ p‚A
 	<value>
 <control>
 assembly started!
-Location num1 maps to counter: 12290
-Location main maps to counter: 12297
-Location testing maps to counter: 12314
-Computed word: 3000 PC = 12288
-Computed word: 4040 PC = 12290
-Computed word: 00 PC = 12292
-Computed word: 3009 PC = 12293
-Computed word: 0000 PC = 12295
-Computed word: 000EE9 PC = 12297
-Computed word: 0001C3C7 PC = 12300
-Computed word: 078B PC = 12304
-Computed word: 3002C6C7 PC = 12306
-Computed word: 30020E88 PC = 12310
-Computed word: F4 PC = 12314
+Location num1 maps to counter: 2
+Location main maps to counter: 9
+Location testing maps to counter: 17
+Computed word: 30FF PC = 0
+Computed word: 4040 PC = 2
+Computed word: 00 PC = 4
+Computed word: 0009 PC = 5
+Computed word: 0000 PC = 7
+Computed word: 0002C6C7 PC = 9
+Computed word: 0FA004C7 PC = 13
+Computed word: F4 PC = 17
 Starting object-write process!

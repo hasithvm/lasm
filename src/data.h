@@ -130,4 +130,8 @@ class Constant : public Operand{
 
 };		
 
+vector<Operand*>* sortOperands(Operand* op1, Operand* op2);
+vector<Operand*>* sortOperands(Operand* op1, Operand* op2, Operand* op3);
+std::vector<Operand*>* _helperOperandSort(vector<Operand*>* pList);
+
 #endif

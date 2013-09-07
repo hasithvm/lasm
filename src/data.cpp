@@ -210,3 +210,41 @@ free(str);
 	return temp;
 
 }
+
+vector<Operand*>* sortOperands(Operand* op1, Operand* op2){
+	
+	vector<Operand*>* pList = new vector<Operand*>();
+	pList->push_back(op1);
+	pList->push_back(op2);
+	_helperOperandSort(pList);
+	return pList;
+}
+
+vector<Operand*>* sortOperands(Operand* op1, Operand* op2, Operand* op3){
+	
+	vector<Operand*>* pList = new vector<Operand*>();
+	pList->push_back(op1);
+	pList->push_back(op2);
+	pList->push_back(op3);
+	_helperOperandSort(pList);
+	return pList;
+}
+
+bool sortOps(Operand* op1, Operand* op2){
+	if (op1->getAccessMode() == REG_DIRECT){
+	 if(op2->getAccessMode() == IMMEDIATE)
+		return true;
+	else if (op2->getAccessMode() == REG_DIRECT){
+		return (((Register*) op1)->getBinEncoding() < ((Register*)op2)->getBinEncoding());
+	}
+	}
+}
+
+
+std::vector<Operand*>* _helperOperandSort(vector<Operand*>* pList){
+
+	sort(pList->begin(), pList->end(), sortOps);
+
+}
+
+
