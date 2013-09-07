@@ -79,7 +79,7 @@
 	 	,, 0x00, r8|m8, r8
 	 	,, 0x01, r16|m16, r16
 	 	,, 0x02, r8, r8|m8
-	 	,, 0x03, r16, r16|i16
+	 	,, 0x03, r16, r16|m16
 
 "and"	, NO_MODRM ,0x24 ,r8 @ AL, i8
 	 	, NO_MODRM ,0x25 ,r16 @ AX, i16
@@ -89,7 +89,7 @@
 	 	,, 0x20, r8|m8, r8
 	 	,, 0x21, r16|m16, r16
 	 	,, 0x22, r8, r8|m8
-	 	,, 0x23, r16, r16|i16
+	 	,, 0x23, r16, r16|m16
 
 "call"	, NO_MODRM,0xE8,i16
 		, MODRM_EXT, 0x02, 0xFF, r16|m16
@@ -261,7 +261,7 @@
 "or"	, NO_MODRM ,0x0C ,r8  @ AL, i8
 		, NO_MODRM ,0x0D ,r16 @ AX, i16
 		,, 0x08, r8|m8, r8
-		,, 0x09, r16|i16, r16
+		,, 0x09, r16|m16, r16
 		, MODRM_EXT, 0x01,0x80, r8|m8, i8
 		, MODRM_EXT, 0x01,0x81, r16|m16, i16
 		, MODRM_EXT, 0x01,0x81, r16|m16, i16
@@ -360,7 +360,7 @@
 "sub"	, NO_MODRM  ,0x2C ,r8 @ AL, i8
 		, NO_MODRM ,0x2D ,r16 @ AX, i16
 		,, 0x28, r8|m8, r8
-		,, 0x29, r16|i16, r16
+		,, 0x29, r16|m16, r16
 		,, 0x2A, r8, r8|m8
 		,, 0x2B, r16, r16|m16
 		, MODRM_EXT, 0x05,0x80, r8|m8, i8
