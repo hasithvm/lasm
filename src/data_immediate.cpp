@@ -82,7 +82,8 @@ switch(base)
 }
 
 	//clear out any zero-padding to make sure it fits in smallest byte count.
-	while (out.back() == 0 && (out.size() > 0))
+	//zero bytes isn't valid though...
+	while ((out.size() > 1) && out.back() == 0)
 		out.pop_back();
 
 	break;
