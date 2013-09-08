@@ -2,10 +2,12 @@
 
 
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
+#define IS_IMM_DIRECT(r) (r->getAccessMode()==IMMEDIATE)
 
 #define ERROR(e)	{cerr << "ERROR:" << e << endl;\
 					return -1;}
 #define ERROR_RESUME(e) {cerr << "ERROR:" << e << endl;}
+
 
 p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0)
 {
@@ -260,8 +262,8 @@ int p86Assembler::_handleOpNode(OpNode* op)
 */
 int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops)
 {
-
-    BinarySegment* binseg = new BinarySegment();
+	//auto_ptr to clean up if the pointer goes out of scope.
+    auto_ptr<BinarySegment> binseg = new BinarySegment();
     Register  *reg[3] = {NULL,NULL,NULL};
     Immediate* imm[3]= {NULL};
     Constant* consts[3] = {NULL};
@@ -280,10 +282,26 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     vector<uint8_t> immediateData;
     unsigned int immSz = 0;
 
-//break out the operands correctly
+	//break out the operands correctly
     decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
+
+
+    //wrong number of operands, end now
+    if (operandCount != ops.size())
+    	return 1;
+
+    //zip(operands in pattern, args)
+    for (int j = 0; j < operandCount;j++){
+    	if (reg[j] && IS_REG_DIRECT(reg[j]) && !IS_SET(pattern[arg0 + j], REG))
+    		return 1;
+    	if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
+    		return 1;
+    	if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))
+    		return 1;
+    }
+
 //single byte operands
-    if ((pattern[0] & OP_NO_MODRM)  &&  ((pattern[0] & OP_OPERANDS) == 0)) {
+    if ((pattern[0] & OP_NO_MODRM)  &&  (operandCount == 0)) {
         //don't need operands!
         if (ops.size() != 0)            
             ERROR( "Opcode "<< op->getContent() << " does not require operands!")
@@ -296,10 +314,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
         _addSeg(binseg);
         return 0;
     }
-    if ((pattern[arg0] & IMM) == IMM) {
+    if (IS_SET(pattern[arg0],IMM)) {
 
         if (consts[0]) {
-//used primarily for the CALL/JMP instruction.
+		//used primarily for the CALL/JMP instruction.
             binseg->push_back(pattern[opcodeIndex]);
             binseg->setUpdateFlag(true);
             binseg->setConstant(consts[0]);
@@ -338,17 +356,14 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
         }
-
-        //if (imm[0] && )
-
     }
-//switch on the DEST of this opcode
+	//switch on the DEST of this opcode
     if (!isMem[0]) {
 
         //source isn't a memory location
         if (!isMem[1]) {
             //first afg isn't a reg
-            if (!reg[0] || ! (reg[0]->getAccessMode() == REG_DIRECT))
+            if (!reg[0] || !IS_REG_DIRECT(reg[0]))
                 return 1;
             //arguments are inherent to the opcode
             if (pattern[0] & OP_NO_MODRM) {

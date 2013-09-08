@@ -23,3 +23,5 @@ src/lex.yy.c
 *.ilk
 *.pdb
 log.txt
+*.obj
+

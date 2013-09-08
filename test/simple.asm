@@ -10,7 +10,8 @@ main:
 ;mov AL, [0x3000]
 ;mov AX, [BP]
 ;mov AX, [BX]
-;mov AX, [SI]
+mov AL, [SI]
+mov AH, [BX]
 ;mov AX, [DI]
 ;mov SI, 2
 ;mov DI, 1

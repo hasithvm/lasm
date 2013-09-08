@@ -72,6 +72,9 @@ using namespace std;
 
 #define isset(o, m) (m & o == m)
 
+
+#define IS_SET(a, b) ((a & b) == b)
+
 //Defines a bitmask for the MOD/RM Extension for one-byte opcodes. See Intel refMan.
 #define MOD_RM_EXT 0xFF
 
