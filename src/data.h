@@ -57,7 +57,7 @@ enum ImmediateEncoding{
 
 
 
-extern char *accessmodeLUT[4];
+extern const char *accessmodeLUT[4];
 std::string hex2str(uint8_t* bytes, int count);
 char convlower(char in);
 class Operand{

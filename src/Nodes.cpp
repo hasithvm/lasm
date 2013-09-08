@@ -129,9 +129,7 @@ void ControlNode::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');	
 	clog << indenter << "<control>" << endl;
 	clog << indenter << "\t<name>" << label << "</name>" << endl;
-	clog << indenter << "\t<key>" << endl;
-	clog << indenter << m_key << endl;
-		clog << indenter << "\t<key>" << endl;
+	clog << indenter << "\t<key>" << m_key << "<key>" << endl;
 	clog << indenter << "\t<value>" << endl;
 	imm->repr(indentlevel + 1);
 		clog << indenter << "\t<value>" << endl;

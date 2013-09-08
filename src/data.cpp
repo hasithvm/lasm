@@ -8,8 +8,8 @@
 #endif
 
 //string lookup table for register types.
-char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
-char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
+const char *regtypeLUT[4] = {"uninitialized","general purpose", "special"};
+const char *accessmodeLUT[4] = {"uninitialized", "direct","address","indexed"};
 
 Operand::Operand():m_am(UNINITIALIZED){
 

@@ -117,6 +117,9 @@
 				;
 
 	directive_key:
+				{
+					$<pStr>$ = NULL;
+				}
 				|
 				DIRECTIVE_KEY
 				{
