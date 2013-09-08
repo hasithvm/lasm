@@ -82,7 +82,8 @@ switch(base)
 }
 
 	//clear out any zero-padding to make sure it fits in smallest byte count.
-	while (out.back() == 0 && (out.size() > 0))
+	//zero bytes isn't valid though...
+	while ((out.size() > 1) && out.back() == 0)
 		out.pop_back();
 
 	break;
@@ -92,7 +93,7 @@ switch(base)
 	if (padding != 8)
 		in.insert(0, padding, (char)in[0]);
 	out.resize(in.length() / 8);
-	for (it = in.rbegin();it < in.rend();it++)
+	for (it = in.rbegin();it != in.rend();)
 	{
 	
 		for (int i = 0; i < 8;i++)

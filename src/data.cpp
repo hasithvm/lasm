@@ -238,13 +238,21 @@ bool sortOps(Operand* op1, Operand* op2){
 	else if (op2->getAccessMode() == REG_DIRECT){
 		return (((Register*) op1)->getBinEncoding() < ((Register*)op2)->getBinEncoding());
 	}
+	} else if (op1->getAccessMode() == IMMEDIATE) {
+		if (op2->getAccessMode() == REG_DIRECT) {
+			return false;
+		} else if (op2->getAccessMode() == IMMEDIATE) {
+			return (((Immediate*)op1)->getBinEncoding() < ((Immediate*)op2)->getBinEncoding());
+		}
 	}
+	return false;
 }
 
 
 std::vector<Operand*>* _helperOperandSort(vector<Operand*>* pList){
 
 	sort(pList->begin(), pList->end(), sortOps);
+	return pList;
 
 }
 
