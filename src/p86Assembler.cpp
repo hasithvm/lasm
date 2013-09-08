@@ -297,8 +297,13 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
     //zip(operands in pattern, args)
     for (int j = 0; j < operandCount;j++){
-    	if (reg[j] && IS_REG_DIRECT(reg[j]) && !IS_SET(pattern[arg0 + j], REG))
-    		return 1;
+    	if (reg[j] && IS_REG_DIRECT(reg[j])){
+
+            if (!IS_SET(pattern[arg0 + j], REG))
+        		return 1;
+            else if (reg[j]->getAccessWidth() !=  (pattern[arg0 + j] & OPERAND_WIDTH))
+                return 1;
+        }
     	if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
     		return 1;
     	if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))

@@ -16,8 +16,9 @@ using namespace std;
 //Constants for operand types.
 #define OP_8BIT		0
 #define	OP_16BIT	1
-#define REG			2
 
+#define OPERAND_WIDTH 1
+#define REG			2
 #define MEM			4
 #define IMM			8
 

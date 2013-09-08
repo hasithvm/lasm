@@ -7,6 +7,7 @@ num1:
 
 
 main:
+dec CH
 sub byte [si], 0Beefh
 ;jmp testing
 ;mov BX, 0x0001

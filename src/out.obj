@@ -1,19 +1,133 @@
-3 18 8 45    
-00002FF3020
-0002240400x404020
-000400x0020
-00042080020
-00062000020
-00083812CEFsub [SI], 0xbeef20
-000B28A04mov AL, [SI]20
-000D2751Djnz testing20
-000F28A27mov AH, [BX]20
-001138B4603mov AX, [BP + 3]20
-001438B4704mov AX, [BX + 4]20
-001748B840001mov AX, [SI + 256]20
-001B38B4501mov AX, [DI + 1]20
-001E38B5A03mov BX, [BP + SI + 3]20
-00213884001mov [BX + SI + 1], AX20
-00244C7C60200mov SI, num120
-00284C704A00Fmov [SI], 400020
-002C1F4hlt20
+3 132 4340 342   
+0000100020
+0001100020
+0002100020
+0003100020
+1000152push DX20
+10014C7C2E904mov DX, 0x04e920
+10051EEout DX, AL20
+100615Apop DX20
+10071C3ret20
+1008150push AX20
+1009156push SI20
+100A28A04mov AL, [SI]20
+100C23C24cmp AL, $20
+100E27407je quitPS20
+10103E8EDFFcall printChar20
+1013146inc SI20
+10143E9F3FFjmp LoopPS20
+101715Epop SI20
+1018158pop AX20
+10191C3ret20
+101A150push AX20
+101B152push DX20
+101C4C7C2E904mov DX, 0x04e920
+10202B00Amov AL, 0x0a20
+10221EEout DX, AL20
+10232B00Dmov AL, 0x0d20
+10251EEout DX, AL20
+102615Apop DX20
+1027158pop AX20
+10281C3ret20
+1029152push DX20
+102A4C7C26400mov DX, 0x006420
+102E1ECin AL, DX20
+102F23C00cmp AL, 020
+1031274F7je GCWait20
+10334C7C26000mov DX, 0x006020
+10371ECin AL, DX20
+103815Apop DX20
+10391C3ret20
+103A3E8ECFFcall getChar20
+103D23C2Bcmp AL, +20
+103F27506jne checkNeg20
+10413E8BCFFcall printChar20
+10442B000mov AL, 020
+10461C3ret20
+104723C2Dcmp AL, -20
+1049275EFjne getSign20
+104B3E8B2FFcall printChar20
+104E2B001mov AL, 120
+10501C3ret20
+1051150push AX20
+1052151push CX20
+10533C6C101mov CL, 120
+10563C6C509mov CH, 920
+1059288C4mov AH, AL20
+105B2FECDdec CH20
+105D27414jz donePB20
+105F2D2E4shl AH, CL20
+106127208jc printOne20
+10632B030mov AL, 020
+10653E898FFcall printChar20
+10683E9F0FFjmp shift20
+106B2B031mov AL, 120
+106D3E890FFcall printChar20
+10703E9E8FFjmp shift20
+1073159pop CX20
+1074158pop AX20
+10751C3ret20
+10763E8B0FFcall getChar20
+107923C0Acmp AL, 0x0a20
+107B27503jne skipGD20
+107D2B063mov AL, 9920
+107F1C3ret20
+108023C30cmp AL, 020
+1082272F2jb getDigit20
+108423C39cmp AL, 920
+1086277EEja getDigit20
+10883E875FFcall printChar20
+108B22C30sub AL, 020
+108D1C3ret20
+108E151push CX20
+108F3C6C500mov CH, 020
+10923C6C10Amov CL, 1020
+10953E8DEFFcall getDigit20
+109823C63cmp AL, 9920
+109A2740Dje doneGN20
+109C150push AX20
+109D288E8mov AL, CH20
+109F2F6E1mul CL20
+10A1288C5mov CH, AL20
+10A3158pop AX20
+10A4200C5add CH, AL20
+10A63E9ECFFjmp loopGN20
+10A9288E8mov AL, CH20
+10AB159pop CX20
+10AC1C3ret20
+10AD39456E7465722061207369676E656420646563206E756D2028757020746F202B2F2D323535293A24Enter a signed dec num (up to +/-255):$20
+10D432496E207175617274657220707265636973696F6E20494545452D3735343A2024In quarter precision IEEE-754: $20
+10F44C7C6AD10mov SI, Message120
+10F83E80DFFcall printStr20
+10FB3E83CFFcall getSign20
+10FE488060000mov [SIGN], AL20
+11023E889FFcall getNumber20
+1105488060100mov [SUM], AL20
+11093E80EFFcall newLine20
+110C3C6C101mov CL, 120
+110F3C6C507mov CH, 720
+11122D2E0shl AL, CL20
+111427205jc doneShift20
+11162FECDdec CH20
+11183E9F7FFjmp shiftAgain20
+111B4C7C6D410mov SI, Message220
+111F3E8E6FEcall printStr20
+1122380C507add CH, 720
+11254882E0200mov [EXP], CH20
+11292D2E8shr AL, CL20
+112B2D2E8shr AL, CL20
+112D2D2E8shr AL, CL20
+112F2D2E8shr AL, CL20
+11312D2E8shr AL, CL20
+113348A260200mov AH, [EXP]20
+11372D2E4shl AH, CL20
+11392D2E4shl AH, CL20
+113B2D2E4shl AH, CL20
+113D200E0add AL, AH20
+113F48A260000mov AH, [SIGN]20
+11432D2CCror AH, CL20
+1145200E0add AL, AH20
+1147488060300mov [FP], AL20
+114B3E803FFcall printBinary20
+114E3E8C9FEcall newLine20
+11511F4hlt20
