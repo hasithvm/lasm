@@ -693,10 +693,13 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back(0);
                 } else if (zeroDisp) {
                     binseg->push_back(0);
+                    binseg->push_back(0);
                 } else {
                     binseg->push_back(imm[1]->getBinEncoding()[0]);
                     if (imm[1]->getBinEncoding().size() > 1)
                         binseg->push_back(imm[1]->getBinEncoding()[1]);
+                    else
+                        binseg->push_back(0);
                 }
 
             } else
