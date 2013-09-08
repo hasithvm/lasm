@@ -263,7 +263,7 @@ int p86Assembler::_handleOpNode(OpNode* op)
 int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops)
 {
 	//auto_ptr to clean up if the pointer goes out of scope.
-    auto_ptr<BinarySegment> binseg = new BinarySegment();
+    auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
     Register  *reg[3] = {NULL,NULL,NULL};
     Immediate* imm[3]= {NULL};
     Constant* consts[3] = {NULL};
@@ -948,11 +948,11 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
 
-void p86Assembler::_addSeg(BinarySegment* binseg)
+void p86Assembler::_addSeg(auto_ptr<BinarySegment> binseg)
 {
     binseg->setCounter(counter);
-    segs.push_back(binseg);
     counter = counter + binseg->size();
+    segs.push_back(binseg.release());
 }
 void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMemory[])
 {
