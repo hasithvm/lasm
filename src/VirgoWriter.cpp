@@ -23,7 +23,7 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 		outfile <<  "\x1f" << segments[i]->size() <<  "\x1f";
 		bytes_written += segments[i]->size();
 		outfile << "\x1f"  << hexdump(&(*segments[i])[0], segments[i]->size()) << "\x1f";
-
+		//label printing.
 		outfile << "\x1f\x1f";
 		if (segments[i]->getStringData() != "")
 			outfile << "\x1f" << segments[i]->getStringData() << "\x1f";

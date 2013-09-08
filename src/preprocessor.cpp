@@ -4,6 +4,9 @@
 *@param pExprList Reference to list of asssembler expressions.
 *@return None
 */
+
+
+
 void preprocess(ExpressionList& pExprList){
 vector<ControlNode*> equ_defs;
 vector<Constant**> pConstants;
@@ -13,6 +16,14 @@ for (int i =0;i < pExprList.size();i++){
 			for (int j = 0;j < op.size();j++){
 			if (op[j]->getAccessMode() == CONST){
 				pConstants.push_back((Constant**)&op[j]);
+			}
+			if (op[j]->getAccessMode() == REG_OFFSET){
+				Operands* p = ((Register*)op[j])->getOffsetPtr();
+				for (int k =0;k < p->size();k++)
+				{
+					if (p->at(k)->getAccessMode() == CONST)
+						pConstants.push_back((Constant**)&p->at(k));
+				}
 			}
 			}
 		}

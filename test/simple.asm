@@ -11,6 +11,7 @@ main:
 ;mov AX, [BP]
 ;mov AX, [BX]
 mov AL, [SI]
+jnz testing
 mov AH, [BX]
 ;mov AX, [DI]
 ;mov SI, 2
@@ -20,6 +21,7 @@ mov AX, [BP + 3]
 mov AX, [BX + 4]
 mov AX, [SI + 256]
 mov AX, [DI + 1]
+
 ;MOV SI, 10
 ;mov BX, 15
 ;mov BP, 5
