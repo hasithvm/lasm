@@ -503,8 +503,8 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     vector<uint8_t>& imm_data = imm[1]->getBinEncoding();
 
                     int len =(pattern[arg1] & OPERAND_WIDTH) + 1;
-                    if (imm_data.size() < len) {
-                        int16_t data =(int16_t) imm_data[0];
+                    if (len == 2 && (imm_data.size() > len)) {
+                        uint16_t data =imm[1]->toWord();
                         binseg->push_back((uint8_t)(data & 0x00FF));
                         binseg->push_back((uint8_t)(data & 0xFF00));
 
