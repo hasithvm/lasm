@@ -6,7 +6,8 @@ m_addr(NULL),
 m_addrSize(AW_UNSPECIFIED),
 m_addrStartIndex(0),
 m_counter(0),
-m_stringData(){
+m_stringData(),
+m_labelptr(NULL){
 
 
 }
@@ -91,3 +92,13 @@ ostream& operator<<( ostream &output, const BinarySegment& src){
 }
 
 
+void BinarySegment::setLabel(LabelNode* ptr)
+{
+	m_labelptr = ptr;
+
+}
+
+LabelNode* BinarySegment::getLabel()
+{
+	return m_labelptr;
+}

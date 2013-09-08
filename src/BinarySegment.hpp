@@ -7,6 +7,7 @@
 #include <iostream>
 #include <iomanip>
 #include "data.h"
+#include "Nodes.h"
 
 
 class BinarySegment{
@@ -28,6 +29,8 @@ class BinarySegment{
 			void setStringData(std::string a);
 			std::string& getStringData();
 			friend ostream& operator<<( ostream &output, const BinarySegment& src);
+			void setLabel(LabelNode* p);
+			LabelNode* getLabel();
 
 	private:
 			vector<uint8_t> m_data;
@@ -38,7 +41,7 @@ class BinarySegment{
 			int m_addrStartIndex;
 			int m_counter;
 			string m_stringData;
-
+			LabelNode* m_labelptr;
 };
 
 #endif

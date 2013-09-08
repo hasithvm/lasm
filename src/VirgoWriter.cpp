@@ -15,6 +15,9 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 
 
 	for (int i = 0; i < segments.size();i++){
+		
+		if (!segments[i])
+			continue;
 		outfile <<  DELIM;
 		outfile << hex << setw(4) << setfill('0');
 	    outfile << (unsigned short)segments[i]->getCounter() <<  DELIM;
@@ -22,10 +25,12 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 		outfile <<  "\x1f" << segments[i]->size() <<  "\x1f";
 		bytes_written += segments[i]->size();
 		outfile << "\x1f" << *segments[i] << "\x1f";
+		outfile << "\x1f";
 		
+		if (segments[i]->getLabel())
+		outfile << segments[i]->getLabel()->getContent();
+		outfile << "\x1f";
 
-		//label printing.
-		outfile << "\x1f\x1f";
 		if (segments[i]->getStringData() != "")
 			outfile << "\x1f" << segments[i]->getStringData() << "\x1f";
 		else

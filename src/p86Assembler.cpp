@@ -9,7 +9,7 @@
 #define ERROR_RESUME(e) {cerr << "ERROR: " << e << endl;}
 
 
-p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0)
+p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0), pLastLabel(NULL)
 {
 
 }
@@ -138,8 +138,9 @@ int p86Assembler::_handleLabelNode(LabelNode* label)
         ERROR("Multiply-defined label " << label->getContent()\
          << "on line" << label->getLineNumber())
     }
-
-    LocationMap[label->getContent()] = counter;
+    std::string LabelContentCopy = label->getContent();
+    LocationMap[LabelContentCopy] = counter;
+    pLastLabel = label;
     clog << "Location " << label->getContent() << " maps to counter: " << counter << endl;
     return 0;
 }
@@ -147,7 +148,7 @@ int p86Assembler::_handleLabelNode(LabelNode* label)
 int p86Assembler::_handleControlNode(ControlNode* ctrl)
 {
 
-    BinarySegment* binseg = new BinarySegment();
+    auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
 
@@ -164,7 +165,6 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
 
 
 
-        binseg->setCounter(counter);
         if (constVal) {
             ERROR_RESUME("reserving memory bytes requires an immediate operand");
             return -1;
@@ -172,30 +172,26 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
         for (int i = 0; i < immVal->size(); i++)
             binseg->push_back(immVal->getBinEncoding()[i]);
         binseg->setStringData(immVal->getSourceRepr());
-        segs.push_back(binseg);
-        counter = counter + binseg->size();
+        _addSeg(binseg);
         break;
         //TODO: Implement DW
     case (CONTROL_DW):
-        binseg->setCounter(counter);
         if (constVal) {
             binseg->setUpdateFlag(false);
             binseg->setConstant(constVal);
             binseg->setAddrSize(AW_16BIT);
             binseg->push_back(0);
             binseg->push_back(0);
-            segs.push_back(binseg);
         } else if (immVal) {
             for (int i = 0; i < immVal->size(); i+=2) {
                 binseg->push_back(immVal->getBinEncoding()[i]);
                 binseg->push_back(immVal->getBinEncoding()[i+1]);
             }
-            segs.push_back(binseg);
+        _addSeg(binseg);
 
         } else
             ERROR("reserving memory requires an immediate or constant operand")
 
-        counter = counter + binseg->size();
         break;
 
     case (CONTROL_ORG):
@@ -1027,9 +1023,19 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 void p86Assembler::_addSeg(auto_ptr<BinarySegment> binseg)
 {
+    if (pLastLabel)
+    {
+        binseg->setLabel(pLastLabel);
+        pLastLabel = NULL;
+
+    }
+
     binseg->setCounter(counter);
+    
     counter = counter + binseg->size();
     segs.push_back(binseg.release());
+    
+
 }
 void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMemory[])
 {

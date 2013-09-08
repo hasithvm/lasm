@@ -33,6 +33,7 @@ class p86Assembler{
 		unsigned int counter;
 		map<string,unsigned int> LocationMap;
 		unsigned int m_codeStart;	
+		LabelNode* pLastLabel;
 };
 
 #endif

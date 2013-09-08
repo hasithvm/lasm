@@ -7,7 +7,9 @@ num1:
 
 
 main:
-dec CH
+mov AX, [2]
+mov ax, [0x02]
+adc [0x12], AX
 sub byte [si], 0Beefh
 ;jmp testing
 ;mov BX, 0x0001
