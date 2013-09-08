@@ -39,6 +39,16 @@ string& Immediate::getSourceRepr(){
 	return m_orig;
 }
 
+uint16_t Immediate::toWord(){
+
+	if (m_data.size() >= 2)
+		return (uint16_t)((m_data[1] << 8) | (m_data[0]));
+	else if (m_data.size() == 1)
+		return (uint16_t) m_data[0];
+	
+
+}
+
 vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 {
 		string::iterator it_fwd;
@@ -70,6 +80,10 @@ switch(base)
 	bytes_written++;	
 
 }
+
+	//clear out any zero-padding to make sure it fits in smallest byte count.
+	while (out.back() == 0 && (out.size() > 0))
+		out.pop_back();
 
 	break;
 	case BASE_BIN:

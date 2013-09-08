@@ -1,148 +1,19 @@
-3 147 250 393   
-000074E616D653A2024Name: $20
-000754D722E2024Mr. $20
-000C64D72732E2024Mrs. $20
-001218456D706C6F796565206E756D6265723A2024Employee number: $20
-0024953616C6172793A2024Salary: $20
-002D150push AX20
-002E153push BX20
-002F156push SI20
-00303C6C405mov AH, 520
-00332F6E4mul AH20
-0035201C3add BX, AX20
-00374C7C60000mov SI, s_name20
-003B3E84500call printStr20
-003E38A4703mov AL, [BX + 3]20
-004123C00cmp AL, 020
-00432740Aje printMale20
-00454C7C60C00mov SI, s_female20
-00493E83700call printStr20
-004C3E90700jmp printName20
-004F4C7C60700mov SI, s_male20
-00533E82D00call printStr20
-005638B7701mov SI, [BX + 1]20
-00593E82700call printStr20
-005C3E88C00call newLine20
-005F4C7C61200mov SI, s_empNum20
-00633E81D00call printStr20
-006638A4700mov AL, [BX + 0]20
-00693E82D00call printInt20
-006C3E87C00call newLine20
-006F4C7C62400mov SI, s_salary20
-00733E80D00call printStr20
-007638A4704mov AL, [BX + 4]20
-00793E85100call printSalary20
-007C3E86C00call newLine20
-007F15Epop SI20
-008015Bpop BX20
-0081158pop AX20
-00821C3ret20
-0083150push AX20
-0084152push DX20
-0085156push SI20
-00864C7C2E904mov DX, 0x04e920
-008A28A04mov AL, [SI]20
-008C23C24cmp AL, $20
-008E27405je quitPS20
-00901EEout DX, AL20
-0091146inc SI20
-00923E9F5FFjmp LoopPS20
-009515Epop SI20
-009615Apop DX20
-0097158pop AX20
-00981C3ret20
-0099152push DX20
-009A151push CX20
-009B150push AX20
-009C4C7C2E904mov DX, 0x04e920
-00A03C6C10Amov CL, 1020
-00A323C0Acmp AL, 1020
-00A527C0Djl printLast20
-00A73C6C400mov AH, 020
-00AA2F6F1div CL20
-00AC3E80C00call printDigit20
-00AF288E0mov AL, AH20
-00B13E9EFFFjmp LoopPI20
-00B43E80400call printDigit20
-00B7158pop AX20
-00B8159pop CX20
-00B915Apop DX20
-00BA1C3ret20
-00BB152push DX20
-00BC150push AX20
-00BD4C7C2E904mov DX, 0x04e920
-00C120430add AL, 020
-00C31EEout DX, AL20
-00C4158pop AX20
-00C515Apop DX20
-00C61C3ret20
-00C752C30303024,000$20
-00CC124$20
-00CD152push DX20
-00CE150push AX20
-00CF156push SI20
-00D04C7C2E904mov DX, 0x04e920
-00D4288C4mov AH, AL20
-00D648A06CC00mov AL, [s_dollars]20
-00DA1EEout DX, AL20
-00DB288E0mov AL, AH20
-00DD3E8B9FFcall printInt20
-00E04C7C6C700mov SI, s_thousands20
-00E43E89CFFcall printStr20
-00E715Epop SI20
-00E8158pop AX20
-00E915Apop DX20
-00EA1C3ret20
-00EB152push DX20
-00EC150push AX20
-00ED4C7C2E904mov DX, 0x04e920
-00F12B00Amov AL, 0x0a20
-00F31EEout DX, AL20
-00F42B00Dmov AL, 0x0d20
-00F61EEout DX, AL20
-00F7158pop AX20
-00F815Apop DX20
-00F91C3ret20
-00FA4C7C30050mov BX, workerDB20
-00FE2B000mov AL, 020
-01003E82AFFcall printEmployee20
-01033E8E5FFcall newLine20
-01064C7C30050mov BX, workerDB20
-010A2B003mov AL, 320
-010C3E81EFFcall printEmployee20
-010F3E8D9FFcall newLine20
-01124C7C31450mov BX, managerDB20
-01162B000mov AL, 020
-01183E812FFcall printEmployee20
-011B3E8CDFFcall newLine20
-011E1F4hlt20
-500010C1220
-500121E5020
-5003100020
-50041325020
-500511B2720
-50062285020
-5008101120
-500913A5820
-500A101120
-500B2345020
-500D101120
-500E1467020
-500F14D7720
-50102415020
-5012100020
-50131203220
-5014107720
-501524E5020
-5017101120
-50181639920
-50191508020
-501A2585020
-501C100020
-501D14B7520
-501E1053616D204A6F6E657324Sam Jones$20
-502812536172612054686F6D617324Sara Thomas$20
-50341353616D69726120536D69746824Samira Smith$20
-5041134D617820476F6C7368616E6924Max Golshani$20
-504E1054686520426F73732124The Boss!$20
-5058184D6964646C65204D616E6167656D656E7424Middle Management$20
+3 18 8 45    
+00002FF3020
+0002240400x404020
+000400x0020
+00042080020
+00062000020
+00083812CEFsub [SI], 0xbeef20
+000B28A04mov AL, [SI]20
+000D2751Djnz testing20
+000F28A27mov AH, [BX]20
+001138B4603mov AX, [BP + 3]20
+001438B4704mov AX, [BX + 4]20
+001748B840001mov AX, [SI + 256]20
+001B38B4501mov AX, [DI + 1]20
+001E38B5A03mov BX, [BP + SI + 3]20
+00213884001mov [BX + SI + 1], AX20
+00244C7C60200mov SI, num120
+00284C704A00Fmov [SI], 400020
+002C1F4hlt20

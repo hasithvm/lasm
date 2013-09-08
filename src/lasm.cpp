@@ -90,7 +90,7 @@ clog << "assembly started!" << endl;
 	if (errs > 0)
 		cerr << errs << " errors encountered during assembly!" << endl;
 	else{
-		writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+		VirgoWriter::writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
 		cout << "Output file " << strOutputFile << " created" << endl;
 	}
 

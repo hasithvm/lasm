@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <vector>
-
+#include <iostream>
+#include <iomanip>
 #include "data.h"
 
 
@@ -26,6 +27,8 @@ class BinarySegment{
 			bool getRelativeAddressFlag();
 			void setStringData(std::string a);
 			std::string& getStringData();
+			friend ostream& operator<<( ostream &output, const BinarySegment& src);
+
 	private:
 			vector<uint8_t> m_data;
 			bool m_updateAddress;

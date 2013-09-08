@@ -5,18 +5,15 @@
 #include <fstream>
 #include <vector>
 #include "BinarySegment.hpp"
+#include "IWriter.hpp"
 
 using namespace std;
 
 
+namespace VirgoWriter{
 
-
-
-void writeFile(vector<BinarySegment*>& segments, std::string& filename, unsigned int startingAddress);
-
-
-
-
+		void writeFile(vector<BinarySegment*>& segments, std::string& filename, unsigned int startingAddress);
+};
 
 
 

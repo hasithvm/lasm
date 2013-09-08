@@ -79,6 +79,15 @@ std::string& BinarySegment::getStringData(){
 	return m_stringData;
 }
 
+ostream& operator<<( ostream &output, const BinarySegment& src){
+	//note: setw isn't sticky. Reset it on every byte written.
+	output << hex << setfill('0') << uppercase;
+	for (vector<uint8_t>::const_iterator it = src.m_data.begin(); it != src.m_data.end(); it++)
 
+		output << setw(2) << (unsigned short) *it;
+	
+	return output;
+  
+}
 
 

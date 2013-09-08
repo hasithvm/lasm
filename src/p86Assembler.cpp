@@ -4,9 +4,9 @@
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 #define IS_IMM_DIRECT(r) (r->getAccessMode()==IMMEDIATE)
 
-#define ERROR(e)	{cerr << "ERROR:" << e << endl;\
+#define ERROR(e)	{cerr << "ERROR: " << e << endl;\
 					return -1;}
-#define ERROR_RESUME(e) {cerr << "ERROR:" << e << endl;}
+#define ERROR_RESUME(e) {cerr << "ERROR: " << e << endl;}
 
 
 p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0)
@@ -70,7 +70,7 @@ bool p86Assembler::_postpass()
             }
 
             catch (std::out_of_range& e) {
-                cerr << "ERROR: Undefined label " << segs[i]->getConstant()->getName() << endl;
+                ERROR_RESUME("ERROR: Undefined label " << segs[i]->getConstant()->getName())
                 continue;
             }
 
@@ -199,18 +199,23 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
         break;
 
     case (CONTROL_ORG):
+        cout << immVal->toWord();
+        if (immVal->size() > 2)             
+            cout << "WARN: ORG argument must be 16-bits wide! This may not be what you intended." << endl;
+        counter = immVal->toWord();
 
-        if (immVal->size() != 2) {
-            cout << "WARNING: ORG argument must be 16-bits wide! Skipping" << endl;
-            return -1;
-        }
-        counter = (immVal->getBinEncoding()[1] << 8) | immVal->getBinEncoding()[0];
+        
         break;
 
     case (CONTROL_END):
-
-        m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-
+        try
+        {
+            m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
+        }
+        catch (std::out_of_range& e){
+            ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
+            m_codeStart = 0;
+        }
         break;
 
 

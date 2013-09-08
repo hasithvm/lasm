@@ -53,19 +53,33 @@
 }
 %debug
 %error-verbose
-%token COLON  COMMA WORDPTR BYTEPTR LSQBR RSQBR PLUS NEWLN
-%token <pOpcode> OPCODE
-%token <pStr> HEX_PRE HEX_SUFF DEC BIN_PRE BIN_SUFF
-%token <pStr> LABEL
-%token <pStr> LITERAL TEXT DIRECTIVE_KEY
-%token <pStr> DIRECTIVE
+%token COLON 	":"
+%token COMMA 	","
+%token WORDPTR 	"word"
+%token BYTEPTR  "byte"
+%token LSQBR 	"["
+%token RSQBR	"]"
+%token PLUS		"+"
+%token NEWLN	"newline"
+%token <pOpcode> OPCODE "opcode"
+
+%token <pStr> HEX_PRE	"prefixed-hex-value"
+%token <pStr> HEX_SUFF	"suffixed-hex-value"
+%token <pStr> DEC 	"decimal-value"
+%token <pStr> BIN_PRE "prefixed-binary-value"
+%token <pStr> BIN_SUFF "suffixed-binary-value"
+%token <pStr> LITERAL TEXT 
+%token <pStr> DIRECTIVE_KEY "directive-key"
+%token <pStr> DIRECTIVE "directive"
+%token <pStr> LABEL "label"
 
 
 %% 		
 	statements:	|
 				statements statement
 				{
-					pList->push_back($<pExpr>2);
+					if ($<pExpr>2)
+						pList->push_back($<pExpr>2);
 				};
  
 	statement: 	program_expr
@@ -77,10 +91,16 @@
 				label
 				|
 				directive
+				|
+				keyword_error
 				;
 
 
-
+	keyword_error:	OPCODE COLON
+				{
+					yyerror("Cannot use reserved keyword for label!");
+					$<pExpr>$ = NULL;
+				};	
 						
 
 	directive:	directive_key DIRECTIVE directive_value

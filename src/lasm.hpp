@@ -14,6 +14,8 @@
 #include <fstream>
 #include "preprocessor.h"
 #include "VirgoWriter.h"
+#include "ListingWriter.hpp"
+
 //#include "boost/program_options.hpp"
 
 

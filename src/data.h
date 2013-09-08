@@ -65,7 +65,6 @@ class Operand{
 			Operand();
 			AccessMode& getAccessMode();
 			void setAccessMode(AccessMode am);
- 			//virtual std::vector<uint8_t> getByteArray() = 0;
 			virtual void repr(int indentlevel)=0;
 
 			
@@ -84,6 +83,7 @@ class Immediate : public Operand{
 			Immediate* clone() const;
 			int size();
 			std::string& getSourceRepr();
+			uint16_t toWord();
 	private:
 			vector<uint8_t> m_data;
 			static vector<uint8_t> parse(std::string& in, ImmediateEncoding base);

@@ -4,7 +4,10 @@ num1:
 	.db 00h
 	.dw main
 	.dw 0
-main: 
+
+
+main:
+sub byte [si], 0Beefh
 ;jmp testing
 ;mov BX, 0x0001
 ;mov AL, [0x3000]
