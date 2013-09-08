@@ -93,7 +93,7 @@ switch(base)
 	if (padding != 8)
 		in.insert(0, padding, (char)in[0]);
 	out.resize(in.length() / 8);
-	for (it = in.rbegin();it < in.rend();it++)
+	for (it = in.rbegin();it != in.rend();)
 	{
 	
 		for (int i = 0; i < 8;i++)
