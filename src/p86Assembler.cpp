@@ -418,6 +418,9 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
                 int len = (pattern[arg0] & 0x01 ) + 1;
 
+				for (int i = len; len > immediateData.size(); len--) {
+					binseg->push_back(0);
+				}
 
                 for (int i = 0; i < len; i++) {
                     binseg->push_back(immediateData[immediateData.size() - i - 1]);
