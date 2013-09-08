@@ -982,6 +982,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 							binseg->push_back(imm[0]->getBinEncoding()[i]);
 						if (imm[0]->size() < 2)
 							binseg->push_back(0);
+						_addSeg(binseg);
 						return 0;
 					}
 
@@ -998,6 +999,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 						for (int i = 0; i < imm[1]->size(); i++)
 							binseg->push_back(imm[1]->getBinEncoding()[i]);
+						_addSeg(binseg);
 						return 0;
 					} else {
 						// size mismatch
@@ -1012,6 +1014,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 					binseg->push_back(imm[0]->getBinEncoding()[i]);
 				if (imm[0]->size() < 2)
 					binseg->push_back(0);
+				_addSeg(binseg);
 				return 0;
 
 			}
