@@ -81,10 +81,6 @@ switch(base)
 
 }
 
-	//clear out any zero-padding to make sure it fits in smallest byte count.
-	//zero bytes isn't valid though...
-	while ((out.size() > 1) && out.back() == 0)
-		out.pop_back();
 
 	break;
 	case BASE_BIN:
@@ -121,15 +117,24 @@ switch(base)
 			tmp = tmp + (counter) *  parseDigit(*it);
 			counter*=10;
 		}
+
+		if (in.at(0) == '-')
+			tmp = (tmp * -1) & 0xFFFF;
+
 		do {
-		out.push_back((uint8_t)tmp & 0xFF);
+		out.push_back((uint8_t)(tmp & 0xFF));
 		tmp >>= 8;
 		} while (tmp > 0);
 			
 	default:
 	break;
 
+	//clear out any zero-padding to make sure it fits in smallest byte count.
+	//zero bytes isn't valid though...
 }
+
+	while ((out.size() > 1) && out.back() == (out.back() >= 0x80 ? 0xFF : 0x00))
+		out.pop_back();
 
 	return out;
 }

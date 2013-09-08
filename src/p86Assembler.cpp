@@ -419,12 +419,15 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
                 int len = (pattern[arg0] & 0x01 ) + 1;
 
-				for (int i = len; len > immediateData.size(); len--) {
-					binseg->push_back(0);
-				}
-
-                for (int i = 0; i < len; i++) {
+                for (int i = 0; i < immediateData.size(); i++) {
                     binseg->push_back(immediateData[immediateData.size() - i - 1]);
+                }
+
+                for (int i = len; len > immediateData.size(); len--) {
+                    if(immediateData[immediateData.size() - 1] < 0x80)
+                        binseg->push_back(0);
+                    else
+                        binseg->push_back(0xFF);
                 }
                 _addSeg(binseg);
                 return 0;
@@ -694,10 +697,13 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back(0);
                 } else if (zeroDisp) {
                     binseg->push_back(0);
+                    binseg->push_back(0);
                 } else {
                     binseg->push_back(imm[1]->getBinEncoding()[0]);
                     if (imm[1]->getBinEncoding().size() > 1)
                         binseg->push_back(imm[1]->getBinEncoding()[1]);
+                    else
+                        binseg->push_back(0);
                 }
 
             } else
@@ -980,6 +986,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 							binseg->push_back(imm[0]->getBinEncoding()[i]);
 						if (imm[0]->size() < 2)
 							binseg->push_back(0);
+						_addSeg(binseg);
 						return 0;
 					}
 
@@ -996,6 +1003,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 						for (int i = 0; i < imm[1]->size(); i++)
 							binseg->push_back(imm[1]->getBinEncoding()[i]);
+						_addSeg(binseg);
 						return 0;
 					} else {
 						// size mismatch
@@ -1010,6 +1018,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 					binseg->push_back(imm[0]->getBinEncoding()[i]);
 				if (imm[0]->size() < 2)
 					binseg->push_back(0);
+				_addSeg(binseg);
 				return 0;
 
 			}
