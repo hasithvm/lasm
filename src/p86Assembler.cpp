@@ -418,6 +418,9 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
                 int len = (pattern[arg0] & 0x01 ) + 1;
 
+				for (int i = len; len > immediateData.size(); len--) {
+					binseg->push_back(0);
+				}
 
                 for (int i = 0; i < len; i++) {
                     binseg->push_back(immediateData[immediateData.size() - i - 1]);
@@ -945,9 +948,73 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
             _addSeg(binseg);
             return 0;
-        }
-    }
+        } else if (imm[0]->getAccessMode() == IMMEDIATE_ADDR) {
+			// Ensure size matches up
 
+
+			modrm |= 0x06; //set to immediate address mode
+
+			// Since mod field is taken, three possibilites remain
+			// 1. reg field used for extended opcode -> second arg immediate
+			// 2. reg field used for register -> second arg register
+			// 3. only one argument
+
+			if (operandCount == 2) {
+				// There's a second argument
+
+				if ((pattern[0] & OP_MODRM_EXT) == 0) {
+					// The reg field is free, check if it's necessary
+					// Only direct reg access allowed, because there's a memory access in arg 0
+					if(reg[1] && ((pattern[arg1] & REG) == REG)) {
+						// arg1 is a register
+						// check that it's the right width
+						if (reg[1]->getAccessWidth() == (pattern[arg1] & AW_16BIT))
+							modrm |= reg[1]->getBinEncoding() << 3; // size is right
+						else
+							return 1; // Size is mismatched
+
+						binseg->push_back(pattern[opcodeIndex]);
+						binseg->push_back(modrm);
+						for (int i = 0; i < imm[0]->size(); i++)
+							binseg->push_back(imm[0]->getBinEncoding()[i]);
+						if (imm[0]->size() < 2)
+							binseg->push_back(0);
+						return 0;
+					}
+
+				} else if(imm[1] && ((pattern[arg1] & IMMEDIATE) == IMMEDIATE)) {
+					// arg1 is an immediate
+					if(((imm[1]->size() == 2) && ((pattern[arg1] & AW_16BIT) == AW_16BIT)) || ((imm[1]->size() == 1) && ((pattern[arg1] & AW_16BIT) == 0))) {
+						// size matches
+						binseg->push_back(pattern[opcodeIndex]);
+						binseg->push_back(modrm);
+						for (int i = 0; i < imm[0]->size(); i++)
+							binseg->push_back(imm[0]->getBinEncoding()[i]);
+						if (imm[0]->size() < 2)
+							binseg->push_back(0);
+
+						for (int i = 0; i < imm[1]->size(); i++)
+							binseg->push_back(imm[1]->getBinEncoding()[i]);
+						return 0;
+					} else {
+						// size mismatch
+						return 1;
+					}
+				}
+			} else {
+				// Only one argument
+				binseg->push_back(pattern[opcodeIndex]);
+				binseg->push_back(modrm);
+				for (int i = 0; i < imm[0]->size(); i++)
+					binseg->push_back(imm[0]->getBinEncoding()[i]);
+				if (imm[0]->size() < 2)
+					binseg->push_back(0);
+				return 0;
+
+			}
+
+		}
+	}
     return 1;
 }
 

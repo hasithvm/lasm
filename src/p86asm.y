@@ -304,7 +304,7 @@
 
 	binary_type:BIN_PRE
 				{
-					Immediate *i = new Immediate($<pStr>1,BASE_BIN,IMMEDIATE);
+					Immediate *i = new Immediate($<pStr>1 + 2,BASE_BIN,IMMEDIATE);
 					free($<pStr>1);
 					Operands* ptr = new std::vector<Operand*>;
 					ptr->push_back(i);
