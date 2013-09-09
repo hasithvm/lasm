@@ -151,7 +151,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
     auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
-
+    binseg->setSourceNode(ctrl);
     if (ctrl->getValue()->getAccessMode() == IMMEDIATE)
         immVal = (Immediate*) ctrl->getValue();
 
@@ -267,6 +267,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 {
 	//auto_ptr to clean up if the pointer goes out of scope.
     auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
+    binseg->setSourceNode(op);
     Register  *reg[3] = {NULL,NULL,NULL};
     Immediate* imm[3]= {NULL};
     Constant* consts[3] = {NULL};

@@ -1,13 +1,15 @@
 #ifndef _LISTING_WRITER_H_
 #define _LISTING_WRITER_H_
-#include "IWriter.hpp"
 #include <iostream>
+#include <fstream>
 #include <iomanip>
+#include <vector>
+#include "BinarySegment.hpp"
+#include "Nodes.h"
+using namespace std;
+namespace ListingWriter {
 
-
-class ListingWriter : public IWriter {
-
-		static void writeFile(vector<BinarySegment*>& segments, std::string& filename, unsigned int startingAddress);
+		void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::string sourceFile);
 		
 
 

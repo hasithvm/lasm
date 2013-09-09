@@ -3,6 +3,7 @@
 ; AH = A; CH = Q; BH = M; Final 16-bit result in AX
 
 .ORG 00h
+	.dw AddM
 Data:
 	Y:	.DB	5		; Multiplicand
 	X: 	.DB	2		; Multiplier
@@ -10,6 +11,10 @@ Data:
 .ORG 0010h
 Init:
 
+
+    NUM .EQU 0x0050
+     
+    MOV BX,NUM
 	mov BX, [BP + 2]
 	MOV AX,0		; Initialize AX to zero. AH serves as accumulator and AX will hold product
 	MOV CH,[X]		; Initialize CH (Q) = X

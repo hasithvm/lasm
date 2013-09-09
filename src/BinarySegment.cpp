@@ -7,8 +7,8 @@ m_addrSize(AW_UNSPECIFIED),
 m_addrStartIndex(0),
 m_counter(0),
 m_stringData(),
-m_labelptr(NULL){
-
+m_labelptr(NULL),
+m_exprptr(NULL){
 
 }
 
@@ -101,4 +101,13 @@ void BinarySegment::setLabel(LabelNode* ptr)
 LabelNode* BinarySegment::getLabel()
 {
 	return m_labelptr;
+}
+
+void BinarySegment::setSourceNode(BaseExpressionNode* ptr){
+	m_exprptr = ptr;
+
+}
+
+BaseExpressionNode* BinarySegment::getSourceNode(){
+	return m_exprptr;
 }

@@ -24,6 +24,7 @@ using namespace std;
 typedef struct {
 	unsigned char instrID;
 	char* pStr;
+	int pos;
 } parser_opcode;
 
 enum AccessWidth{

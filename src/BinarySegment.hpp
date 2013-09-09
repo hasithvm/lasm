@@ -31,6 +31,8 @@ class BinarySegment{
 			friend ostream& operator<<( ostream &output, const BinarySegment& src);
 			void setLabel(LabelNode* p);
 			LabelNode* getLabel();
+			void setSourceNode(BaseExpressionNode* ptr);
+			BaseExpressionNode* getSourceNode();
 
 	private:
 			vector<uint8_t> m_data;
@@ -42,6 +44,8 @@ class BinarySegment{
 			int m_counter;
 			string m_stringData;
 			LabelNode* m_labelptr;
+			BaseExpressionNode* m_exprptr;
+
 };
 
 #endif

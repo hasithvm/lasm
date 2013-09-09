@@ -5,41 +5,6 @@
 int main(int argc, char **argv)
 	{
 
-	/* opt::options_description desc("Options"); 
-    	desc.add_options() 
-      ("help", "Prints this message") 
-      ("version,v", "Show version and copyright information") 
-      ("like", "this"); 
- 
-    opt::variables_map vm; 
-    try 
-    { 
-      opt::store(opt::parse_command_line(argc, argv, desc),  
-                vm); // can throw 
- 
-      /** --help option 
-       
-      if ( vm.count("help")  ) 
-      { 
-        std::cout << "Basic Command Line Parameter App" << std::endl 
-                  << desc << std::endl; 
-        return 0; 
-      } 
- 
-      opt::notify(vm); // throws on error, so do after help in case 
-                      // there are any problems 
-    } 
-    catch(opt::error& e) 
-    { 
-      std::cerr << "ERROR: " << e.what() << std::endl << std::endl; 
-      std::cerr << desc << std::endl; 
-      return -1; 
-    } 
- 
-    // application code here // 
- 
-
-*/
 
 	cout << "Libra-8086 Emulator -- Assembler\n" << "Built on " << __DATE__  << " : " << __TIME__  << endl;
 	setExpressionList(&list);
@@ -50,17 +15,22 @@ int main(int argc, char **argv)
 		
 	  streambuf *psbuf, *backup;
 		ofstream toFile;
-		toFile.open("log.txt");
+		toFile.open("debug.log");
 		backup = clog.rdbuf();
 		psbuf = toFile.rdbuf();
 		clog.rdbuf(psbuf);
 
 		list.reserve(80);
 		FILE *myfile = fopen(argv[1], "r");
+		
+		if (argc > 1)
 		if (myfile)
 			strOutputFile = string(argv[2]);
 		yyin = myfile;
 	
+
+
+
 	if (!myfile) {
 		cout << "No inputfile specified\nSwitching to interactive mode...." << endl;
 	yyin = stdin;
@@ -88,11 +58,16 @@ clog << "assembly started!" << endl;
 	int errs;
 	errs = asmgen.parse(list);
 	if (errs > 0)
-		cerr << errs << " errors encountered during assembly!" << endl;
+		cerr << errs << " error(s) encountered during assembly!" << endl;
 	else{
 		VirgoWriter::writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
 		cout << "Output file " << strOutputFile << " created" << endl;
 	}
+
+	strOutputFile += ".lst";
+if (myfile)
+		ListingWriter::writeFile(asmgen.getSegments(), strOutputFile, string(argv[1]));
+
 
 for (int i = 0; i< list.size();i++)
 {

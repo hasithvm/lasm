@@ -110,6 +110,7 @@
 					free($<pStr>2);
 					if ($<pStr>1)
 				 	pControl->setKey($<pStr>1);
+					pControl->setLineNumber(yylineno);
 					$<pExpr>$ = pControl;
 
 					
@@ -141,7 +142,8 @@
 						free($<pAccessWidth>2);					
 					}
 						pCode->setID($<pOpcode>1->instrID);
-						pCode->setLineNumber(yylineno);
+
+						pCode->setLineNumber($<pOpcode>1->pos);
 						free($<pOpcode>1->pStr);
 						free($<pOpcode>1);
 						$<pExpr>$ = pCode;
@@ -357,6 +359,7 @@
 				{
 					LabelNode* pLabel = new LabelNode($<pStr>1);
 					free($<pStr>1);
+					pLabel->setLineNumber(yylineno);
 					$<pExpr>$ = pLabel;
 				};
 
