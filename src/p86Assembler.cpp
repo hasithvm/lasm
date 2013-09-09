@@ -505,7 +505,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     vector<uint8_t>& imm_data = imm[1]->getBinEncoding();
 
                     int len =(pattern[arg1] & OPERAND_WIDTH) + 1;
-                    if (len == 2 && (imm_data.size() > len)) {
+                    //if there is a 2-byte imm required and the immediate isn't long enough 
+                    //or is too long,
+                    //get the toWord representation, and push it on correctly.
+                    if (len == 2 && (imm_data.size() != len)) {
                         uint16_t data =imm[1]->toWord();
                         binseg->push_back((uint8_t)(data & 0x00FF));
                         binseg->push_back((uint8_t)(data & 0xFF00));
