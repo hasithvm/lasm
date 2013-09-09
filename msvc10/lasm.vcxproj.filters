@@ -60,6 +60,9 @@
     <ClCompile Include="..\src\p86asm.tab.c">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ListingWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BinarySegment.hpp">
