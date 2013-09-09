@@ -186,12 +186,14 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
             for (int i = 0; i < immVal->size(); i+=2) {
                 binseg->push_back(immVal->getBinEncoding()[i]);
                 binseg->push_back(immVal->getBinEncoding()[i+1]);
+                binseg->setStringData(immVal->getSourceRepr());
             }
-        _addSeg(binseg);
+        
 
         } else
             ERROR("reserving memory requires an immediate or constant operand")
-
+        
+        _addSeg(binseg);
         break;
 
     case (CONTROL_ORG):
