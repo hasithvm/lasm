@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>315</height>
+    <width>1008</width>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,6 +19,16 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTextBrowser" name="taConsole"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -41,6 +51,13 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bClear">
+          <property name="text">
+           <string>Clear Log</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="cbDebug">

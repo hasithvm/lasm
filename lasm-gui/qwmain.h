@@ -26,6 +26,7 @@ private slots:
 public slots:
     void sigStdErrReady();
     void sigStdOutReady();
+	void sigProcessFinished(int exitcode, QProcess::ExitStatus e);
 
 private:
     Ui::QWMain *ui;

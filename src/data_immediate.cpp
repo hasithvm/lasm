@@ -9,13 +9,21 @@ Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 {
 	Operand::setAccessMode(am);
 	m_orig = std::string(pValue);
+		
 	m_data = Immediate::parse(m_orig,base);
 	switch(base) {
 		case BASE_HEX:
-			m_orig = "0x" + m_orig;
+			strToUpperCase(m_orig);
+			break;
+		case BASE_ASC:
+			m_orig = "'" + m_orig;
+			m_orig = m_orig + "'";
+			break;
+			m_orig = "0x" + m_orig ;
 			break;
 		case BASE_BIN:
 			m_orig = "0b" + m_orig;
+		default:
 			break;
 	}
 }
@@ -36,6 +44,8 @@ vector<uint8_t>& Immediate::getBinEncoding(){
 return m_data;
 }
 string& Immediate::getSourceRepr(){
+		
+	
 	return m_orig;
 }
 

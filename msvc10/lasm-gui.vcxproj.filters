@@ -71,7 +71,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\lasm-gui\ui_qwmain.h">
+    <ClInclude Include="..\lasm-gui\GeneratedFiles\ui_qwmain.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

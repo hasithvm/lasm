@@ -59,7 +59,7 @@ void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::str
 
 
 		bool segments_written = false;
-		while(segments[i] && (segments[i]->getSourceNode()->getLineNumber() == curLineNo) && i < segments.size()){
+		while(i < segments.size() && segments[i] && (segments[i]->getSourceNode()->getLineNumber() == curLineNo)){
 			outfile << setw(4) << setfill('0') << hex << segments[i]->getCounter() << "\t" << *segments[i];
 			i++;
 			segments_written = true;

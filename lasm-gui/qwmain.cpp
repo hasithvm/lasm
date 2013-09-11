@@ -8,9 +8,9 @@ QWMain::QWMain(QWidget *parent) :
     ui->setupUi(this);
     connect(&pRunnable, SIGNAL(readyReadStandardOutput()), this, SLOT(sigStdOutReady()));
     connect(&pRunnable, SIGNAL(readyReadStandardError()), this, SLOT(sigStdErrReady()));
-
+	connect(&pRunnable, SIGNAL(finished(int exitcode, QProcess::ExitStatus status)), this, SLOT(sigProcessFinished(int exitcode, QProcess::ExitStatus e)));
     loadSettings();
-
+	statusBar()->showMessage(tr("Ready"));
 }
 
 QWMain::~QWMain()
@@ -40,7 +40,7 @@ void QWMain::on_pbLoad_clicked()
         ui->taConsole->clear();
         ui->taConsole->setFontWeight(63);
         ui->taConsole->append("No file selected");
-
+		
         ui->cbDebug->setEnabled(false);
 
 
@@ -75,6 +75,11 @@ void QWMain::writeSettings(){
 
 }
 
+void QWMain::on_bClear_clicked(){
+	ui->taConsole->clear();
+	statusBar()->showMessage(tr("Ready"));
+}
+
 void QWMain::on_pbAssemble_clicked()
 {
     if (!sFilename.isNull())
@@ -85,6 +90,7 @@ void QWMain::on_pbAssemble_clicked()
     args.append(sOutName);
     ui->taConsole->append("===============================");
     pRunnable.start("./lasm",args);
+	statusBar()->showMessage(tr("Running"));
     }
     else
         ui->taConsole->append("No file selected!");
@@ -107,4 +113,17 @@ void QWMain::sigStdOutReady(){
     ui->taConsole->append(text);
 
 
+}
+
+void QWMain::sigProcessFinished(int exitcode, QProcess::ExitStatus e){
+	if (e == QProcess::ExitStatus::NormalExit){
+		statusBar()->showMessage("Finished");
+		ui->taConsole->setTextColor(QColor("Black"));
+	}
+	else{
+		ui->taConsole->setTextColor(QColor("Red"));
+		ui->taConsole->append("The assembler encountered an unknown error");
+		ui->taConsole->setTextColor(QColor("Black"));
+		statusBar()->showMessage("Finished");
+	}
 }
