@@ -2,9 +2,10 @@
 #define NODES_H
 #include <string>
 #include <cstdlib>
-
 #include <cstddef>
 #include "data.h"
+#include "symtable.h"
+
 using namespace std;
 enum ExpressionType{
 EXPR_OP=1,
@@ -18,8 +19,6 @@ EXPR_COMMENT=5,
 class BaseExpressionNode{
 		public:
 					virtual ExpressionType getType()=0;
-					virtual void setContent(std::string a) =0;
-					virtual std::string& getContent()=0;
 					virtual void repr(int indentlevel)=0;
 					int getLineNumber();
 					void setLineNumber(int lineno);
@@ -92,10 +91,9 @@ class LabelNode : public BaseExpressionNode{
 class OpNode : public BaseExpressionNode{
 		public:
 					//constructor
-					OpNode(char* pOpName, Operands* op);
+					OpNode(unsigned int nOpcodeID, Operands* op);
 					ExpressionType getType();
-					void setContent(std::string a);
-					std::string& getContent();
+					const char* getContent();
 					int getOperandCount();
 					Operands& getOperands();
 					void setExplicitAccessModifier(AccessWidth aw);

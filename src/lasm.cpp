@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 	{
 
 
-	cout << "Libra-8086 Emulator -- Assembler\n" << "Built on " << __DATE__  << " : " << __TIME__  << endl;
+	cout << "Libra-8086 Emulator -- Assembler\n" << "assembler built on " << __DATE__  << " : " << __TIME__  << endl;
 	setExpressionList(&list);
 
 

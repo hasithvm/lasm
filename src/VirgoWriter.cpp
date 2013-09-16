@@ -28,7 +28,7 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 		outfile << "\x1f";
 		
 		if (segments[i]->getLabel())
-		outfile << segments[i]->getLabel()->getContent();
+			outfile << segments[i]->getLabel()->getContent();
 		outfile << "\x1f";
 
 		if (segments[i]->getStringData() != "")

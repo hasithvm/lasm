@@ -8,7 +8,7 @@ QWMain::QWMain(QWidget *parent) :
     ui->setupUi(this);
     connect(&pRunnable, SIGNAL(readyReadStandardOutput()), this, SLOT(sigStdOutReady()));
     connect(&pRunnable, SIGNAL(readyReadStandardError()), this, SLOT(sigStdErrReady()));
-	connect(&pRunnable, SIGNAL(finished(int exitcode, QProcess::ExitStatus status)), this, SLOT(sigProcessFinished(int exitcode, QProcess::ExitStatus e)));
+	connect(&pRunnable, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(sigProcessFinished(int, QProcess::ExitStatus)));
     loadSettings();
 	statusBar()->showMessage(tr("Ready"));
 }
@@ -75,10 +75,6 @@ void QWMain::writeSettings(){
 
 }
 
-void QWMain::on_bClear_clicked(){
-	ui->taConsole->clear();
-	statusBar()->showMessage(tr("Ready"));
-}
 
 void QWMain::on_pbAssemble_clicked()
 {
@@ -116,7 +112,7 @@ void QWMain::sigStdOutReady(){
 }
 
 void QWMain::sigProcessFinished(int exitcode, QProcess::ExitStatus e){
-	if (e == QProcess::ExitStatus::NormalExit){
+	if (e ==QProcess::NormalExit){
 		statusBar()->showMessage("Finished");
 		ui->taConsole->setTextColor(QColor("Black"));
 	}
@@ -126,4 +122,11 @@ void QWMain::sigProcessFinished(int exitcode, QProcess::ExitStatus e){
 		ui->taConsole->setTextColor(QColor("Black"));
 		statusBar()->showMessage("Finished");
 	}
+}
+
+void QWMain::on_bClear_clicked()
+{
+    ui->taConsole->clear();
+    statusBar()->showMessage(tr("Ready"));
+
 }

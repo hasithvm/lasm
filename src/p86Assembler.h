@@ -28,7 +28,6 @@ class p86Assembler{
 		void updateLocationMap(unsigned int startFrom, int increment);
 		int _construct(auto_ptr<OpType> pattern,OpNode* op, Operands& ops);
  		void _addSeg(auto_ptr<BinarySegment> binseg);
-		SymTable st;
 		vector<BinarySegment*> segs;	
 		unsigned int counter;
 		map<string,unsigned int> LocationMap;

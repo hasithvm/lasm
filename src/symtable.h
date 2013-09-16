@@ -6,7 +6,6 @@
 #include <iostream>
 #include <memory>
 #include "data.h"
-
 #include "symtable-generated.hpp"
 using namespace std;
 
@@ -137,12 +136,10 @@ class OpVars{
 
 
 
-class SymTable{
-		public:
-						SymTable();
-						uint8_t get(std::string opcode);
+namespace SymTable{
 						void repr();
-						auto_ptr<OpVars> at(int index); 
+						auto_ptr<OpVars> getVariants(int index); 
+						const char* translateIDToName(unsigned int nID);
 		};
 
 

@@ -23,6 +23,8 @@ private slots:
     void on_pbLoad_clicked();
     void on_pbAssemble_clicked();
 
+    void on_bClear_clicked();
+
 public slots:
     void sigStdErrReady();
     void sigStdOutReady();

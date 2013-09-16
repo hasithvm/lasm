@@ -153,8 +153,15 @@ def helper_gen_files(lineset, lut, path):
 	for l in ftemp:
 		fheader_processed.write(l);
 	ftemp.close()
+	fheader_processed.write("};\n")
 
+	fheader_processed.write("static const char* lookup_opcodes[%d] = {\n" % len(opcodes))
+	for opcode in opcodes:
+		fheader_processed.write('%s,\n' % opcode)
 
+	fheader_processed.seek(fheader_processed.tell() - 2)
+	fheader_processed.write(' ')
+	
 
 
 	fheader_processed.write("};\n#endif\n")
@@ -172,7 +179,7 @@ def helper_gen_files(lineset, lut, path):
 	for l in ftemp:
 		if l.find("%{/*OPCODES*/%}") != -1:
 			for i, opcode in enumerate(opcodes):
-				fLexer.write(opcodes[i] + '\t {yylval.pOpcode =(parser_opcode*) malloc(sizeof(parser_opcode)); yylval.pOpcode->pos = yylineno; yylval.pOpcode->pStr = strdup(yytext); yylval.pOpcode->instrID = %d; BEGIN(PARAM);\t return OPCODE;}\n' % i)
+				fLexer.write(opcodes[i] + '\t {yylval.pOpcode =(parser_opcode*) malloc(sizeof(parser_opcode)); yylval.pOpcode->pos = yylineno; yylval.pOpcode->instrID = %d; BEGIN(PARAM);\t return OPCODE;}\n' % i)
 		else:
 			fLexer.write(l)
 	fLexer.write("\n%%")

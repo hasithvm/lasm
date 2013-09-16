@@ -4,7 +4,6 @@
 	#include <cstddef>
 	#include <vector>
 	#include "data.h"
-	#include "symtable.h"
 	#include "Nodes.h"
 	ExpressionList* pList;
 	using namespace std;
@@ -135,16 +134,13 @@
 	code:		 OPCODE modifier params
 				{
 					
-					OpNode* pCode = new OpNode($<pOpcode>1->pStr, $<pListOperands>3);
+					OpNode* pCode = new OpNode($<pOpcode>1->instrID, $<pListOperands>3);
 					if ($<pAccessWidth>2)
 					{
 						pCode->setExplicitAccessModifier((AccessWidth)*$<pAccessWidth>2);
 						free($<pAccessWidth>2);					
 					}
-						pCode->setID($<pOpcode>1->instrID);
-
 						pCode->setLineNumber($<pOpcode>1->pos);
-						free($<pOpcode>1->pStr);
 						free($<pOpcode>1);
 						$<pExpr>$ = pCode;
 						

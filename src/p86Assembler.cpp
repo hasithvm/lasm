@@ -9,7 +9,7 @@
 #define ERROR_RESUME(e) {cerr << "ERROR: " << e << endl;}
 
 
-p86Assembler::p86Assembler(): st(), segs(), counter(0),LocationMap(), m_codeStart(0), pLastLabel(NULL)
+p86Assembler::p86Assembler(): segs(), counter(0),LocationMap(), m_codeStart(0), pLastLabel(NULL)
 {
 
 }
@@ -197,7 +197,6 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
         break;
 
     case (CONTROL_ORG):
-        cout << immVal->toWord();
         if (immVal->size() > 2)             
             cout << "WARN: ORG argument must be 16-bits wide! This may not be what you intended." << endl;
         counter = immVal->toWord();
@@ -226,7 +225,7 @@ int p86Assembler::_handleOpNode(OpNode* op)
 {
     int match = 1;
     Operands& operands = op->getOperands();
-    auto_ptr<OpVars> opv = st.at(op->getID());
+    auto_ptr<OpVars> opv = SymTable::getVariants(op->getID());
     if (opv->size() == 0) {
         ERROR_RESUME("ERROR: Unimplemented mnemonic " << op->getContent()\
           << " on line " << op->getLineNumber())
@@ -1093,9 +1092,9 @@ void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** c
 
 static std::string getSourceRepr(OpNode* ptr)
 {
-    std::string returnStr;
+    std::string returnStr(ptr->getContent());;
+
     std::string paramStr;
-    returnStr = ptr->getContent();
     Operands& ops = ptr->getOperands();
     Operands* offsets;
     for (int i = 0; i < ops.size(); i++) {

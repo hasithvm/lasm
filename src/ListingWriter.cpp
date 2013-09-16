@@ -40,7 +40,7 @@ void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::str
 	outfile.open (filename.c_str());
 
 
-  	 while (bytes_written < length && (i < segments.size())){
+  	 while (bytes_written < length){
 		
 		while(*(writePos) != '\n' && *writePos != 0)
 			writePos++;
@@ -60,22 +60,19 @@ void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::str
 
 		bool segments_written = false;
 		while(i < segments.size() && segments[i] && (segments[i]->getSourceNode()->getLineNumber() == curLineNo)){
-			outfile << setw(4) << setfill('0') << hex << segments[i]->getCounter() << "\t" << *segments[i];
+			outfile << setw(4) << setfill('0') << hex << segments[i]->getCounter()
+			 << "\t" <<setw(5) << *segments[i] << "\t";
 			i++;
 			segments_written = true;
 		}
 		if (segments_written)
 			outfile << "\t";
 		else
-			outfile << "\t\t\t\t";
+			outfile << "\t\t\t\t\t";
 		outfile.write(writeStart, sz);
 		outfile << "\n";
 		writeStart = writePos;
 		bytes_written+= sz;
-
-		/*if (segments[i]->getLabel())
-		outfile << segments[i]->getLabel()->getContent();
-		outfile << "\x1f";*/
 		
 
 		}

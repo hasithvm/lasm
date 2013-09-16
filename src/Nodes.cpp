@@ -25,26 +25,22 @@ int BaseExpressionNode::getLineNumber(){
 //================================================================
 
 
-OpNode::OpNode(char* pOpName, Operands* op)
+OpNode::OpNode(unsigned int nOpcodeID, Operands* op)
 {
-	ops = *op;
-	opstr = std::string(pOpName);
-	strToLowerCase(opstr);
+
+	m_id = nOpcodeID;
 	m_aw = AW_UNSPECIFIED;
+	ops = *op;
 }
 
 ExpressionType OpNode::getType(){
 	return EXPR_OP;
 }
 
-void OpNode::setContent(std::string a)
-{
-	opstr = a;
-	strToLowerCase(opstr);
-}
 
-std::string& OpNode::getContent(){
-	return opstr;
+const char* OpNode::getContent(){
+
+	return SymTable::translateIDToName(m_id);;
 }
 
 Operands& OpNode::getOperands(){
@@ -65,7 +61,7 @@ void OpNode::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');	
 	clog << indenter << "<statement>" << endl;
 	clog << indenter << "\t<type>opcode</type>" << endl;
-	clog << indenter << "\t<opcode>" << opstr << "</opcode>" << endl;
+	clog << indenter << "\t<opcode>" << getContent() << "</opcode>" << endl;
 		clog << indenter << "\t<id>" << m_id << "</id>" << endl;
 
 	clog << indenter << "\t<params>" << endl;
@@ -162,31 +158,7 @@ std::string& ControlNode::getKey(){
 Operand* ControlNode::getValue(){
 	return imm;
 }
-/*==========================================================
-CommentNode::CommentNode(char* pContent){
- cmt = std::string(pContent);
-}
 
-ExpressionType CommentNode::getType(){
-	return ExpressionType::EXPR_COMMENT;
-}
-
-void CommentNode::setContent(std::string a){
-cmt = a;
-}
-std::string& CommentNode::getContent(){
-	return cmt;
-}
-
-void CommentNode::repr(int indentlevel){
-	std::string indenter(indentlevel, '\t');	
-	clog << indenter << "<comment>" << endl;
-	clog << indenter << "\t<content>" << cmt << "</content>" << endl;
-	clog << indenter << "<comment>" << endl;
-}
-*/
-
-//=============================================================
 LabelNode::LabelNode(char* a){
 	m_label = std::string(a);
 }

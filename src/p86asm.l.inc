@@ -3,9 +3,7 @@
 #include <stdio.h>
 	#include <vector>
 	#include "data.h"
-	#include "symtable.h"
 	#include "Nodes.h"
-	SymTable st;
   
 extern "C"{
 	int yylex(void);

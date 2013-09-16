@@ -10,6 +10,7 @@ msvc10/Release/*
 lasm-gui/Debug/*
 lasm-gui/Release/*
 lasm-gui/ui_qwmain.h
+lasm-gui/moc_qwmain.cpp
 *.pro.user
 *.vcxproj.user
 *.sdf

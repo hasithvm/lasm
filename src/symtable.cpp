@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
-
-void SymTable::repr(){
+namespace SymTable{
+void repr(){
 
 clog << "p86asm supported opcodes:" << endl;
 /*for (SymMap::iterator it=m_opmap.begin(); it != m_opmap.end();it++)
@@ -23,16 +23,18 @@ clog << "p86asm supported opcodes:" << endl;
 */
 }
 
-auto_ptr<OpVars> SymTable::at(int index){
+auto_ptr<OpVars> getVariants(int index){
 	auto_ptr<OpVars> pOp(new OpVars());
 	pOp->realign(index);
 	return pOp;
 }
-SymTable::SymTable(){
+
+const char * translateIDToName(unsigned int nID){
+	return lookup_opcodes[nID];
+
 }
 
-
-
+};
 
 
 OpVars::OpVars() {
