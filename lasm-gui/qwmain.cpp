@@ -24,9 +24,10 @@ void QWMain::on_pbLoad_clicked()
     sFilename = QFileDialog::getOpenFileName(this, tr("Select File"),
                                                     sDefaultPath,
                                                     tr("Assembler listing (*.asm)"));
-    sDefaultPath= QFileInfo(sFilename).absoluteDir().absolutePath();
     if (!sFilename.isNull()){
-       // pbAssemble.setEnabled(true);
+        //update MRU path only if file is selected.
+        sDefaultPath= QFileInfo(sFilename).absoluteDir().absolutePath();
+        
         ui->pbAssemble->setEnabled(true);
         ui->taConsole->clear();
         ui->taConsole->setFontWeight(63);
