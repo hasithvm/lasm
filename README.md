@@ -1,14 +1,14 @@
 #lasm -- replacement assembler for the p8086 virtual machine
 
 
-Alpha build of revised assembler.
 
-##Missing features
-* Register-based addressing mode is not supported.
-* Selectable file output, currently hardcoded to dump "out.obj".
+##Features
+* Generates p8086-compatible assembly file.
+* Mostly backward-compatible syntax with virgo-assembler.
+* Generates listing file for each source file with start addresses and encodings
+* Fast flex/bison powered parser with support for multiple immediate formats.
 
-
-*Currently compiles only with GCC, requires C++11 support.* 
+*Builds with both msvc10/msbuild and gcc/make environments* 
 
 **Usage**
 ```bash
