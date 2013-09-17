@@ -18,3 +18,6 @@ SOURCES += main.cpp\
 HEADERS  += qwmain.h
 
 FORMS    += qwmain.ui
+
+
+RESOURCES += lasm-gui.qrc

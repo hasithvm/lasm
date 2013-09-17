@@ -45,6 +45,11 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lasm-gui\main.cpp">
@@ -59,10 +64,16 @@
     <ClCompile Include="..\lasm-gui\Release\moc_qwmain.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\lasm-gui\GeneratedFiles\qrc_lasm-gui.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\lasm-gui\qwmain.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\lasm-gui\lasm-gui.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -74,5 +85,14 @@
     <ClInclude Include="..\lasm-gui\GeneratedFiles\ui_qwmain.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="lasm-gui.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\res\lasm-gui.ico" />
   </ItemGroup>
 </Project>
