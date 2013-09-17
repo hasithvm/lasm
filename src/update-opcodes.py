@@ -42,7 +42,7 @@ def helper_gen_files(lineset, lut, path):
 			try:
 				options = options | lut[opt.strip()]
 			except KeyError:
-				print "error! lookup {%s} value not found!" % opt
+				print("error! lookup {%s} value not found!" % opt)
 		tableEntry.append(options)
 		
 		opbyteStart = 2
