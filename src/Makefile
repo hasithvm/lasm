@@ -16,7 +16,7 @@ lasm: $(OBJ)
 
 
 p86asm.l: p86asm.l.inc opcodes.dat
-	python update-opcodes.py
+	python2 update-opcodes.py
 
 
 lex.yy.c :p86asm.l
