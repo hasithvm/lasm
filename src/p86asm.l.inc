@@ -36,7 +36,11 @@ This block takes care of removing comments from the input stream*/
 ":"																	return COLON;			
 "word"																return WORDPTR;
 "byte"																return BYTEPTR;
+"ptr"				
+
 [hb]				{/*Eats leftover text*/}
+
+
 %{/*OPCODES*/%}
 
 
@@ -67,7 +71,7 @@ This block takes care of removing comments from the input stream*/
 \]																	return RSQBR;
 \+																	return PLUS;
 
-[ \t\r]+															/*whitespace*/
-\n 							{/*ignore*/}
-.							printf("unrecognized input character '%s' at line %d\n", yytext, yylineno);
-<<EOF>>						yyterminate();
+[ \t\r]+			/*whitespace*/
+\n 					{/*ignore*/}
+.					printf("unrecognized input character '%s' at line %d\n", yytext, yylineno);
+<<EOF>>				yyterminate();

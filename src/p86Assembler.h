@@ -7,7 +7,7 @@
 #include "common.h"
 #include "BinarySegment.hpp"
 
-void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMem[]);
+inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMem[]);
 
 static std::string getSourceRepr(OpNode* ptr);
 
