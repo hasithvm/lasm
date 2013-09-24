@@ -4,8 +4,15 @@
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 #define IS_IMM_DIRECT(r) (r->getAccessMode()==IMMEDIATE)
 #define PATTERN_PARAMS pattern[0]
+#define VALID_INSTR isValidInstr = true;
 
 #define PATTERN_IS_SET(r) (pattern[0] & r)
+
+#define ASSERT_REGISTER_WIDTH(r,aw) if(r->getAccessWidth() != aw)\
+                                        ERROR("16-bit register required!");
+
+#define ASSERT_REGISTER_ISINDEXABLE(r) if (!(r->isIndexable()))\
+                                        ERROR("Invalid base register for addressing mode");
 
 #define ERROR(e)	{cerr << "ERROR: " << e << endl;\
 					return -1;}
@@ -51,7 +58,7 @@ int p86Assembler::parse(ExpressionList& pExprList)
             break;
         }
         if (retcode)
-        	errCount++;
+            errCount++;
 
     }
 
@@ -139,7 +146,7 @@ int p86Assembler::_handleLabelNode(LabelNode* label)
     if (LocationMap.count(label->getContent())) {
         //this label has been predefined
         ERROR("Multiply-defined label " << label->getContent()\
-         << "on line" << label->getLineNumber())
+              << "on line" << label->getLineNumber())
     }
     std::string LabelContentCopy = label->getContent();
     LocationMap[LabelContentCopy] = counter;
@@ -191,28 +198,26 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
                 binseg->push_back(immVal->getBinEncoding()[i+1]);
                 binseg->setStringData(immVal->getSourceRepr());
             }
-        
+
 
         } else
             ERROR("reserving memory requires an immediate or constant operand")
-        
-        _addSeg(binseg);
+
+            _addSeg(binseg);
         break;
 
     case (CONTROL_ORG):
-        if (immVal->size() > 2)             
+        if (immVal->size() > 2)
             cout << "WARN: ORG argument must be 16-bits wide! This may not be what you intended." << endl;
         counter = immVal->toWord();
 
-        
+
         break;
 
     case (CONTROL_END):
-        try
-        {
+        try {
             m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-        }
-        catch (std::out_of_range& e){
+        } catch (std::out_of_range& e) {
             ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
             m_codeStart = 0;
         }
@@ -231,34 +236,33 @@ int p86Assembler::_handleOpNode(OpNode* op)
     auto_ptr<OpVars> opv = SymTable::getVariants(op->getID());
     if (opv->size() == 0) {
         ERROR_RESUME("ERROR: Unimplemented mnemonic " << op->getContent()\
-          << " on line " << op->getLineNumber())
+                     << " on line " << op->getLineNumber())
         return -1;
     }
 
     for (int j = 0; j < opv->size(); j++) {
         uint8_t op_prop = (*opv->get(j))[0];
         int opcode_offset = 1;
-        if ((op_prop & OP_OPERANDS) == operands.size()){
-        match = _construct(opv->get(j), op, operands);
-        if (match == 0) {
-            segs[segs.size()-1]->setStringData(getSourceRepr(op));
-            break;
-        }
-        if (match == -1)
-            break;
+        if ((op_prop & OP_OPERANDS) == operands.size()) {
+            match = _construct(opv->get(j), op, operands);
+            if (match == 0) {
+                segs[segs.size()-1]->setStringData(getSourceRepr(op));
+                break;
+            }
+            if (match == -1)
+                break;
 
-        }
-        else
-           match = 1; 
+        } else
+            match = 1;
 
     }
     if (match == 1)
         ERROR_RESUME("Incorrect operands for mnemonic " << \
-        	op->getContent()  << " on line " << op->getLineNumber())
-    else if (match ==-1)
-        ERROR_RESUME("Assembly failed on " << op->getContent()\
-          << " at line " << op->getLineNumber())
- 	return match;   
+                     op->getContent()  << " on line " << op->getLineNumber())
+        else if (match ==-1)
+            ERROR_RESUME("Assembly failed on " << op->getContent()\
+                         << " at line " << op->getLineNumber())
+            return match;
 }
 
 /**
@@ -269,7 +273,7 @@ int p86Assembler::_handleOpNode(OpNode* op)
 */
 int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops)
 {
-	//auto_ptr to clean up if the pointer goes out of scope.
+    //auto_ptr to clean up if the pointer goes out of scope.
     auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
     binseg->setSourceNode(op);
     Register  *reg[3] = {NULL,NULL,NULL};
@@ -283,140 +287,132 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     int operandCount = pattern[0] & OP_OPERANDS;
     int arg0 = pattern.size() - operandCount;
     int arg1 = pattern.size() - operandCount + 1;
+
     int opcodeIndex = 1;
+
     uint8_t modrm = 0;
-    uint8_t opcode = 0x90;
+    //set to FF to catch a misencoded instruction
+    uint8_t opcode = 0xFF;
+
+    //temporary variable to store auxillary modRM encoding patterns.
+    uint8_t auxModRM = 0;
+
     bool hasDisp = false;
+    AccessWidth aw_disp = AW_UNSPECIFIED;
     bool hasModRm = true;
     bool hasImm = false;
     bool zeroDisp = false;
+    bool dispIsRel = false;
+    bool dispIsImmediate = false;
+    bool isValidInstr = false;
+    bool copyPattern = false;
+    bool twoOffsetRegs;
+
+    Operands* offsets;
+
+
+    Immediate* immSrc;
+    Immediate* dispSrc;
+    Constant* constSrc;
+
     vector<uint8_t> immediateData;
     unsigned int immSz = 0;
 
-	//break out the operands correctly
+    //break out the operands correctly
     decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
 
 
     //zip(operands in pattern, args)
-    for (int j = 0; j < operandCount;j++){
+    for (int j = 0; j < operandCount; j++) {
 
-    	if (reg[j] && IS_REG_DIRECT(reg[j])){
+        if (reg[j] && IS_REG_DIRECT(reg[j])) {
 
             //if the pattern says the param isn't a reg, reject.
             if (!IS_SET(pattern[arg0 + j], REG))
-        		return 1;
+                return 1;
 
             //check if accesswidths match the pattern.
             else if (reg[j]->getAccessWidth() !=  (pattern[arg0 + j] & OPERAND_WIDTH))
                 return 1;
-            
+
             //if there's a preset reg flag on the pattern, check it.
             else if (IS_SET(pattern[arg0 + j], REG_PRESET)) {
-                
+
                 if (reg[j]->getBinEncoding() != pattern[arg0 + j]  >> 5)
                     return 1;
             }
         }
-    	if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
-    		return 1;
-    	if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))
-    		return 1;
+        if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
+            return 1;
+        if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))
+            return 1;
     }
 
     //single byte opcodes
     if (PATTERN_IS_SET(OP_NO_MODRM)  &&  (operandCount == 0)) {
         //don't need operands!
-        if (ops.size() != 0)            
+        if (ops.size() != 0)
             ERROR( "Opcode "<< op->getContent() << " does not require operands!")
-        
-        binseg->push_back(pattern[opcodeIndex]);
 
-        for(int i = opcodeIndex + 1; i < pattern.size(); i++)
-            binseg->push_back(pattern[i]);
 
-        _addSeg(binseg);
-        return 0;
+        copyPattern = true;
+        hasImm = false;
+        hasModRm = false;
+        hasDisp = false;
+
+        isValidInstr = true;
     }
 
     /*
     *This block takes care of one-operand instructions like CALL/JMP
-    *that don't require modRMs.
+    *that don't require modRMs. This precludes memory addresses from being used.
     *
     */
-    if (PATTERN_IS_SET(OP_NO_MODRM) && operandCount == 1){
-        
-        if (reg[0]){
+    else if (PATTERN_IS_SET(OP_NO_MODRM) && operandCount == 1) {
 
-        /**
-                        Note: for the Virgo/Libra architecture, the only two opcodes that
-                        use one operand implied are PUSH/POP
-        **/
+        hasModRm = false;
+        hasDisp = false;
+        hasImm = false;
+        opcode = pattern[opcodeIndex];
 
-         opcode = pattern[opcodeIndex];
+        if (reg[0]) {
 
-        //OR in the register address
-        if (PATTERN_IS_SET(OP_REG_ADD))
-            opcode |= reg[0]->getBinEncoding();
+            /*
+                Note: for the Virgo/Libra architecture, the only two opcodes that
+                use one operand implied are PUSH/POP
+            */
 
 
-        binseg->push_back(opcode);
-        _addSeg(binseg);
-        return 0;
-        }
-    //if dst is an immediate
-    else if (IS_SET(pattern[arg0],IMM)) {
+            if (PATTERN_IS_SET(OP_REG_ADD))
+                opcode |= reg[0]->getBinEncoding();
 
-        if (consts[0]) {
-		//used primarily for the CALL/JMP instruction.
-            binseg->push_back(pattern[opcodeIndex]);
-            binseg->setUpdateFlag(true);
-            binseg->setConstant(consts[0]);
+            isValidInstr = true;
 
-            //default to 8-bit offset
-            binseg->setAddrSize(AW_8BIT);
-            binseg->push_back(0);
+        } else if (IS_SET(pattern[arg0],IMM)) {
 
-            if (pattern[arg0] & 0x01) {
-                binseg->setAddrSize(AW_16BIT);
-                binseg->push_back(0);
+            if (consts[0]) {
+                constSrc = consts[0];
+                hasDisp = true;
+                aw_disp = (pattern[arg0] & 0x01) ? AW_16BIT : AW_8BIT;
+                isValidInstr = true;
+                dispIsRel = true;
             }
 
-
-            _addSeg(binseg);
-            return 0;
-        }
-
-        //
-        else if (imm[0]) {
-
-            binseg->push_back(pattern[opcodeIndex]);
-            immediateData = imm[0]->getBinEncoding();
-
-            immSz = (pattern[arg0] & 0x01) + 1;
-            //sign-extend the operand
-            if (immediateData.size() < immSz) {
-                int16_t data =(int16_t) immediateData[0];
-                binseg->push_back((uint8_t)(data & 0xFF00));
-                binseg->push_back((uint8_t)(data & 0x00FF));
-            } else {
-                for (int i = 0; i < immSz; i++)
-                    binseg->push_back(immediateData[i]);
+            //
+            else if (imm[0]) {
+                immSrc = imm[9];
+                hasImm = true;
+                isValidInstr = true;
             }
-
-            _addSeg(binseg);
-            return 0;
-
-
         }
-    }
 
 
 
 
     }
 
-	//switch on the DEST of this opcode
-    if (!isMem[0]) {
+    //switch on the DEST of this opcode
+    else if (!isMem[0]) {
 
         //source isn't a memory location
         if (!isMem[1]) {
@@ -424,317 +420,207 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             //arguments are inherent to the opcode
             if (PATTERN_IS_SET(OP_NO_MODRM)) {
 
+                opcode = pattern[opcodeIndex];
+                hasModRm = false;
+
+                if (PATTERN_IS_SET(OP_REG_ADD))
+                    opcode |= reg[0]->getBinEncoding();
+
                 if (reg[0] && reg[1]) {
 
-                    //this is an OUT DX,A[L|X] instruction.
-                    binseg->push_back(pattern[opcodeIndex]);
-                    _addSeg(binseg);
-                    return 0;
+                    isValidInstr = true;
+                }
+
+                else if (imm[1]) {
+
+                    hasImm = true;
+                    immSrc = imm[1];
+                    isValidInstr = true;
+
+                } else if (consts[1]) {
+                    constSrc = consts[1];
+                    ASSERT_REGISTER_WIDTH(reg[0], AW_16BIT);
+                    hasDisp = true;
+                    aw_disp = AW_16BIT;
+                    isValidInstr = true;
 
                 }
 
-                else {
-                    //this is now not a REG<-mem operation (no mod/rm), it has to be a REG<-imm
-                    opcode = pattern[opcodeIndex];
-                    if (PATTERN_IS_SET(OP_REG_ADD))
-                        opcode |= reg[0]->getBinEncoding();
-
-                    binseg->push_back(opcode);
-                    if (imm[1]){
-                    immediateData = imm[1]->getBinEncoding();
-
-                    int len = (pattern[arg0] & 0x01 ) + 1;
-
-                    for (int i = 0; i < len; i++) {
-                        binseg->push_back(immediateData[i]);
-                    }
-
-                    }
-                    else if (consts[1]){
-                        binseg->setUpdateFlag(false);
-                        binseg->setConstant(consts[1]);
-
-                                    //default to 8-bit offset
-                        binseg->setAddrSize(AW_16BIT);
-                        binseg->push_back(0);
-                        binseg->push_back(0);
-                    }
 
 
-                    
-
-                    _addSeg(binseg);
-                    return 0;
-                    }
-
-
-
-                } 
-            else {
+            } else {
+                /*
+                    NB: For single reg-operand mnemonics (eg MUL AX), the modrm extension
+                    should take care of it automatically.
+                */
                 if (PATTERN_IS_SET(OP_MODRM_EXT)) {
-                 
+
                     modrm |= pattern[1];
                     opcodeIndex = opcodeIndex + 1;
-                    opcode = pattern[opcodeIndex];
                 }
 
-                     //if dst is a reg
-                 if (operandCount == 1){
 
-                     modrm |= 0xC0; //MOD field is b11
-                     modrm |= reg[0]->getBinEncoding();
-                     
-                     binseg->push_back(opcode);
-                     binseg->push_back(modrm);
-                     _addSeg(binseg);
-                     return 0;
+                opcode = pattern[opcodeIndex];
+                modrm |= reg[0]->getBinEncoding();
+                modrm |= 0xC0; //MOD field is b11
 
-                }
+
+                //encodes to opcode modrm with one reg -- see MUL.
+                if (operandCount == 1)
+                    isValidInstr = 1;
+
+
                 //Reg1<-Reg2
                 if ((reg[1])) {
 
-
                     modrm |= 0xC0; //MOD field is b11
-                    modrm |= (reg[0]->getBinEncoding());
-
-                    if (!(pattern[0] & OP_MODRM_EXT))
+                    if (!PATTERN_IS_SET(OP_MODRM_EXT))
                         modrm |= reg[1]->getBinEncoding() << 3;
-
-                    binseg->push_back(pattern[opcodeIndex]);
-                    binseg->push_back(modrm);
-                    _addSeg(binseg);
-                    return 0;
+                    isValidInstr = true;
 
                 }
 
                 //REG <--IMM
-                if ((imm[1])) {
-
-                    modrm |= 0xC0; //MOD field is b11
-
-                    modrm |= reg[0]->getBinEncoding();
-
-                    binseg->push_back(opcode);
-                    binseg->push_back(modrm);
-                    vector<uint8_t>& imm_data = imm[1]->getBinEncoding();
-
-                    int len =(pattern[arg1] & OPERAND_WIDTH) + 1;
-                    //if there is a 2-byte imm required and the immediate isn't long enough 
-                    //or is too long,
-                    //get the toWord representation, and push it on correctly.
-                    if (len == 2 && (imm_data.size() != len)) {
-                        uint16_t data =imm[1]->toWord();
-                        binseg->push_back((uint8_t)(data & 0x00FF));
-                        binseg->push_back((uint8_t)(data & 0xFF00));
-
-                    } else {
-                        for (int i = 0; i < len; i++)
-                            binseg->push_back(imm_data[i]);
-                    }
-                    _addSeg(binseg);
-                    return 0;
-
+                else if ((imm[1])) {
+                    immSrc = imm[1];
+                    hasImm = true;
+                    isValidInstr = true;
 
                 }
+
+
                 //REG <--IMM [CONST]. This is reserved for final pass label updates.
                 /*
                 Syntax example: mov BX, label, where label is a label pointing to data and
                 not a simple constant. Only reserved for 16-bit registers
 
                 */
-                if ((consts[1]) && (pattern[arg1] & IMM)) {
+                else if ((consts[1]) && (pattern[arg1] & IMM)) {
 
-
-                    //is 16-bit register only!
-                    if ((pattern[arg0] & 0x01) != 0x01)
-                        return 1;
-
-                    if (reg[0]->getAccessWidth() != 0x01) {
-                        cerr << "ERROR: 16-bit register required" << endl;
-                        return -1;
-                    }
-
-                    modrm |= 0xC0; //MOD field is b11
-
-                    modrm |= reg[0]->getBinEncoding();
-                    binseg->push_back(pattern[opcodeIndex]);
-                    binseg->push_back(modrm);
-                    binseg->setUpdateFlag(false);
-                    binseg->setConstant(consts[1]);
-                    binseg->setAddrSize(AW_16BIT);
-                    binseg->push_back(0);
-                    binseg->push_back(0);
-                    _addSeg(binseg);
-                    return 0;
-
+                    ASSERT_REGISTER_WIDTH(reg[0], AW_16BIT);
+                    constSrc = consts[1];
+                    hasDisp = true;
+                    aw_disp = AW_16BIT;
+                    isValidInstr = true;
 
                 }
-
-
-
-
             }
 
+        }
 
-        } else {
+
+        else {
             //REG <--MEM
             modrm = 0x00; //MOD field is b11
+            hasImm = false;
             hasDisp = false;
-            //special case to handle intel encoding snafu
+            hasModRm = true;
+            //special case to handle intel encoding quirk.
             zeroDisp = false;
 
             if (PATTERN_IS_SET(OP_MODRM_EXT)) {
                 modrm |= pattern[1];
+                opcodeIndex = opcodeIndex + 1;
 
             }
+
+            opcode = pattern[opcodeIndex];
+            modrm |= reg[0]->getBinEncoding() << 3;
+
             if (imm[1]) {
                 //addressing mode is disp16
                 hasDisp = true;
-                modrm = 0x06;
+                modrm |= 0x06;
+                dispSrc = imm[1];
+                dispIsImmediate = true;
+                isValidInstr = true;
+                aw_disp = AW_16BIT;
+
             } else if (consts[1]) {
                 //addressing mode is disp16
                 hasDisp = true;
-                modrm = 0x06;
-            } else if (reg[1] && reg[1]->getAccessMode() == REG_ADDR) {
-                if (reg[1]->isIndexable()) {
+                modrm |= 0x06;
+                isValidInstr = true;
+                aw_disp = AW_16BIT;
+                constSrc = consts[1];
 
+            } else if (reg[1]) {
 
-                    switch (reg[1]->getBinEncoding()) {
-                    case (ENC_REG_BP):
-                        hasDisp = true;
-                        zeroDisp = true;
-                        modrm = 0x46;
-                        break;
-                    case (ENC_REG_SI):
-                        modrm = 0x04;
-                        break;
-                    case (ENC_REG_DI):
-                        modrm = 0x05;
-                        break;
-                    case (ENC_REG_BX):
-                        modrm = 0x07;
-                        break;
-                    default:
-                        cerr << "ERROR: Undefined register-addressing mode!" << endl;
-                        return -1;
-                        break;
-                    }
+                ASSERT_REGISTER_ISINDEXABLE(reg[1]);
 
+                switch (reg[1]->getBinEncoding()) {
+                case (ENC_REG_BP):
+                    hasDisp = true;
+                    zeroDisp = true;
+                    auxModRM |= 0x46;
+                    break;
+                case (ENC_REG_SI):
+                    auxModRM |= 0x04;
+                    break;
+                case (ENC_REG_DI):
+                    auxModRM |= 0x05;
+                    break;
+                case (ENC_REG_BX):
+                    auxModRM |= 0x07;
+                    break;
+                default:
+                    ERROR("Undefined register-addressing mode!");
                 }
-            } else if (reg[1] && reg[1]->getAccessMode() == REG_OFFSET) {
-                if (reg[1]->isIndexable()) {
 
 
-                    Operands* offsets = reg[1]->getOffsetPtr();
+                if (reg[1]->getAccessMode() == REG_OFFSET) {
+                    offsets = reg[1]->getOffsetPtr();
 
-                    bool twoOffsetRegs = (offsets->size() >= 1) &&\
-                                         offsets->at(0)->getAccessMode() == REG_DIRECT;
+                    twoOffsetRegs = (offsets->size() >= 1) &&\
+                                    offsets->at(0)->getAccessMode() == REG_DIRECT;
 
-                    if ((twoOffsetRegs) & (offsets->size() == 2) &&\
+                    if ((twoOffsetRegs) && (offsets->size() == 2) &&\
                             offsets->at(1)->getAccessMode() != IMMEDIATE) {
                         ERROR("invalid indexed addressing mode!")
                     }
 
                     if (offsets->back()->getAccessMode() == IMMEDIATE) {
                         hasDisp = true;
-                        imm[1] = (Immediate*) offsets->back();
-                        modrm |= (imm[1]->size() % 3) << 6;
+                        dispSrc = (Immediate*) offsets->back();
+                        dispIsImmediate = true;
+                        modrm |= (dispSrc->size() % 3) << 6;
                     }
 
-                    switch (reg[1]->getBinEncoding()) {
-                    case (ENC_REG_BP):
-                        modrm |= 0x46;
-                        break;
-                    case (ENC_REG_SI):
-                        modrm |= 0x04;
-                        break;
-                    case (ENC_REG_DI):
-                        modrm |= 0x05;
-                        break;
-                    case (ENC_REG_BX):
-                        modrm |= 0x07;
-                        break;
-                    default:
-                        cerr << "ERROR: Undefined register-addressing mode!" << endl;
-                        return -1;
-                        break;
-
-                    }
-
-
-                    if (twoOffsetRegs) {
-                        modrm &= 0xF8;
-                        uint8_t binEnc = reg[1]->getBinEncoding();
-                        if (binEnc == ENC_REG_BX)
-                            modrm = 0x00;
-                        else if (binEnc == ENC_REG_BP)
-                            modrm = 0x02;
-                        else
-                            ERROR("Undefined register addressing mode")
-
-                            binEnc = ((Register*)offsets->at(0))->getBinEncoding();
-                        if (binEnc == ENC_REG_SI)
-                            modrm |= 0x00;
-                        else if (binEnc == ENC_REG_DI)
-                            modrm |= 0x01;
-                        else
-                            ERROR("Undefined register addressing mode")
-
-                            if (offsets->size() == 2) {
-
-                                //last one has to be an immediate.
-                                uint8_t mod = imm[1]->size() % 3;
-                                modrm |= mod << 6;
-                                hasDisp = true;
-
-                            }
-                    }
-                    //if (offsets->at(0)->getBinEncoding() == ENC_REG_SI)
-                } else {
-                    ERROR("Invalid register for addressing")
                 }
 
 
+                if (twoOffsetRegs) {
+                    //clear out RM field.
+                    modrm &= 0xF8;
+                    uint8_t binEnc = reg[1]->getBinEncoding();
+                    if (binEnc == ENC_REG_BX)
+                        modrm |= 0x00;
+                    else if (binEnc == ENC_REG_BP)
+                        modrm |= 0x02;
+                    else
+                        ERROR("Undefined register addressing mode")
+
+                        binEnc = ((Register*)offsets->at(0))->getBinEncoding();
+                    if (binEnc == ENC_REG_SI)
+                        modrm |= 0x00;
+                    else if (binEnc == ENC_REG_DI)
+                        modrm |= 0x01;
+                    else
+                        ERROR("Undefined register addressing mode")
+
+                }
+            
+                modrm |= auxModRM;
+                isValidInstr = true;
             }
-
-            modrm |= reg[0]->getBinEncoding() << 3;
-            binseg->push_back(pattern[opcodeIndex]);
-            if (hasDisp) {
-
-                binseg->push_back(modrm);
-
-                if (consts[1]) {
-                    binseg->setUpdateFlag(false);
-                    binseg->setConstant(consts[1]);
-                    binseg->setAddrSize(AW_16BIT);
-
-                    binseg->push_back(0);
-                    binseg->push_back(0);
-                } else if (zeroDisp) {
-                    binseg->push_back(0);
-                    if ((pattern[arg1] & OPERAND_WIDTH) == 1)
-                    binseg->push_back(0);
-                } else {
-                    binseg->push_back(imm[1]->getBinEncoding()[0]);
-                    if (imm[1]->getBinEncoding().size() > 1 && ((pattern[arg1] & OPERAND_WIDTH) == 1))
-                        binseg->push_back(imm[1]->getBinEncoding()[1]);
-               }
-
-            } else
-                binseg->push_back(modrm);
-
-            _addSeg(binseg);
-            return 0;
-
-
-
-
 
 
         }
 
     }
-    if (isMem[0]) {
+
+
+    else if (isMem[0]) {
         /*
         Acceptable memory operations:
         R->Mem
@@ -970,94 +856,145 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             _addSeg(binseg);
             return 0;
         } else if (imm[0]->getAccessMode() == IMMEDIATE_ADDR) {
-			// Ensure size matches up
+            // Ensure size matches up
 
 
-			modrm |= 0x06; //set to immediate address mode
+            modrm |= 0x06; //set to immediate address mode
 
-			// Since mod field is taken, three possibilites remain
-			// 1. reg field used for extended opcode -> second arg immediate
-			// 2. reg field used for register -> second arg register
-			// 3. only one argument
+            // Since mod field is taken, three possibilites remain
+            // 1. reg field used for extended opcode -> second arg immediate
+            // 2. reg field used for register -> second arg register
+            // 3. only one argument
 
-			if (operandCount == 2) {
-				// There's a second argument
+            if (operandCount == 2) {
+                // There's a second argument
 
-				if ((pattern[0] & OP_MODRM_EXT) == 0) {
-					// The reg field is free, check if it's necessary
-					// Only direct reg access allowed, because there's a memory access in arg 0
-					if(reg[1] && ((pattern[arg1] & REG) == REG)) {
-						// arg1 is a register
-						// check that it's the right width
-						if (reg[1]->getAccessWidth() == (pattern[arg1] & AW_16BIT))
-							modrm |= reg[1]->getBinEncoding() << 3; // size is right
-						else
-							return 1; // Size is mismatched
+                if ((pattern[0] & OP_MODRM_EXT) == 0) {
+                    // The reg field is free, check if it's necessary
+                    // Only direct reg access allowed, because there's a memory access in arg 0
+                    if(reg[1] && ((pattern[arg1] & REG) == REG)) {
+                        // arg1 is a register
+                        // check that it's the right width
+                        if (reg[1]->getAccessWidth() == (pattern[arg1] & AW_16BIT))
+                            modrm |= reg[1]->getBinEncoding() << 3; // size is right
+                        else
+                            return 1; // Size is mismatched
 
-						binseg->push_back(pattern[opcodeIndex]);
-						binseg->push_back(modrm);
-						for (int i = 0; i < imm[0]->size(); i++)
-							binseg->push_back(imm[0]->getBinEncoding()[i]);
-						if (imm[0]->size() < 2)
-							binseg->push_back(0);
-						_addSeg(binseg);
-						return 0;
-					}
+                        binseg->push_back(pattern[opcodeIndex]);
+                        binseg->push_back(modrm);
+                        for (int i = 0; i < imm[0]->size(); i++)
+                            binseg->push_back(imm[0]->getBinEncoding()[i]);
+                        if (imm[0]->size() < 2)
+                            binseg->push_back(0);
+                        _addSeg(binseg);
+                        return 0;
+                    }
 
-				} else if(imm[1] && ((pattern[arg1] & IMMEDIATE) == IMMEDIATE)) {
-					// arg1 is an immediate
-					if(((imm[1]->size() == 2) && ((pattern[arg1] & AW_16BIT) == AW_16BIT)) || ((imm[1]->size() == 1) && ((pattern[arg1] & AW_16BIT) == 0))) {
-						// size matches
-						binseg->push_back(pattern[opcodeIndex]);
-						binseg->push_back(modrm);
-						for (int i = 0; i < imm[0]->size(); i++)
-							binseg->push_back(imm[0]->getBinEncoding()[i]);
-						if (imm[0]->size() < 2)
-							binseg->push_back(0);
+                } else if(imm[1] && ((pattern[arg1] & IMMEDIATE) == IMMEDIATE)) {
+                    // arg1 is an immediate
+                    if(((imm[1]->size() == 2) && ((pattern[arg1] & AW_16BIT) == AW_16BIT)) || ((imm[1]->size() == 1) && ((pattern[arg1] & AW_16BIT) == 0))) {
+                        // size matches
+                        binseg->push_back(pattern[opcodeIndex]);
+                        binseg->push_back(modrm);
+                        for (int i = 0; i < imm[0]->size(); i++)
+                            binseg->push_back(imm[0]->getBinEncoding()[i]);
+                        if (imm[0]->size() < 2)
+                            binseg->push_back(0);
 
-						for (int i = 0; i < imm[1]->size(); i++)
-							binseg->push_back(imm[1]->getBinEncoding()[i]);
-						_addSeg(binseg);
-						return 0;
-					} else {
-						// size mismatch
-						return 1;
-					}
-				}
-			} else {
-				// Only one argument
-				binseg->push_back(pattern[opcodeIndex]);
-				binseg->push_back(modrm);
-				for (int i = 0; i < imm[0]->size(); i++)
-					binseg->push_back(imm[0]->getBinEncoding()[i]);
-				if (imm[0]->size() < 2)
-					binseg->push_back(0);
-				_addSeg(binseg);
-				return 0;
+                        for (int i = 0; i < imm[1]->size(); i++)
+                            binseg->push_back(imm[1]->getBinEncoding()[i]);
+                        _addSeg(binseg);
+                        return 0;
+                    } else {
+                        // size mismatch
+                        return 1;
+                    }
+                }
+            } else {
+                // Only one argument
+                binseg->push_back(pattern[opcodeIndex]);
+                binseg->push_back(modrm);
+                for (int i = 0; i < imm[0]->size(); i++)
+                    binseg->push_back(imm[0]->getBinEncoding()[i]);
+                if (imm[0]->size() < 2)
+                    binseg->push_back(0);
+                _addSeg(binseg);
+                return 0;
 
-			}
+            }
 
-		}
-	}
+        }
+    }
+
+    if (isValidInstr) {
+        if (copyPattern) {
+
+            for (int i=opcodeIndex; i < pattern.size(); i++)
+                binseg->push_back(pattern[i]);
+
+        } else {
+            binseg->push_back(opcode);
+            if (hasModRm)
+                binseg->push_back(modrm);
+            if (hasDisp) {
+                if (zeroDisp){
+                    binseg->push_back(0);
+                }
+                if (dispIsImmediate) {
+                    binseg->push_back(dispSrc->getBinEncoding()[0]);
+                    if (aw_disp == AW_16BIT)
+                        binseg->push_back(dispSrc->getBinEncoding()[1]);
+
+
+                } else {
+                    binseg->setUpdateFlag(dispIsRel);
+                    binseg->setConstant(constSrc);
+                    binseg->setAddrSize(aw_disp);
+
+                    binseg->push_back(0);
+                    if(aw_disp == AW_16BIT)
+                        binseg->push_back(0);
+                }
+            }
+            if (hasImm) {
+                int len =(pattern[arg1] & OPERAND_WIDTH) + 1;
+                //if there is a 2-byte imm required and the immediate isn't long enough
+                //or is too long,
+                //get the toWord representation, and push it on correctly.
+                if (len == 2 && (immSrc->size() != len)) {
+                    uint16_t data =immSrc->toWord();
+                    binseg->push_back((uint8_t)(data & 0x00FF));
+                    binseg->push_back((uint8_t)(data & 0xFF00));
+
+                } else {
+                    for (int i = 0; i < len; i++)
+                        binseg->push_back(immSrc->getBinEncoding()[i]);
+                }
+            }
+        }
+        _addSeg(binseg);
+        return 0;
+    }
+
     return 1;
+
 }
 
 
 
 void p86Assembler::_addSeg(auto_ptr<BinarySegment> binseg)
 {
-    if (pLastLabel)
-    {
+    if (pLastLabel) {
         binseg->setLabel(pLastLabel);
         pLastLabel = NULL;
 
     }
 
     binseg->setCounter(counter);
-    
+
     counter = counter + binseg->size();
     segs.push_back(binseg.release());
-    
+
 
 }
 inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMemory[])
