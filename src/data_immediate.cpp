@@ -55,7 +55,7 @@ uint16_t Immediate::toWord(){
 		return (uint16_t)((m_data[1] << 8) | (m_data[0]));
 	else if (m_data.size() == 1)
 		return (uint16_t) m_data[0];
-	
+	return 0;	
 
 }
 
@@ -99,15 +99,19 @@ switch(base)
 	if (padding != 8)
 		in.insert(0, padding, (char)in[0]);
 	out.resize(in.length() / 8);
+
 	for (it = in.rbegin();it != in.rend();)
 	{
 	
 		for (int i = 0; i < 8;i++)
 		{
-					out[bytes_written] |= parseDigit(*it) << i;
+					out[bytes_written] |= (*it - '0') << i;
 					it++;
 			}
+		bytes_written++;
+
 	}
+
 	break;
 	case BASE_ASC:
 		out.resize(in.length() - 2);

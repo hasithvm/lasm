@@ -39,9 +39,9 @@ int p86Assembler::parse(ExpressionList& pExprList)
 // skip to control|label|opcode node.
     BaseExpressionNode* currentExpr;
     int retcode;
-    int errCount = 0;
+    unsigned int errCount = 0;
 
-    for (int i = 0; i < pExprList.size(); i++) {
+    for (unsigned int i = 0; i < pExprList.size(); i++) {
 
         currentExpr = pExprList[i];
         switch(currentExpr->getType()) {
