@@ -73,7 +73,7 @@ bool p86Assembler::_postpass()
     int finalAddress;
     int addrStart;
     bool rerunPass = false;
-    for (int i = 0; i < segs.size(); i++) {
+    for (unsigned int i = 0; i < segs.size(); i++) {
         if (segs[i]->getUpdateFlag()) {
             try {
                 loc_target = LocationMap.at(segs[i]->getConstant()->getName());
@@ -193,7 +193,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
             binseg->push_back(0);
             binseg->push_back(0);
         } else if (immVal) {
-            for (int i = 0; i < immVal->size(); i+=2) {
+            for (unsigned int i = 0; i < immVal->size(); i+=2) {
                 binseg->push_back(immVal->getBinEncoding()[i]);
                 binseg->push_back(immVal->getBinEncoding()[i+1]);
                 binseg->setStringData(immVal->getSourceRepr());
@@ -217,7 +217,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
     case (CONTROL_END):
         try {
             m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-        } catch (std::out_of_range& e) {
+        } catch (std::out_of_range&) {
             ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
             m_codeStart = 0;
         }
@@ -240,9 +240,8 @@ int p86Assembler::_handleOpNode(OpNode* op)
         return -1;
     }
 
-    for (int j = 0; j < opv->size(); j++) {
+    for (unsigned int j = 0; j < opv->size(); j++) {
         uint8_t op_prop = (*opv->get(j))[0];
-        int opcode_offset = 1;
         if ((op_prop & OP_OPERANDS) == operands.size()) {
             match = _construct(opv->get(j), op, operands);
             if (match == 0) {
@@ -284,11 +283,11 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
     OpType pattern = *pPattern.release();
 
-    int operandCount = pattern[0] & OP_OPERANDS;
-    int arg0 = pattern.size() - operandCount;
-    int arg1 = pattern.size() - operandCount + 1;
+    unsigned int operandCount = pattern[0] & OP_OPERANDS;
+    unsigned int arg0 = pattern.size() - operandCount;
+    unsigned int arg1 = pattern.size() - operandCount + 1;
 
-    int opcodeIndex = 1;
+    unsigned int opcodeIndex = 1;
 
     uint8_t modrm = 0;
     //set to FF to catch a misencoded instruction
@@ -323,7 +322,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
     //zip(operands in pattern, args)
-    for (int j = 0; j < operandCount; j++) {
+    for (unsigned int j = 0; j < operandCount; j++) {
 
         if (reg[j] && IS_REG_DIRECT(reg[j])) {
 
@@ -683,7 +682,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back((uint8_t)(data & 0xFF00));
                     binseg->push_back((uint8_t)(data & 0x00FF));
                 } else {
-                    for (int i = 0; i < immSz; i++)
+                    for (unsigned int i = 0; i < immSz; i++)
                         binseg->push_back(immediateData[i]);
                 }
 
@@ -847,7 +846,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back(imm[1]->getBinEncoding()[0]);
                     binseg->push_back(0);
                 } else
-                    for (int i = 0; i < len; i++)
+                    for (unsigned int i = 0; i < len; i++)
                         binseg->push_back(imm[1]->getBinEncoding()[i]);
 
 
@@ -882,7 +881,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
                         binseg->push_back(pattern[opcodeIndex]);
                         binseg->push_back(modrm);
-                        for (int i = 0; i < imm[0]->size(); i++)
+                        for (unsigned int i = 0; i < imm[0]->size(); i++)
                             binseg->push_back(imm[0]->getBinEncoding()[i]);
                         if (imm[0]->size() < 2)
                             binseg->push_back(0);
@@ -896,12 +895,12 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                         // size matches
                         binseg->push_back(pattern[opcodeIndex]);
                         binseg->push_back(modrm);
-                        for (int i = 0; i < imm[0]->size(); i++)
+                        for (unsigned int i = 0; i < imm[0]->size(); i++)
                             binseg->push_back(imm[0]->getBinEncoding()[i]);
                         if (imm[0]->size() < 2)
                             binseg->push_back(0);
 
-                        for (int i = 0; i < imm[1]->size(); i++)
+                        for (unsigned int i = 0; i < imm[1]->size(); i++)
                             binseg->push_back(imm[1]->getBinEncoding()[i]);
                         _addSeg(binseg);
                         return 0;
@@ -914,7 +913,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                 // Only one argument
                 binseg->push_back(pattern[opcodeIndex]);
                 binseg->push_back(modrm);
-                for (int i = 0; i < imm[0]->size(); i++)
+                for (unsigned int i = 0; i < imm[0]->size(); i++)
                     binseg->push_back(imm[0]->getBinEncoding()[i]);
                 if (imm[0]->size() < 2)
                     binseg->push_back(0);
@@ -929,7 +928,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     if (isValidInstr) {
         if (copyPattern) {
 
-            for (int i=opcodeIndex; i < pattern.size(); i++)
+            for (unsigned int i=opcodeIndex; i < pattern.size(); i++)
                 binseg->push_back(pattern[i]);
 
         } else {
@@ -967,7 +966,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back((uint8_t)(data & 0xFF00));
 
                 } else {
-                    for (int i = 0; i < len; i++)
+                    for (unsigned int i = 0; i < len; i++)
                         binseg->push_back(immSrc->getBinEncoding()[i]);
                 }
             }
@@ -1044,7 +1043,7 @@ static std::string getSourceRepr(OpNode* ptr)
     std::string paramStr;
     Operands& ops = ptr->getOperands();
     Operands* offsets;
-    for (int i = 0; i < ops.size(); i++) {
+    for (unsigned int i = 0; i < ops.size(); i++) {
         paramStr = "";
         switch (ops[i]->getAccessMode()) {
         case (REG_DIRECT):
@@ -1056,7 +1055,7 @@ static std::string getSourceRepr(OpNode* ptr)
         case (REG_OFFSET):
             paramStr = "[" + ((Register*) ops[i])->getRegName();
             offsets = ((Register*)ops[i])->getOffsetPtr();
-            for (int k = 0; k < offsets->size(); k++) {
+            for (unsigned int k = 0; k < offsets->size(); k++) {
                 switch (offsets->at(k)->getAccessMode()) {
 
                 case(REG_DIRECT):

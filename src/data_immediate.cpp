@@ -90,7 +90,8 @@ switch(base)
 	bytes_written++;	
 
 }
-
+	while ((out.size() > 1) && out.back() == 0x00)
+		out.pop_back();
 
 	break;
 	case BASE_BIN:
@@ -111,7 +112,8 @@ switch(base)
 		bytes_written++;
 
 	}
-
+	while ((out.size() > 1) && out.back() == 0x00)
+		out.pop_back();
 	break;
 	case BASE_ASC:
 		out.resize(in.length() - 2);
@@ -122,7 +124,7 @@ switch(base)
 			bytes_written++;
 			}
 			
-		break;
+		break;	
 	case BASE_DEC:
 
 		intermediate = in.at(0) == '-'? in.substr(1,-1): in;
@@ -147,8 +149,7 @@ switch(base)
 	//zero bytes isn't valid though...
 }
 
-	while ((out.size() > 1) && out.back() == (out.back() >= 0x80 ? 0xFF : 0x00))
-		out.pop_back();
+
 
 	return out;
 }
