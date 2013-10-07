@@ -26,7 +26,7 @@ void Operand::setAccessMode(AccessMode am){
 Register::RegLookupMap Register::m_regmap(Register::_populate());
 //default constructor.
 
-Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL), m_isIndexBase(false)
+Register::Register(): reg(0xFF),m_regtype(0), m_regname(), m_isIndexBase(false),m_ptrOffset(NULL)
 {
 }
 
@@ -34,7 +34,7 @@ Register::Register(): reg(0xFF),m_regtype(0), m_regname(),m_ptrOffset(NULL), m_i
 
 //extended constructor. Consumes a regname and an accessmode.
 Register::Register(char* pRegName, AccessMode accessmode): 
-reg(0xFF), m_regtype(0),m_regname(),m_ptrOffset(NULL), m_isIndexBase(false)
+reg(0xFF), m_regtype(0),m_regname(), m_isIndexBase(false),m_ptrOffset(NULL)
 
 {
 //create the LUT for regtypes. Really should make this static.
@@ -87,7 +87,7 @@ void Register::repr(int indentlevel){
 //returns a binary representation of the register.
 uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
-for (int i=0;i<str.size();i++)
+for (unsigned int i=0;i<str.size();i++)
 		str[i] = toupper(str[i]);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
 if (m_regmap.find(str) == m_regmap.end())

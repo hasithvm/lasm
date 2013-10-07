@@ -52,7 +52,7 @@ void OpNode::setID(int id){
 }
 int OpNode::getOperandCount(){
 	int tmp_len =0;
-	for (int i = 0; i < ops.size();i++)
+	for (unsigned int i = 0; i < ops.size();i++)
 		tmp_len = tmp_len + !ops[i] ? 0 : 1;
 	return tmp_len;
 }

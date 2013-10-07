@@ -10,16 +10,16 @@
 void preprocess(ExpressionList& pExprList){
 vector<ControlNode*> equ_defs;
 vector<Constant**> pConstants;
-for (int i =0;i < pExprList.size();i++){
+for (unsigned int i =0;i < pExprList.size();i++){
 		if (pExprList[i]->getType() == EXPR_OP){
 			Operands& op = ((OpNode*) pExprList[i])->getOperands();
-			for (int j = 0;j < op.size();j++){
+			for (unsigned int j = 0;j < op.size();j++){
 			if (op[j]->getAccessMode() == CONST){
 				pConstants.push_back((Constant**)&op[j]);
 			}
 			if (op[j]->getAccessMode() == REG_OFFSET){
 				Operands* p = ((Register*)op[j])->getOffsetPtr();
-				for (int k =0;k < p->size();k++)
+				for (unsigned int k =0;k < p->size();k++)
 				{
 					if (p->at(k)->getAccessMode() == CONST)
 						pConstants.push_back((Constant**)&p->at(k));
@@ -37,9 +37,9 @@ for (int i =0;i < pExprList.size();i++){
 
 //replace named EQUs with Immediate values.
 
-for (int i=0;i< equ_defs.size();i++){
+for (unsigned int i=0;i< equ_defs.size();i++){
 	std::string& equ_key = equ_defs[i]->getKey();
-	for (int j=0;j<pConstants.size();j++){
+	for (unsigned int j=0;j<pConstants.size();j++){
 		std::string& const_name = (*(pConstants[j]))->getName();
 		if (equ_key.compare(const_name)==0){
 				if ((*pConstants[j])->getAccessMode() == CONST_ADDR){

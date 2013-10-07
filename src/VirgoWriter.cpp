@@ -9,12 +9,11 @@ void writeFile(vector<BinarySegment*>& segments, string& filename, unsigned int 
 	clog << "Starting object-write process!" << endl; 
 	ofstream outfile;		
 	outfile.open (filename.c_str());
-	Constant* label;
 	 	
 	outfile << "3 " << segments.size() << " " << startingAddress << "       " << endl;
 
 
-	for (int i = 0; i < segments.size();i++){
+	for (unsigned int i = 0; i < segments.size();i++){
 		
 		if (!segments[i])
 			continue;

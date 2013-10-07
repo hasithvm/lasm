@@ -41,7 +41,7 @@ int p86Assembler::parse(ExpressionList& pExprList)
     int retcode;
     int errCount = 0;
 
-    for (int i = 0; i < pExprList.size(); i++) {
+    for (unsigned int i = 0; i < pExprList.size(); i++) {
 
         currentExpr = pExprList[i];
         switch(currentExpr->getType()) {
@@ -73,7 +73,7 @@ bool p86Assembler::_postpass()
     int finalAddress;
     int addrStart;
     bool rerunPass = false;
-    for (int i = 0; i < segs.size(); i++) {
+    for (unsigned int i = 0; i < segs.size(); i++) {
         if (segs[i]->getUpdateFlag()) {
             try {
                 loc_target = LocationMap.at(segs[i]->getConstant()->getName());
@@ -217,7 +217,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
     case (CONTROL_END):
         try {
             m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-        } catch (std::out_of_range& e) {
+        } catch (std::out_of_range&) {
             ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
             m_codeStart = 0;
         }
@@ -304,8 +304,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     bool immIsConst = false;
     bool isValidInstr = false;
     bool copyPattern = false;
-    bool twoOffsetRegs;
-
 
     Immediate* immSrc;
     Immediate* dispSrc;
@@ -673,7 +671,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                 if (op->getExplicitAccessModifier() == AW_UNSPECIFIED)
                     ERROR("Ambiguous operand size for operation" << op->getContent())
                 
-                if (op->getExplicitAccessModifier() != pattern[arg1] & OPERAND_WIDTH)
+                if (op->getExplicitAccessModifier() != (pattern[arg1] & OPERAND_WIDTH))
                     return 1;
 
                 immSrc = imm[1];
@@ -766,7 +764,7 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
 
 
 
-    for (int i = 0 ; i < ops.size(); i++) {
+    for (unsigned int i = 0 ; i < ops.size(); i++) {
         AccessMode& am = ops[i]->getAccessMode();
 
         switch (am) {
@@ -808,7 +806,7 @@ static std::string getSourceRepr(OpNode* ptr)
     std::string paramStr;
     Operands& ops = ptr->getOperands();
     Operands* offsets;
-    for (int i = 0; i < ops.size(); i++) {
+    for (unsigned int i = 0; i < ops.size(); i++) {
         paramStr = "";
         switch (ops[i]->getAccessMode()) {
         case (REG_DIRECT):

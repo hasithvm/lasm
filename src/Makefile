@@ -1,7 +1,7 @@
 TARGET=lasm
 SRC=symtable.cpp data.cpp lex.yy.c data_immediate.cpp p86asm.tab.c common.cpp Nodes.cpp BinarySegment.cpp p86Assembler.cpp preprocessor.cpp lasm.cpp VirgoWriter.cpp ListingWriter.cpp
 OBJ=$(SRC:.cpp=.o)
-CXXFLAGS=-g
+CXXFLAGS=-g -Wall
 CCFLAGS=-g
 all:$(TARGET)
 

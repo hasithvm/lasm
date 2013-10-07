@@ -1,7 +1,7 @@
 #include "symtable.h"
 #include <iostream>
 #include <iomanip>
-
+#include "assert.h"
 namespace SymTable{
 void repr(){
 
@@ -81,6 +81,7 @@ void OpType::realign(inst_variant* ptr){
 
 
 unsigned char& OpType::operator[](int index){
-	if (m_ptr)
-		return m_ptr->pStart[index];
+	assert(m_ptr);
+	return m_ptr->pStart[index];
+
 }

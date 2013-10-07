@@ -9,10 +9,10 @@ void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::str
 	char* writePos = NULL;
 	char* writeStart = NULL;
 	ofstream outfile;		
-	int bytes_written = 0;
-	int i = 0;
-	int length;
-	int curLineNo = 0;
+	unsigned int bytes_written = 0;
+	unsigned int i = 0;
+	unsigned int length;
+	unsigned int curLineNo = 0;
 	std::ifstream is (sourceFile.c_str(), std::ifstream::binary);
 	if (is) {
     // get length of file:
