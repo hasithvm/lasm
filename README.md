@@ -15,9 +15,10 @@
     lasm [filename] [outputfile]
 ```
 **Building**
+
 ***Windows***
-The msvc10 build environment currently requires an environment variable GNUBINDIR, pointing to a bin folder with flex and bison (preferably GnuWin32), and a variable FLEXINCLUDE pointing to /usr/include to pull in unistd.h for flex. QTDIR should point to a QT4.x directory to run qmake for lasm-gui.
-PATH should include a Python 2/3 environment for running some of the build scripts.
+The msvc10 build environment currently requires an environment variable GNUBINDIR, pointing to a bin folder with flex and bison >= 2.7.1 (preferably GnuWin32), and a variable FLEXINCLUDE pointing to /usr/include to pull in unistd.h for flex. QTDIR should point to a QT4.x directory to run qmake for lasm-gui.
+PATH should include a Python 2/3 environment for running some of the build scripts. 
 
 ***Linux***
 lasm depends on flex, bison, and lasm-gui adds dependencies on qt4. Installing qt4-defaults should pull in the required dependencies.

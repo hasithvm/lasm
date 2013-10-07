@@ -14,15 +14,16 @@ Immediate::Immediate(char* pValue,ImmediateEncoding base, AccessMode am)
 	switch(base) {
 		case BASE_HEX:
 			strToUpperCase(m_orig);
+			m_orig.append("H") ;
 			break;
 		case BASE_ASC:
 			m_orig = "'" + m_orig;
 			m_orig = m_orig + "'";
 			break;
-			m_orig = "0x" + m_orig ;
-			break;
+
 		case BASE_BIN:
 			m_orig = "0b" + m_orig;
+			break;
 		default:
 			break;
 	}
