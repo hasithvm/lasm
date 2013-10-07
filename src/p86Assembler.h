@@ -9,6 +9,8 @@
 
 inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Constant** consts, bool isMem[]);
 
+inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, AccessWidth* aw_disp,bool* dispIsImmediate, bool* hasDisp, bool* zeroDisp, Immediate** dispSrc);
+
 static std::string getSourceRepr(OpNode* ptr);
 
 

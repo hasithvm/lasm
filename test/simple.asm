@@ -2,20 +2,30 @@
 ; Program to complete 8-bit unsigned shift & add multiplication
 ; AH = A; CH = Q; BH = M; Final 16-bit result in AX
 
-.ORG 00h
-	.dw AddM
-Data:
+;.ORG 00h
+;	.dw AddM
+;Data:
 	Y:	.DB	5		; Multiplicand
 	X: 	.DB	2		; Multiplier
-	
-.ORG 0010h
+
+;Data2: ;
+	Z: .DW 0x50
+;.ORG 0010h
 Init:
 
+;	mov BX, 0x0000	;reset BX
+;	mov [BX], Y		;should die here
+;	add [BX], BX
+;	add word [Z], AX; ;add[0] + Y > [0]
 
     NUM .EQU 0x0050
      
-    MOV BX,NUM
-	mov BX, [BP + 2]
+;    MOV BX,NUM
+	mov BX, [BP + 0x1FF]
+	mov [BP + 0x1FF], BX
+	
+	add [2], AX
+
 	MOV AX,0		; Initialize AX to zero. AH serves as accumulator and AX will hold product
 	MOV CH,[X]		; Initialize CH (Q) = X
 	MOV	BH,[Y]		; Init BH (M) = Y

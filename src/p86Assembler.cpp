@@ -39,9 +39,9 @@ int p86Assembler::parse(ExpressionList& pExprList)
 // skip to control|label|opcode node.
     BaseExpressionNode* currentExpr;
     int retcode;
-    unsigned int errCount = 0;
+    int errCount = 0;
 
-    for (unsigned int i = 0; i < pExprList.size(); i++) {
+    for (int i = 0; i < pExprList.size(); i++) {
 
         currentExpr = pExprList[i];
         switch(currentExpr->getType()) {
@@ -73,7 +73,7 @@ bool p86Assembler::_postpass()
     int finalAddress;
     int addrStart;
     bool rerunPass = false;
-    for (unsigned int i = 0; i < segs.size(); i++) {
+    for (int i = 0; i < segs.size(); i++) {
         if (segs[i]->getUpdateFlag()) {
             try {
                 loc_target = LocationMap.at(segs[i]->getConstant()->getName());
@@ -193,7 +193,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
             binseg->push_back(0);
             binseg->push_back(0);
         } else if (immVal) {
-            for (unsigned int i = 0; i < immVal->size(); i+=2) {
+            for (int i = 0; i < immVal->size(); i+=2) {
                 binseg->push_back(immVal->getBinEncoding()[i]);
                 binseg->push_back(immVal->getBinEncoding()[i+1]);
                 binseg->setStringData(immVal->getSourceRepr());
@@ -217,7 +217,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
     case (CONTROL_END):
         try {
             m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-        } catch (std::out_of_range&) {
+        } catch (std::out_of_range& e) {
             ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
             m_codeStart = 0;
         }
@@ -240,8 +240,9 @@ int p86Assembler::_handleOpNode(OpNode* op)
         return -1;
     }
 
-    for (unsigned int j = 0; j < opv->size(); j++) {
+    for (int j = 0; j < opv->size(); j++) {
         uint8_t op_prop = (*opv->get(j))[0];
+        int opcode_offset = 1;
         if ((op_prop & OP_OPERANDS) == operands.size()) {
             match = _construct(opv->get(j), op, operands);
             if (match == 0) {
@@ -273,8 +274,6 @@ int p86Assembler::_handleOpNode(OpNode* op)
 int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops)
 {
     //auto_ptr to clean up if the pointer goes out of scope.
-    auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
-    binseg->setSourceNode(op);
     Register  *reg[3] = {NULL,NULL,NULL};
     Immediate* imm[3]= {NULL};
     Constant* consts[3] = {NULL};
@@ -283,11 +282,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
     OpType pattern = *pPattern.release();
 
-    unsigned int operandCount = pattern[0] & OP_OPERANDS;
-    unsigned int arg0 = pattern.size() - operandCount;
-    unsigned int arg1 = pattern.size() - operandCount + 1;
-
-    unsigned int opcodeIndex = 1;
+    int operandCount = pattern[0] & OP_OPERANDS;
+    int arg0 = pattern.size() - operandCount;
+    int arg1 = pattern.size() - operandCount + 1;
+    int opcodeIndex = 1;
 
     uint8_t modrm = 0;
     //set to FF to catch a misencoded instruction
@@ -303,18 +301,15 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     bool zeroDisp = false;
     bool dispIsRel = false;
     bool dispIsImmediate = false;
+    bool immIsConst = false;
     bool isValidInstr = false;
     bool copyPattern = false;
     bool twoOffsetRegs;
-
-    Operands* offsets;
 
 
     Immediate* immSrc;
     Immediate* dispSrc;
     Constant* constSrc;
-
-    vector<uint8_t> immediateData;
     unsigned int immSz = 0;
 
     //break out the operands correctly
@@ -322,7 +317,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
     //zip(operands in pattern, args)
-    for (unsigned int j = 0; j < operandCount; j++) {
+    for (int j = 0; j < operandCount; j++) {
 
         if (reg[j] && IS_REG_DIRECT(reg[j])) {
 
@@ -341,6 +336,8 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     return 1;
             }
         }
+
+
         if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
             return 1;
         if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))
@@ -510,7 +507,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
         else {
             //REG <--MEM
-            modrm = 0x00; //MOD field is b11
+            modrm = 0x00; //reset modrm
             hasImm = false;
             hasDisp = false;
             hasModRm = true;
@@ -545,71 +542,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
             } else if (reg[1]) {
 
-                ASSERT_REGISTER_ISINDEXABLE(reg[1]);
-
-                switch (reg[1]->getBinEncoding()) {
-                case (ENC_REG_BP):
-                    hasDisp = true;
-                    zeroDisp = true;
-                    auxModRM |= 0x46;
-                    break;
-                case (ENC_REG_SI):
-                    auxModRM |= 0x04;
-                    break;
-                case (ENC_REG_DI):
-                    auxModRM |= 0x05;
-                    break;
-                case (ENC_REG_BX):
-                    auxModRM |= 0x07;
-                    break;
-                default:
-                    ERROR("Undefined register-addressing mode!");
-                }
-
-
-                if (reg[1]->getAccessMode() == REG_OFFSET) {
-                    offsets = reg[1]->getOffsetPtr();
-
-                    twoOffsetRegs = (offsets->size() >= 1) &&\
-                                    offsets->at(0)->getAccessMode() == REG_DIRECT;
-
-                    if ((twoOffsetRegs) && (offsets->size() == 2) &&\
-                            offsets->at(1)->getAccessMode() != IMMEDIATE) {
-                        ERROR("invalid indexed addressing mode!")
-                    }
-
-                    if (offsets->back()->getAccessMode() == IMMEDIATE) {
-                        hasDisp = true;
-                        dispSrc = (Immediate*) offsets->back();
-                        dispIsImmediate = true;
-                        modrm |= (dispSrc->size() % 3) << 6;
-                    }
-
-                }
-
-
-                if (twoOffsetRegs) {
-                    //clear out RM field.
-                    modrm &= 0xF8;
-                    uint8_t binEnc = reg[1]->getBinEncoding();
-                    if (binEnc == ENC_REG_BX)
-                        modrm |= 0x00;
-                    else if (binEnc == ENC_REG_BP)
-                        modrm |= 0x02;
-                    else
-                        ERROR("Undefined register addressing mode")
-
-                        binEnc = ((Register*)offsets->at(0))->getBinEncoding();
-                    if (binEnc == ENC_REG_SI)
-                        modrm |= 0x00;
-                    else if (binEnc == ENC_REG_DI)
-                        modrm |= 0x01;
-                    else
-                        ERROR("Undefined register addressing mode")
-
-                }
-            
-                modrm |= auxModRM;
+                int retcode = _generateIndexedRegisterEncoding(reg[1],&modrm,&aw_disp,
+                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc);
+                if (retcode)
+                    return retcode;
                 isValidInstr = true;
             }
 
@@ -617,8 +553,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
         }
 
     }
-
-
     else if (isMem[0]) {
         /*
         Acceptable memory operations:
@@ -629,23 +563,35 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
         #note: no inherent operations. There is a set of one-memory operand opcodes
         (INV and NEG)? that take in a m8/16 operand.
         */
-        //if constant and constant refers to memory addr
+        
 
-        if ((pattern[0] & OP_MODRM_EXT) == OP_MODRM_EXT) {
+        if (isMem[1]){
+            ERROR("Memory to memory operations are not supported!")
+        }
+
+
+
+
+
+        if (PATTERN_IS_SET(OP_MODRM_EXT)) {
             modrm |= pattern[1];
             opcodeIndex = opcodeIndex + 1;
         }
+            opcode = pattern[opcodeIndex];
 
+        //if constant and constant refers to memory addr
         if(consts[0]) {
+            modrm |= 0x06;
+            constSrc = consts[0];
+            dispIsRel = false;
+            hasDisp = true;
+            aw_disp = AW_16BIT;            
 
-            if (reg[1] && (pattern[arg1] & REG)) {
-                if( (pattern[arg1] & 0x01) != (uint8_t) reg[1]->getAccessWidth())
-                    return 1;
-
+            if (reg[1]) {
                 modrm |= reg[1]->getBinEncoding() << 3;
-            } else if (imm[1] && (pattern[arg1] & IMM)) {
+                isValidInstr = true;
 
-
+            } else if (imm[1]) {
 
                 if (op->getExplicitAccessModifier() == AW_UNSPECIFIED) {
                     cerr << "ERROR: Ambiguous operand size for " << op->getContent() << endl;
@@ -654,281 +600,99 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                 if ((uint8_t)op->getExplicitAccessModifier() != (pattern[arg0] & 0x01))
                     return 1;
 
-                immediateData = imm[1]->getBinEncoding();
-                immSz = (unsigned int)op->getExplicitAccessModifier() + 1;
-
-
-            } else if (isMem[1]) {
-
-                cerr << "ERROR: memory-to-memory operations not supported!" << endl;
-                return -1;
+                immSrc = imm[1];
+                dispIsRel = false;
+                isValidInstr = true;
             }
 
-            modrm |= 0x06;
-            binseg->push_back(pattern[opcodeIndex]);
-            binseg->push_back(modrm);
-            binseg->setUpdateFlag(false);
-            binseg->setConstant(consts[0]);
-
-
-            //addr is 16-bit offset
-            binseg->setAddrSize(AW_16BIT);
-            binseg->push_back(0);
-            binseg->push_back(0);
-            if (immSz) {
-                //sign-extend the operand
-                if (immediateData.size() < immSz) {
-                    int16_t data =(int16_t) immediateData[0];
-                    binseg->push_back((uint8_t)(data & 0xFF00));
-                    binseg->push_back((uint8_t)(data & 0x00FF));
-                } else {
-                    for (unsigned int i = 0; i < immSz; i++)
-                        binseg->push_back(immediateData[i]);
-                }
-
+            else if (consts[1]){
+                ERROR("Unimplemented mode!")
             }
 
-
-            _addSeg(binseg);
-            return 0;
 
         }
 
-
         else if (reg[0]) {
-            if (imm[1]) {
-                if (imm[1]->size() > ((pattern[arg1] & 0x01) + 1))
-                    return 1;
-                if (!(pattern[arg1] & IMM))
-                    return 1;
-            }
-            if (imm[1] )
-                if (reg[1] && (reg[1]->getAccessWidth() != (pattern[arg1] & 0x01)))
-                    return 1;
 
             hasDisp = false;
             hasImm = false;
-            bool isWordAccess = false;
-            if( reg[0]->getAccessMode() == REG_ADDR) {
-                if (reg[0]->isIndexable()) {
-                    switch (reg[0]->getBinEncoding()) {
-                    case (ENC_REG_BP):
-                        hasDisp = true;
-                        zeroDisp = true;
-                        modrm |= 0x46;
-                        break;
-                    case (ENC_REG_SI):
-                        modrm |= 0x04;
-                        break;
-                    case (ENC_REG_DI):
-                        modrm |= 0x05;
-                        break;
-                    case (ENC_REG_BX):
-                        modrm |= 0x07;
-                        break;
-                    default:
-                        cerr << "ERROR: Undefined register-addressing mode!" << endl;
-                        break;
-                    }
+            int retcode = _generateIndexedRegisterEncoding(reg[0],&modrm,&aw_disp,
+                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc);
 
-                } else {
-                    cerr << "ERROR: Undefined register-addressing mode!" << endl;
-                    return -1;
-                }
+            if (retcode != 0)
+                    return retcode;
+            
 
-            }
-
-            else if (reg[0]->getAccessMode() == REG_OFFSET) {
-                if (reg[0]->isIndexable()) {
-                    Operands* offsets = reg[0]->getOffsetPtr();
-                    bool twoOffsetRegs = (offsets->size() >= 1) &&\
-                                         offsets->at(0)->getAccessMode() == REG_DIRECT;
-
-                    if ((twoOffsetRegs) & (offsets->size() == 2) &&\
-                            offsets->at(1)->getAccessMode() != IMMEDIATE) {
-                        ERROR("invalid indexed addressing mode!")
-                    }
-
-                    if (offsets->back()->getAccessMode() == IMMEDIATE) {
-                        hasDisp = true;
-                        imm[0] = (Immediate*) offsets->back();
-                        modrm |= (imm[0]->size() % 3) << 6;
-                    }
-
-                    switch (reg[0]->getBinEncoding()) {
-                    case (ENC_REG_BP):
-                        modrm |= 0x46;
-                        break;
-                    case (ENC_REG_SI):
-                        modrm |= 0x04;
-                        break;
-                    case (ENC_REG_DI):
-                        modrm |= 0x05;
-                        break;
-                    case (ENC_REG_BX):
-                        modrm |= 0x07;
-                        break;
-                    default:
-                        cerr << "ERROR: Undefined register-addressing mode!" << endl;
-                        return -1;
-                        break;
-
-                    }
-
-
-                    if (twoOffsetRegs) {
-                        modrm &= 0xF8;
-                        uint8_t binEnc = reg[0]->getBinEncoding();
-                        if (binEnc == ENC_REG_BX)
-                            modrm |= 0x00;
-                        else if (binEnc == ENC_REG_BP)
-                            modrm |= 0x02;
-                        else
-                            ERROR("Undefined register addressing mode")
-
-                            binEnc = ((Register*)offsets->at(0))->getBinEncoding();
-                        if (binEnc == ENC_REG_SI)
-                            modrm |= 0x00;
-                        else if (binEnc == ENC_REG_DI)
-                            modrm |= 0x01;
-                        else
-                            ERROR("Undefined register addressing mode")
-
-                            if (offsets->size() == 2) {
-
-                                //last one has to be an immediate.
-                                uint8_t mod = imm[0]->size() % 3;
-                                modrm |= mod << 6;
-                                hasDisp = true;
-
-                            }
-                    }
-                    //if (offsets->at(0)->getBinEncoding() == ENC_REG_SI)
-                } else {
-                    ERROR("Invalid register for addressing")
-                }
-
-
-            }
-
-            else
-                cerr << "ERROR: Unimplemented register addressing mode!" << endl;
-
-            if (reg[1] && IS_REG_DIRECT(reg[1]) && (pattern[arg1] & REG)) {
-                modrm |= reg[1]->getBinEncoding() <<  3;
-                op->setExplicitAccessModifier(reg[1]->getAccessWidth());
-            } else if (imm[1] && imm[1]->getAccessMode() == IMMEDIATE)
+            if (imm[1]) {
+               int sz = imm[1]->size();
+               sz = sz > 2 ? 2 : sz;
+               if (sz > (pattern[arg1] & 0x01) + 1)
+                return 1;
+                immSrc = imm[1];
                 hasImm = true;
-            else {
-                cerr << "ERROR: Unsupported source for operation" << endl;
-                return -1;
-            }
-            binseg->push_back(pattern[opcodeIndex]);
-            binseg->push_back(modrm);
-            if (hasDisp) {
-                if (zeroDisp) {
-                    binseg->push_back(0);
-                } else {
-                    binseg->push_back(imm[0]->getBinEncoding()[0]);
-                    if (imm[0]->getBinEncoding().size() > 1)
-                        binseg->push_back(imm[0]->getBinEncoding()[1]);
-                }
-            }
-            if (hasImm) {
-                if (op->getExplicitAccessModifier() == AW_UNSPECIFIED) {
-                    cerr << "ERROR: Ambiguous operand sizes. Use \"byte\" or \"word\" modifier" << endl;
-                    return -1;
-                }
-
-                int len = ((int) op->getExplicitAccessModifier()) + 1;
-
-                if (imm[1]->size() < len) {
-                    binseg->push_back(imm[1]->getBinEncoding()[0]);
-                    binseg->push_back(0);
-                } else
-                    for (unsigned int i = 0; i < len; i++)
-                        binseg->push_back(imm[1]->getBinEncoding()[i]);
+                isValidInstr = true;
 
 
             }
 
-            _addSeg(binseg);
-            return 0;
-        } else if (imm[0]->getAccessMode() == IMMEDIATE_ADDR) {
+            if (reg[1]){
+                modrm |= reg[1]->getBinEncoding() << 3;
+                isValidInstr = true;
+            }
+
+            if (consts[1])
+                ERROR("Currently Unimplemented")
+            
+
+        } else if (imm[0]) {
             // Ensure size matches up
-
-
             modrm |= 0x06; //set to immediate address mode
 
             // Since mod field is taken, three possibilites remain
             // 1. reg field used for extended opcode -> second arg immediate
             // 2. reg field used for register -> second arg register
             // 3. only one argument
+            hasDisp = true;
+            dispSrc = imm[0];
+            dispIsImmediate = true;
+            dispIsRel = false;
+            aw_disp = AW_16BIT;
 
-            if (operandCount == 2) {
-                // There's a second argument
-
-                if ((pattern[0] & OP_MODRM_EXT) == 0) {
-                    // The reg field is free, check if it's necessary
-                    // Only direct reg access allowed, because there's a memory access in arg 0
-                    if(reg[1] && ((pattern[arg1] & REG) == REG)) {
-                        // arg1 is a register
-                        // check that it's the right width
-                        if (reg[1]->getAccessWidth() == (pattern[arg1] & AW_16BIT))
-                            modrm |= reg[1]->getBinEncoding() << 3; // size is right
-                        else
-                            return 1; // Size is mismatched
-
-                        binseg->push_back(pattern[opcodeIndex]);
-                        binseg->push_back(modrm);
-                        for (unsigned int i = 0; i < imm[0]->size(); i++)
-                            binseg->push_back(imm[0]->getBinEncoding()[i]);
-                        if (imm[0]->size() < 2)
-                            binseg->push_back(0);
-                        _addSeg(binseg);
-                        return 0;
-                    }
-
-                } else if(imm[1] && ((pattern[arg1] & IMMEDIATE) == IMMEDIATE)) {
-                    // arg1 is an immediate
-                    if(((imm[1]->size() == 2) && ((pattern[arg1] & AW_16BIT) == AW_16BIT)) || ((imm[1]->size() == 1) && ((pattern[arg1] & AW_16BIT) == 0))) {
-                        // size matches
-                        binseg->push_back(pattern[opcodeIndex]);
-                        binseg->push_back(modrm);
-                        for (unsigned int i = 0; i < imm[0]->size(); i++)
-                            binseg->push_back(imm[0]->getBinEncoding()[i]);
-                        if (imm[0]->size() < 2)
-                            binseg->push_back(0);
-
-                        for (unsigned int i = 0; i < imm[1]->size(); i++)
-                            binseg->push_back(imm[1]->getBinEncoding()[i]);
-                        _addSeg(binseg);
-                        return 0;
-                    } else {
-                        // size mismatch
-                        return 1;
-                    }
-                }
-            } else {
-                // Only one argument
-                binseg->push_back(pattern[opcodeIndex]);
-                binseg->push_back(modrm);
-                for (unsigned int i = 0; i < imm[0]->size(); i++)
-                    binseg->push_back(imm[0]->getBinEncoding()[i]);
-                if (imm[0]->size() < 2)
-                    binseg->push_back(0);
-                _addSeg(binseg);
-                return 0;
-
+            if (ops.size() == 1){
+                hasImm = false;
+                isValidInstr = true;
             }
 
+            if (reg[1]){
+
+                modrm |= reg[1]->getBinEncoding() << 3;
+                isValidInstr = true;
+            }
+
+            if (imm[1]){
+                if (op->getExplicitAccessModifier() == AW_UNSPECIFIED)
+                    ERROR("Ambiguous operand size for operation" << op->getContent())
+                
+                if (op->getExplicitAccessModifier() != pattern[arg1] & OPERAND_WIDTH)
+                    return 1;
+
+                immSrc = imm[1];
+                hasImm = true;
+                isValidInstr = true;
+
+            }
+            if (consts[1])
+                ERROR("Currently Unimplemented")
+            
         }
     }
 
     if (isValidInstr) {
+       auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
+       binseg->setSourceNode(op);
         if (copyPattern) {
 
-            for (unsigned int i=opcodeIndex; i < pattern.size(); i++)
+            for (int i=opcodeIndex; i < pattern.size(); i++)
                 binseg->push_back(pattern[i]);
 
         } else {
@@ -940,9 +704,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back(0);
                 }
                 if (dispIsImmediate) {
-                    binseg->push_back(dispSrc->getBinEncoding()[0]);
+                    uint16_t tImmediateVal = dispSrc->toWord();
+                    binseg->push_back((uint8_t)tImmediateVal & 0x00FF);
                     if (aw_disp == AW_16BIT)
-                        binseg->push_back(dispSrc->getBinEncoding()[1]);
+                        binseg->push_back((uint8_t)((tImmediateVal & 0xFF00) >> 8));
 
 
                 } else {
@@ -966,7 +731,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                     binseg->push_back((uint8_t)(data & 0xFF00));
 
                 } else {
-                    for (unsigned int i = 0; i < len; i++)
+                    for (int i = 0; i < len; i++)
                         binseg->push_back(immSrc->getBinEncoding()[i]);
                 }
             }
@@ -1043,7 +808,7 @@ static std::string getSourceRepr(OpNode* ptr)
     std::string paramStr;
     Operands& ops = ptr->getOperands();
     Operands* offsets;
-    for (unsigned int i = 0; i < ops.size(); i++) {
+    for (int i = 0; i < ops.size(); i++) {
         paramStr = "";
         switch (ops[i]->getAccessMode()) {
         case (REG_DIRECT):
@@ -1055,7 +820,7 @@ static std::string getSourceRepr(OpNode* ptr)
         case (REG_OFFSET):
             paramStr = "[" + ((Register*) ops[i])->getRegName();
             offsets = ((Register*)ops[i])->getOffsetPtr();
-            for (unsigned int k = 0; k < offsets->size(); k++) {
+            for (int k = 0; k < offsets->size(); k++) {
                 switch (offsets->at(k)->getAccessMode()) {
 
                 case(REG_DIRECT):
@@ -1099,4 +864,84 @@ static std::string getSourceRepr(OpNode* ptr)
 
 }
 
+inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, AccessWidth* aw_disp,bool* dispIsImmediate, bool* hasDisp, bool* zeroDisp, Immediate** dispSrc){
+                ASSERT_REGISTER_ISINDEXABLE(regSrc);
+                uint8_t auxModRM = 0;
+                Operands* offsets;
+                uint8_t binEnc = regSrc->getBinEncoding();
+                bool twoOffsetRegs;
+                Immediate* pDisp;
+                switch (regSrc->getBinEncoding()) {
+                case (ENC_REG_BP):
+                    *hasDisp = true;
+                    *zeroDisp = true;
+                    auxModRM |= 0x46;
+                    break;
+                case (ENC_REG_SI):
+                    auxModRM |= 0x04;
+                    break;
+                case (ENC_REG_DI):
+                    auxModRM |= 0x05;
+                    break;
+                case (ENC_REG_BX):
+                    auxModRM |= 0x07;
+                    break;
+                default:
+                    ERROR("Undefined register-addressing mode!");
+                }
 
+
+                if (regSrc->getAccessMode() == REG_OFFSET) {
+
+                    //if there's an offset, that means we don't need to escape the special
+                    //case for BP.
+                    *zeroDisp = false;
+                    //clear out the mod bits
+                    auxModRM &= 0x3F;
+                    
+                    offsets = regSrc->getOffsetPtr();
+                    twoOffsetRegs = (offsets->size() >= 1) &&\
+                                    offsets->at(0)->getAccessMode() == REG_DIRECT;
+
+                    if ((twoOffsetRegs) && (offsets->size() == 2) &&\
+                            offsets->at(1)->getAccessMode() != IMMEDIATE) {
+                        ERROR("invalid indexed addressing mode!")
+                    }
+
+                    if (offsets->back()->getAccessMode() == IMMEDIATE) {
+
+                           
+                        *hasDisp = true;
+                        pDisp = (Immediate*) offsets->back();
+                        *dispIsImmediate = true;
+                        auxModRM |= pDisp->size() > 1 ? 0x02 << 6 : 0x01 << 6;
+                        *aw_disp = pDisp->size() > 1 ? AW_16BIT : AW_8BIT;
+                        *dispSrc = pDisp;
+                    }
+
+                }
+
+
+                if (twoOffsetRegs) {
+                    //clear out RM field.
+                    auxModRM &= 0xF8;
+                    if (binEnc == ENC_REG_BX)
+                        auxModRM |= 0x00;
+                    else if (binEnc == ENC_REG_BP)
+                        auxModRM |= 0x02;
+                    else
+                        ERROR("Undefined register addressing mode")
+
+                        binEnc = ((Register*)offsets->at(0))->getBinEncoding();
+                    if (binEnc == ENC_REG_SI)
+                        auxModRM |= 0x00;
+                    else if (binEnc == ENC_REG_DI)
+                        auxModRM |= 0x01;
+                    else
+                        ERROR("Undefined register addressing mode")
+
+                }
+            
+                *modrm |= auxModRM;
+                return 0;
+}
