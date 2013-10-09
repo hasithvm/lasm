@@ -39,6 +39,11 @@ for (unsigned int i =0;i < pExprList.size();i++){
 
 for (unsigned int i=0;i< equ_defs.size();i++){
 	std::string& equ_key = equ_defs[i]->getKey();
+	if (equ_key.empty()){
+		cerr << "syntax error: .EQU requires a key (maybe you specified a label instead?) on line " << equ_defs[i]->getLineNumber() << endl;
+		continue;
+	}
+
 	for (unsigned int j=0;j<pConstants.size();j++){
 		std::string& const_name = (*(pConstants[j]))->getName();
 		if (equ_key.compare(const_name)==0){

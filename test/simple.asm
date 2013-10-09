@@ -18,7 +18,7 @@ Init:
 ;	add [BX], BX
 ;	add word [Z], AX; ;add[0] + Y > [0]
 
-    NUM .EQU 0x0050
+    NUM: .EQU 0x0050
      
 ;    MOV BX,NUM
 	mov BX, [BP + 0x1FF]
@@ -43,4 +43,4 @@ shift:
 	JNZ	mainLoop		; If loop counter reaches zero, quit, else, loop back
 quit:
 	HLT
-.END	Init
+.END	Init2
