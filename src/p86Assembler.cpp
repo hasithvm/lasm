@@ -1,5 +1,7 @@
 #include "p86Assembler.h"
 
+#define RV_IMMEDIATE_TOO_SMALL 4
+#define RV_END_FOUND 5
 
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 #define IS_IMM_DIRECT(r) (r->getAccessMode()==IMMEDIATE)
@@ -57,8 +59,10 @@ int p86Assembler::parse(ExpressionList& pExprList)
         default:
             break;
         }
-        if (retcode)
-            errCount++;
+        if (retcode == RV_END_FOUND)
+            break;
+        else if (retcode)
+           errCount++;
 
     }
 
@@ -75,15 +79,11 @@ bool p86Assembler::_postpass()
     bool rerunPass = false;
     for (unsigned int i = 0; i < segs.size(); i++) {
         if (segs[i]->getUpdateFlag()) {
-            try {
-                loc_target = LocationMap.at(segs[i]->getConstant()->getName());
-            }
-
-            catch (std::out_of_range& e) {
+            if (LocationMap.find(segs[i]->getConstant()->getName()) == LocationMap.end()){
                 ERROR_RESUME("ERROR: Undefined label " << segs[i]->getConstant()->getName())
                 continue;
             }
-
+            loc_target = LocationMap[segs[i]->getConstant()->getName()];
             loc_addr = segs[i]->getCounter() + segs[i]->size();
             addrStart = segs[i]->getAddrStartIndex();
 
@@ -158,6 +158,7 @@ int p86Assembler::_handleLabelNode(LabelNode* label)
 int p86Assembler::_handleControlNode(ControlNode* ctrl)
 {
 
+    int retval = 0;
     auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
@@ -215,19 +216,23 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
         break;
 
     case (CONTROL_END):
-        try {
-            m_codeStart = LocationMap.at(((Constant*)ctrl->getValue())->getName());
-        } catch (std::out_of_range&) {
-            ERROR_RESUME("Start label " << ((Constant*)ctrl->getValue())->getName() << " not found! defaulting to 0000h")
+        if (LocationMap.find(constVal->getName()) == LocationMap.end()){
+            ERROR_RESUME("Start label " << constVal->getName() << " not found! defaulting to 0000h")
             m_codeStart = 0;
         }
+        else{
+            m_codeStart = LocationMap[constVal->getName()];
+
+        }
+        retval = RV_END_FOUND;
+
         break;
 
 
     default:
         break;
     }
-    return 0;
+    return retval;
 }
 int p86Assembler::_handleOpNode(OpNode* op)
 {
@@ -291,9 +296,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     //set to FF to catch a misencoded instruction
     uint8_t opcode = 0xFF;
 
-    //temporary variable to store auxillary modRM encoding patterns.
-    uint8_t auxModRM = 0;
-
     bool hasDisp = false;
     AccessWidth aw_disp = AW_UNSPECIFIED;
     bool hasModRm = true;
@@ -308,7 +310,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     Immediate* immSrc;
     Immediate* dispSrc;
     Constant* constSrc;
-    unsigned int immSz = 0;
 
     //break out the operands correctly
     decodeOperands(ops, &reg[0],&imm[0],&consts[0],isMem);
@@ -394,7 +395,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
             //
             else if (imm[0]) {
-                immSrc = imm[9];
+                immSrc = imm[0];
                 hasImm = true;
                 isValidInstr = true;
             }
@@ -791,6 +792,8 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
         case (REG_OFFSET):
             isMemory[i] = true;
             break;
+        case (UNINITIALIZED):
+        cerr << "Something happened in " << __FILE__ ":"<< __LINE__ <<  ". Please contact the devs." << endl; 
         default:
             break;
         }
