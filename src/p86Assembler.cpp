@@ -80,7 +80,7 @@ bool p86Assembler::_postpass()
     for (unsigned int i = 0; i < segs.size(); i++) {
         if (segs[i]->getUpdateFlag()) {
             if (LocationMap.find(segs[i]->getConstant()->getName()) == LocationMap.end()){
-                ERROR_RESUME("ERROR: Undefined label " << segs[i]->getConstant()->getName())
+                ERROR_RESUME("Undefined label " << segs[i]->getConstant()->getName() << " on line " << segs[i]->getSourceNode()->getLineNumber())
                 continue;
             }
             loc_target = LocationMap[segs[i]->getConstant()->getName()];
@@ -542,7 +542,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             } else if (reg[1]) {
 
                 int retcode = _generateIndexedRegisterEncoding(reg[1],&modrm,&aw_disp,
-                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc);
+                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc, &constSrc);
                 if (retcode)
                     return retcode;
                 isValidInstr = true;
@@ -616,7 +616,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             hasDisp = false;
             hasImm = false;
             int retcode = _generateIndexedRegisterEncoding(reg[0],&modrm,&aw_disp,
-                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc);
+                 &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc, &constSrc);
 
             if (retcode != 0)
                     return retcode;
@@ -865,7 +865,7 @@ static std::string getSourceRepr(OpNode* ptr)
 
 }
 
-inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, AccessWidth* aw_disp,bool* dispIsImmediate, bool* hasDisp, bool* zeroDisp, Immediate** dispSrc){
+inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, AccessWidth* aw_disp,bool* dispIsImmediate, bool* hasDisp, bool* zeroDisp, Immediate** dispSrc, Constant** constSrc){
                 ASSERT_REGISTER_ISINDEXABLE(regSrc);
                 uint8_t auxModRM = 0;
                 Operands* offsets;
@@ -918,6 +918,16 @@ inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, Ac
                         auxModRM |= pDisp->size() > 1 ? 0x02 << 6 : 0x01 << 6;
                         *aw_disp = pDisp->size() > 1 ? AW_16BIT : AW_8BIT;
                         *dispSrc = pDisp;
+                    }
+                    //if a const hasn't been changed by the preprocessor, it has to be 16-bits
+                    else if (offsets->back()->getAccessMode() == CONST){
+
+                    	*hasDisp = true;
+                    	*dispIsImmediate = false;
+                    	auxModRM |= 0x02 << 6;
+                    	*aw_disp = AW_16BIT;
+                    	*constSrc = (Constant*) offsets->back();
+
                     }
 
                 }

@@ -14,7 +14,7 @@
 Init:
 
 ;	mov BX, 0x0000	;reset BX
-;	mov [BX], Y		;should die here
+	mov AX, [BX + InvalidLabel]		;should die here
 ;	add [BX], BX
 ;	add word [Z], AX; ;add[0] + Y > [0]
 
