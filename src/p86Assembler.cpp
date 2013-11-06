@@ -5,6 +5,8 @@
 
 #define IS_REG_DIRECT(r) (r->getAccessMode()==REG_DIRECT)
 #define IS_IMM_DIRECT(r) (r->getAccessMode()==IMMEDIATE)
+#define IS_CONST_DIRECT(r) (r->getAccessMode()==CONST)
+
 #define PATTERN_PARAMS pattern[0]
 #define VALID_INSTR isValidInstr = true;
 
@@ -338,6 +340,8 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
         if (imm[j] && IS_IMM_DIRECT(imm[j]) && !IS_SET(pattern[arg0 + j],IMM))
+            return 1;
+        if (consts[j] && IS_CONST_DIRECT(consts[j]) && !IS_SET(pattern[arg0 + j],IMM))
             return 1;
         if (isMem[j] && !IS_SET(pattern[arg0 + j], MEM))
             return 1;
