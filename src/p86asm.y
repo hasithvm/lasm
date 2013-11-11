@@ -11,6 +11,7 @@
 	#ifdef VS2010
 	extern FILE* yyin;
 	extern int yylineno;
+	extern int yynerrs;
 	#endif
 
 	extern "C"
@@ -18,10 +19,12 @@
 	#ifndef VS2010
 		extern FILE *yyin;
 		extern int yylineno;
+		extern int yynerrs;
 	#endif
 		int yyparse(void);
 		void yyerror(const char *str);
 		int yylex(void);
+		int err_count();
 		int yywrap(){
 
 
@@ -29,7 +32,9 @@
 		}
 	}
 
-
+	int err_count(){
+		return yynerrs;
+	}
 	
 
 	void yyerror(const char *str)

@@ -38,9 +38,11 @@ int main(int argc, char **argv)
 		}
 
 		yyparse();
-
-
-
+		if (err_count())
+		{
+			cout << "ERROR: Syntax errors detected. lasm will now exit." << endl;
+			return 1;
+		}
 
 
 

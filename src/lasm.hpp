@@ -39,7 +39,8 @@ extern "C"
 #endif
 		int yyparse(void);
 		void yyerror(const char *str);
-	}
+		int err_count();	
+}
 extern void setExpressionList(ExpressionList* l);
 int main(int argc, char **argv);
 
