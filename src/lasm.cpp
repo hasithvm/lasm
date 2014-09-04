@@ -84,6 +84,8 @@ int main(int argc, char **argv)
 	else{
 
 		cout << "Usage: lasm [infile] [outfile]" << endl;
+		clog.rdbuf(backup);
+		toFile.close();
 		return 0;
 	}
 }
