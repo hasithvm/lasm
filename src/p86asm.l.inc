@@ -13,7 +13,7 @@ extern "C"{
 parser_opcode p;
 
 
-#include "p86asm.tab.h"
+#include "p86asm.tab.hpp"
 
 
 

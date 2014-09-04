@@ -6,11 +6,17 @@
 
 QT       += core gui
 
+OBJDIR = ../obj
+DESTDIR = ../bin
+OBJECTS_DIR = $$OBJDIR
+MOC_DIR = $$OBJDIR/moc
+UI_DIR = $$OBJDIR/ui
+RCC_DIR = $$OBJDIR/rcc
+TARGET = lasm-gui
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = lasm-gui
 TEMPLATE = app
-
 
 SOURCES += main.cpp\
         qwmain.cpp
