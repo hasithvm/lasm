@@ -15,18 +15,25 @@ int main(int argc, char **argv)
 
 	streambuf *psbuf, *backup;
 	ofstream toFile;
-	toFile.open("debug.log");
+	int argIdx = 1;
+	if (argc == 4) {
+		if (!strncmp(argv[argIdx], "-d", 3)) {
+			toFile.open("debug.log");
+		}
+		argIdx++;
+		argc--;
+	}
 	backup = clog.rdbuf();
 	psbuf = toFile.rdbuf();
 	clog.rdbuf(psbuf);
 
 	list.reserve(80);
 	if (argc == 3){
-		FILE *myfile = fopen(argv[1], "r");
+		FILE *myfile = fopen(argv[argIdx], "r");
 
 
 		yyin = myfile;
-		strOutputFile = string(argv[2]);
+		strOutputFile = string(argv[argIdx + 1]);
 
 
 
@@ -83,7 +90,7 @@ int main(int argc, char **argv)
 	}
 	else{
 
-		cout << "Usage: lasm [infile] [outfile]" << endl;
+		cout << "Usage: lasm [-d] infile outfile" << endl;
 		clog.rdbuf(backup);
 		toFile.close();
 		return 0;
