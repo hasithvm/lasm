@@ -6,8 +6,12 @@
 
 QT       += core gui
 
-OBJDIR = ../obj
-DESTDIR = ../bin
+isEmpty(BUILDPREFIX) {
+	BUILDPREFIX=.
+}
+
+OBJDIR = $$BUILDPREFIX/obj
+DESTDIR = $$BUILDPREFIX/bin
 OBJECTS_DIR = $$OBJDIR
 MOC_DIR = $$OBJDIR/moc
 UI_DIR = $$OBJDIR/ui
@@ -17,7 +21,6 @@ TARGET = lasm-gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
-
 SOURCES += main.cpp\
         qwmain.cpp
 
@@ -25,5 +28,13 @@ HEADERS  += qwmain.h
 
 FORMS    += qwmain.ui
 
+unix {
+    isEmpty(PREFIX) {
+        PREFIX = /usr
+    }
+    BINDIR = $$PREFIX/bin
 
-RESOURCES += lasm-gui.qrc
+    INSTALLS += target
+
+    target.path = $$BINDIR
+}

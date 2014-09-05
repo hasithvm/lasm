@@ -12,7 +12,7 @@ def run_parser(sFile):
 		if tokens[0] == "!def":
 			lut[tokens[1]] = int(tokens[2], 0)
 		elif tokens[0] == "!begin":
-			helper_gen_files(lines[index+1:], lut, sFile[:sFile.rfind('\\') + 1])
+			helper_gen_files(lines[index+1:], lut, sFile[:sFile.rfind(os.sep) + 1])
 			break
 def helper_gen_files(lineset, lut, path):
 	
