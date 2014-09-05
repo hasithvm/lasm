@@ -1,6 +1,10 @@
+//
+//
+//
+//
+
+
 #include "lasm.hpp"	
-
-
 
 int main(int argc, char **argv)
 {
@@ -8,10 +12,6 @@ int main(int argc, char **argv)
 
 	cout << "Libra-8086 Emulator -- Assembler\n" << "assembler built on " << __DATE__  << " : " << __TIME__  << endl;
 	setExpressionList(&list);
-
-
-
-
 
 	streambuf *psbuf, *backup;
 	ofstream toFile;

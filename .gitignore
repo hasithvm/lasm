@@ -25,4 +25,4 @@ src/lex.yy.c
 *.pdb
 log.txt
 *.obj
-
+build/*
