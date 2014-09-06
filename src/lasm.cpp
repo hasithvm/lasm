@@ -47,6 +47,7 @@ int main(int argc, char **argv)
 		yyparse();
 		if (err_count())
 		{
+			fclose(myfile);
 			cout << "ERROR: Syntax errors detected. lasm will now exit." << endl;
 			return 1;
 		}
@@ -56,17 +57,17 @@ int main(int argc, char **argv)
 
 		preprocess(list);
 
-		for (int i = 0; i< list.size();i++)
+		for (unsigned int i = 0; i< list.size();i++)
 		{
 			list[i]->repr(0);
 		}
 		clog << "assembly started!" << endl;
 		p86Assembler asmgen;
 
-		int errs;
-		errs = asmgen.parse(list);
-		if (errs > 0)
-			cerr << errs << " error(s) encountered during assembly!" << endl;
+		unsigned int err_count;
+		err_count = asmgen.parse(list);
+		if (err_count > 0)
+			cerr << err_count << " error(s) encountered during assembly!" << endl;
 		else{
 			VirgoWriter::writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
 			cout << "Output file " << strOutputFile << " created" << endl;
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
 			ListingWriter::writeFile(asmgen.getSegments(), strOutputFile, string(argv[1]));
 
 
-		for (int i = 0; i< list.size();i++)
+		for (unsigned int i = 0; i< list.size();i++)
 		{
 			delete list[i];
 		}

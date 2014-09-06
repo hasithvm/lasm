@@ -2,7 +2,7 @@
 #define _DATA_H_
 //defines for assembler information
 #include <string>
-#ifdef VS2010
+#ifdef _MSC_VER
 #include <cstdint>
 #include <cstdlib>
 #include <cstdio>

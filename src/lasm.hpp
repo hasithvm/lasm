@@ -27,14 +27,14 @@ string strOutputFile;
 ExpressionList list;		
 using namespace std;
 
-#ifdef VS2010
+#ifdef _MSC_VER
 	extern FILE* yyin;
 	extern int yylineno;
 #endif
 
 extern "C"
 	{
-#ifndef VS2010
+#ifndef _MSC_VER
 		extern FILE *yyin;
 		extern int yylineno;
 #endif

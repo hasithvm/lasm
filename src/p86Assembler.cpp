@@ -33,7 +33,7 @@ unsigned int p86Assembler::getStartingAddress()
     return m_codeStart;
 }
 
-vector<BinarySegment*>& p86Assembler::getSegments()
+vector<TextSegment*>& p86Assembler::getSegments()
 {
     return segs;
 
@@ -161,7 +161,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
 {
 
     int retval = 0;
-    auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
+    auto_ptr<TextSegment> binseg = auto_ptr<TextSegment>(new TextSegment());
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
     binseg->setSourceNode(ctrl);
@@ -249,7 +249,6 @@ int p86Assembler::_handleOpNode(OpNode* op)
 
     for (int j = 0; j < opv->size(); j++) {
         uint8_t op_prop = (*opv->get(j))[0];
-        int opcode_offset = 1;
         if ((op_prop & OP_OPERANDS) == operands.size()) {
             match = _construct(opv->get(j), op, operands);
             if (match == 0) {
@@ -305,7 +304,6 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     bool zeroDisp = false;
     bool dispIsRel = false;
     bool dispIsImmediate = false;
-    bool immIsConst = false;
     bool isValidInstr = false;
     bool copyPattern = false;
 
@@ -691,7 +689,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     }
 
     if (isValidInstr) {
-       auto_ptr<BinarySegment> binseg = auto_ptr<BinarySegment>(new BinarySegment());
+       auto_ptr<TextSegment> binseg = auto_ptr<TextSegment>(new TextSegment());
        binseg->setSourceNode(op);
         if (copyPattern) {
 
@@ -749,7 +747,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
 
 
 
-void p86Assembler::_addSeg(auto_ptr<BinarySegment> binseg)
+void p86Assembler::_addSeg(auto_ptr<TextSegment> binseg)
 {
     if (pLastLabel) {
         binseg->setLabel(pLastLabel);
@@ -825,7 +823,7 @@ static std::string getSourceRepr(OpNode* ptr)
         case (REG_OFFSET):
             paramStr = "[" + ((Register*) ops[i])->getRegName();
             offsets = ((Register*)ops[i])->getOffsetPtr();
-            for (int k = 0; k < offsets->size(); k++) {
+            for (unsigned int k = 0; k < offsets->size(); k++) {
                 switch (offsets->at(k)->getAccessMode()) {
 
                 case(REG_DIRECT):

@@ -1,9 +1,9 @@
 #ifndef _COMMON_H
 #define _COMMON_H
-#include <stdint.h>
 #include <string>
 #include <algorithm>
-#include "data.h"
+#include <cstdint>
+
 //common utility functions for data manipulation.
 
 

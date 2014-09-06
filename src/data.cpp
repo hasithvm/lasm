@@ -1,9 +1,8 @@
 #include "data.h"
 
-#ifndef VS2010
+#ifndef _MSC_VER
 #define toupper std::toupper
 #else
-#define toupper(a) ((a >= 'a' && a <= 'z') ? (a - 'a' + 'A') : a)
 #define snprintf(a, b, c, ...) _snprintf_s(a, b, b, c, __VA_ARGS__)
 #endif
 
@@ -74,7 +73,7 @@ void Register::repr(int indentlevel){
 	{
 		clog << indenter << "\t<offset>" << endl;
 		Operands* ops =  getOffsetPtr();
-		for (int i =0;i < ops->size();i++){
+		for (unsigned int i =0;i < ops->size();i++){
 			ops->at(i)->repr(indentlevel + 1);
 		}
 		clog << indenter << "\t</offset>" << endl;
@@ -87,8 +86,7 @@ void Register::repr(int indentlevel){
 //returns a binary representation of the register.
 uint8_t Register::parseRegString(std::string& str){
 //convert string to uppercase.
-for (unsigned int i=0;i<str.size();i++)
-		str[i] = toupper(str[i]);
+	strToUpperCase(str);
 //if the register is not in memory,i.e invalid combination such as "AI" or "SX"
 if (m_regmap.find(str) == m_regmap.end())
 {
@@ -172,8 +170,6 @@ void Constant::repr(int indentlevel){
 	std::string indenter(indentlevel, '\t');
 	clog << indenter << "<Constant>" << endl;
 	clog << indenter << "\t<name>" << m_name << "</name>" <<  endl;
-//	clog << indenter << "\t<accessmode>" << accessmodeLUT[((uint8_t)Operand::getAccessMode()) >> 4] << "</accessmode>" << endl;
-
 	clog << indenter << "</Constant>" << endl;
 }
 

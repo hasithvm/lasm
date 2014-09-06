@@ -4,7 +4,9 @@
 	#include <vector>
 	#include "data.h"
 	#include "Nodes.h"
-  
+  	#ifdef _MSC_VER
+	#include <io.h>
+	#endif
 extern "C"{
 	int yylex(void);
 
@@ -23,6 +25,7 @@ parser_opcode p;
 %option yylineno
 %option case-insensitive
 %option nodefault
+%option nounistd
 %%
 %{/*
 This block takes care of removing comments from the input stream*/

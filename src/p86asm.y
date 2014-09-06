@@ -1,14 +1,13 @@
 %{
 	#include <string.h>
 	#include <stdlib.h>
-	#include <cstddef>
 	#include <vector>
 	#include "data.h"
 	#include "Nodes.h"
 	ExpressionList* pList;
 	using namespace std;
 
-	#ifdef VS2010
+	#ifdef _MSC_VER
 	extern FILE* yyin;
 	extern int yylineno;
 	extern int yynerrs;
@@ -16,7 +15,7 @@
 
 	extern "C"
 	{
-	#ifndef VS2010
+	#ifndef _MSC_VER
 		extern FILE *yyin;
 		extern int yylineno;
 		extern int yynerrs;

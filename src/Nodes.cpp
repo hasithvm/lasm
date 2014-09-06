@@ -1,6 +1,9 @@
 #include "Nodes.h"
-
-
+#ifndef _MSC_VER
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
 
 BaseExpressionNode* BaseExpressionNode::getNextExpr(){
 	return m_nextptr;
@@ -65,7 +68,7 @@ void OpNode::repr(int indentlevel){
 		clog << indenter << "\t<id>" << m_id << "</id>" << endl;
 
 	clog << indenter << "\t<params>" << endl;
-	for (int i = 0; i < ops.size();i++)
+	for (unsigned int i = 0; i < ops.size();i++)
 	{
 		if (ops[i])
 			ops[i]->repr(indentlevel + 2);

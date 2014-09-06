@@ -4,12 +4,12 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
-#include "BinarySegment.hpp"
+#include "TextSegment.hpp"
 #include "Nodes.h"
 using namespace std;
 namespace ListingWriter {
 
-		void writeFile(vector<BinarySegment*>& segments, std::string& filename, std::string sourceFile);
+		void writeFile(vector<TextSegment*>& segments, std::string& filename, std::string sourceFile);
 		
 
 

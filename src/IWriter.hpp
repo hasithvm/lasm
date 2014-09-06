@@ -3,7 +3,7 @@
 
 class IWriter{
 	IWriter();
-	virtual void WriteFile(vector<BinarySegment*> segment, std::string& filename) = 0;
+	virtual void WriteFile(vector<TextSegment*> segment, std::string& filename) = 0;
 };
 
 

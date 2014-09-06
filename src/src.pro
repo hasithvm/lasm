@@ -9,6 +9,7 @@ MOC_DIR = $$OBJDIR/moc
 UI_DIR = $$OBJDIR/ui
 RCC_DIR = $$OBJDIR/rcc
 TARGET = lasm
+CONFIG += console
 
 TEMPLATE = app
 
@@ -24,6 +25,9 @@ SOURCES += symtable.cpp \
 		VirgoWriter.cpp \
 		ListingWriter.cpp
 
+win32-msvc* {
+    SOURCES += opcodes.dat
+}
 HEADERS  += TextSegment.hpp \
 		IWriter.hpp \
 		lasm.hpp \
