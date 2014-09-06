@@ -24,6 +24,10 @@ SOURCES += symtable.cpp \
 		VirgoWriter.cpp \
 		ListingWriter.cpp
 
+win32-msvc* {
+    SOURCES += opcodes.dat
+}
+
 HEADERS  += BinarySegment.hpp \
 		IWriter.hpp \
 		lasm.hpp \
