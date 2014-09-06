@@ -13,6 +13,10 @@ CONFIG += console
 
 TEMPLATE = app
 
+macx {
+	CONFIG -= app_bundle
+}
+
 SOURCES += symtable.cpp \
 		data.cpp \
 		data_immediate.cpp \
