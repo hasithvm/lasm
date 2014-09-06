@@ -17,14 +17,14 @@ SOURCES += symtable.cpp \
 		data_immediate.cpp \
 		common.cpp \
 		Nodes.cpp \
-		BinarySegment.cpp \
+		TextSegment.cpp \
 		p86Assembler.cpp \
 		preprocessor.cpp \
 		lasm.cpp \
 		VirgoWriter.cpp \
 		ListingWriter.cpp
 
-HEADERS  += BinarySegment.hpp \
+HEADERS  += TextSegment.hpp \
 		IWriter.hpp \
 		lasm.hpp \
 		ListingWriter.hpp \
@@ -73,7 +73,7 @@ bisonHeader.commands = @true
 bisonHeader.depends = ${QMAKE_FILE_BASE}.tab.cpp
 bisonHeader.variable_out = GENERATED_HEADERS
 
-QMAKE_EXTRA_COMPILERS += opcode flex bison symtable bisonHeader
+QMAKE_EXTRA_COMPILERS += opcode symtable flex bison bisonHeader
 
 unix {
     isEmpty(PREFIX) {
