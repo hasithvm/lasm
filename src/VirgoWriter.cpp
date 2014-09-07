@@ -1,6 +1,6 @@
 #include "VirgoWriter.h"
 #include <iomanip>
-
+#include "Logger.hpp"
 #define DELIM "\x1f"
 
 namespace VirgoWriter
@@ -8,7 +8,7 @@ namespace VirgoWriter
 	void writeFile(vector<TextSegment*>& segments, string& filename, unsigned int startingAddress)
 	{
 		int bytes_written = 0;
-		clog << "Starting object-write process!" << endl;
+		Logger::Instance() << "Starting object-write process!" << endl;
 		ofstream outfile;
 		outfile.open(filename.c_str());
 

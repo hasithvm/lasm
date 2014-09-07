@@ -83,8 +83,9 @@ void QWMain::on_pbAssemble_clicked()
     {QStringList args;
     QString sOutName = sFilename;
     sOutName.replace(sOutName.lastIndexOf("."),sOutName.size(),".obj");
-    args.append(sFilename);
+    args.append("-o");
     args.append(sOutName);
+    args.append(sFilename);
     ui->taConsole->append("===============================");
     pRunnable.start("./lasm",args);
 	statusBar()->showMessage(tr("Running"));

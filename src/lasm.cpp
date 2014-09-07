@@ -7,7 +7,7 @@
 #include "lasm.hpp"	
 #include "Logger.hpp"
 #include <sstream>
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
 
 
@@ -20,18 +20,19 @@ int main(int argc, char **argv)
 
 	for (int i=1; i < argc - 1; i++)
 	{
-		if (!strncmp(argv[i], "-d", 2)) 
+
+		if (!strncmp(argv[i], "-d", 3)) 
 		{
 			Logger::Instance().SetOutput(Logger::OUTPUT_FILE);
 		}
-		else if (!strncmp(argv[i], "-o", 2))
+		else if (!strncmp(argv[i], "-o", 3))
 		{
 			if ((int)i+1 >= argc)
 			{
 				cout << "ERROR: output filename expected" << endl;
 				return 0;
 			}
-			outFile = argv[i++];
+			outFile = argv[++i];
 		}
 
 	}
@@ -97,7 +98,7 @@ int main(int argc, char **argv)
 			cerr << err_count << " error(s) encountered during assembly!" << endl;
 		else{
 			VirgoWriter::writeFile(asmgen.getSegments(), outFile, asmgen.getStartingAddress());
-			cout << "Output file " << strOutputFile << " created" << endl;
+			cout << "Output file " << outFile << " created" << endl;
 		}
 
 		outFile.append(".lst");
