@@ -10,7 +10,8 @@ int main(int argc, char **argv)
 {
 
 
-	cout << "Libra-8086 Emulator -- Assembler\n" << "assembler built on " << __DATE__  << " : " << __TIME__  << endl;
+	cout << "Lasm -- assembler for the Libra-8086 Emulator\
+			Compiled on " << __DATE__  << " : " << __TIME__  << endl;
 	setExpressionList(&list);
 
 	streambuf *psbuf, *backup;
@@ -38,10 +39,14 @@ int main(int argc, char **argv)
 
 
 		if (!myfile) {
-			cout << "Invalid inputfile specified\nSwitching to interactive mode...." << endl;
+
+			cout << "Invalid inputfile specified\
+					Switching to interactive mode...." << endl;
+			
 			yyin = stdin;
 			strOutputFile = "a.obj";
-			cout << "============\nInteractive Mode"<< endl;
+			cout << "========================\
+					Interactive Mode"<< endl;
 		}
 
 		yyparse();
