@@ -6,11 +6,21 @@
 #include <iostream>
 #include <memory>
 #include "data.h"
-#include "symtable-generated.hpp"
 using namespace std;
 
-#define OPCODE(op,bin)	ret[std::string(op)] = bin
+typedef struct {
+	int szVariant; //size of the opcode byte array
+	unsigned char* pStart; // pointer to the start of the array
+} inst_variant;
 
+typedef struct {
+	int varCount; //number of variants
+	inst_variant* ptr; //pointer to first element
+} inst_t;
+
+
+
+#define OPCODE(op,bin)	ret[std::string(op)] = bin
 
 //Constants for operand types.
 #define OP_8BIT		0

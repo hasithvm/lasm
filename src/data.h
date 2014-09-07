@@ -21,7 +21,8 @@
 
 using namespace std;
 
-typedef struct {
+typedef struct 
+{
 	unsigned char instrID;
 	char* pStr;
 	int pos;
@@ -66,10 +67,19 @@ class Operand{
 			Operand();
 			AccessMode& getAccessMode();
 			void setAccessMode(AccessMode am);
-			virtual void repr(int indentlevel)=0;
+			virtual ~Operand() {}
 
+		    virtual ostream& repr(ostream& out)
+    		{
+        		return out << Indent << "<Operand/>" << endl;
+    		}
+			friend ostream& operator << (ostream& out, Operand& base) 
+			{
+   				base.repr(out);
+				return out;
+			}	
 			
-	private:
+	protected:
 			AccessMode m_am;
 };
 typedef vector<Operand*> Operands;
@@ -80,11 +90,12 @@ class Immediate : public Operand{
 			Immediate(char* pValue,ImmediateEncoding base, AccessMode am);
 
 			vector<uint8_t>& getBinEncoding();
-			void repr(int indentlevel);
+			virtual ostream& repr(ostream& stream);
 			Immediate* clone() const;
 			int size();
 			std::string& getSourceRepr();
 			uint16_t toWord();
+			~Immediate() {};
 	private:
 			vector<uint8_t> m_data;
 			static vector<uint8_t> parse(std::string& in, ImmediateEncoding base);
@@ -100,13 +111,15 @@ class Register : public Operand{
 					void setName(std::string& regname);
 					uint8_t getBinEncoding();
 					static bool exists(std::string reg);
-					void repr(int indentlevel);
+					virtual ostream& repr(ostream& stream);
 					Operands* getOffsetPtr();
 					void setOffsetPtr(Operands* ptr);
 					AccessWidth& getAccessWidth();
 					RegType& getRegType();
 					bool& isIndexable();
 					std::string& getRegName();
+					~Register() {};
+
 		private:
 						typedef std::map<string, uint8_t>  RegLookupMap;
 						uint8_t reg;
@@ -122,12 +135,12 @@ class Register : public Operand{
 
 class Constant : public Operand{
 		public:
-					Constant(char*  pName);
-					void repr(int indentlevel);
-					std::string& getName();
-
+			Constant(char*  pName);
+			virtual ostream& repr(ostream& stream);
+			std::string& getName();
+			~Constant() {};
 		private:
-					std::string m_name;
+			std::string m_name;
 
 };		
 

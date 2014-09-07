@@ -1,5 +1,5 @@
 #include "ListingWriter.hpp"
-
+#include "Logger.hpp"
 namespace ListingWriter
 {
 	void writeFile(vector<TextSegment*>& segments, std::string& filename, std::string sourceFile)
@@ -23,20 +23,25 @@ namespace ListingWriter
 
 			pBuffer = new char[length + 1];
 
-			clog << "Reading " << length << " characters... ";
+			Logger::Instance() << "Reading " << length << " characters... ";
 			// read data as a block:
 			is.read(pBuffer, length);
 
 			if (is)
-				clog << "all characters read successfully.";
+				Logger::Instance() << "all characters read successfully.";
 			else
-				clog << "error: only " << is.gcount() << " could be read";
+				Logger::Instance() << "error: only " << is.gcount() << " could be read";
 			is.close();
 			//null terminate the buffer;
 			pBuffer[length] = 0;
 			//delete[] pBuffer;
 			writePos = pBuffer;
 			writeStart = pBuffer;
+		}
+		else
+		{
+			cerr << "could not open source file" << endl;
+			return;
 		}
 		outfile.open(filename.c_str());
 

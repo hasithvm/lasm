@@ -1,5 +1,5 @@
 #include "p86Assembler.h"
-
+#include "Logger.hpp"
 #define RV_IMMEDIATE_TOO_SMALL 4
 #define RV_END_FOUND 5
 
@@ -101,7 +101,7 @@ bool p86Assembler::_postpass()
             case (AW_8BIT):
 
                 if (finalAddress < -128 || finalAddress > 127) {
-                    clog << "WARNING: Jump offset is longer than 8 bits!" << endl;
+                    Logger::Instance() << "WARNING: Jump offset is longer than 8 bits!" << endl;
                     //set the 16-bit bit field.
                     (*segs[i])[0] |= 0x01;
                     segs[i]->setAddrSize(AW_16BIT);
@@ -126,7 +126,7 @@ bool p86Assembler::_postpass()
 
         }
 
-        clog << "Computed word: " << hex2str(&(*segs[i])[0], segs[i]->size()) << " PC = " << segs[i]->getCounter() << endl;
+        Logger::Instance() << "Computed word: " << hex2str(&(*segs[i])[0], segs[i]->size()) << " PC = " << segs[i]->getCounter() << endl;
     }
     return rerunPass;
 }
@@ -153,7 +153,7 @@ int p86Assembler::_handleLabelNode(LabelNode* label)
     std::string LabelContentCopy = label->getContent();
     LocationMap[LabelContentCopy] = counter;
     pLastLabel = label;
-    clog << "Location " << label->getContent() << " maps to counter: " << counter << endl;
+    Logger::Instance() << "Location " << label->getContent() << " maps to counter: " << counter << endl;
     return 0;
 }
 
@@ -785,8 +785,11 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
         case (CONST_ADDR):
             consts[i] =(Constant*) ops[i];
             break;
-
+        case (UNINITIALIZED):
+        cerr << "Something happened in " << __FILE__ ":"<< __LINE__ <<  ". Please contact the devs." << endl; 
+        break;
         }
+
         switch (am) {
         case (IMMEDIATE_ADDR):
         case (CONST_ADDR):
@@ -796,6 +799,7 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
             break;
         case (UNINITIALIZED):
         cerr << "Something happened in " << __FILE__ ":"<< __LINE__ <<  ". Please contact the devs." << endl; 
+        break;
         default:
             break;
         }
@@ -804,7 +808,7 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
 }
 
 
-static std::string getSourceRepr(OpNode* ptr)
+std::string getSourceRepr(OpNode* ptr)
 {
     std::string returnStr(ptr->getContent());;
 

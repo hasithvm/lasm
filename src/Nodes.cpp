@@ -25,6 +25,12 @@ int BaseExpressionNode::getLineNumber(){
 
 }
 
+ostream& operator<<(ostream& stream, BaseExpressionNode& node)
+{
+	node.repr(stream);
+	return stream;
+}
+
 //================================================================
 
 
@@ -60,22 +66,29 @@ int OpNode::getOperandCount(){
 	return tmp_len;
 }
 
-void OpNode::repr(int indentlevel){
-	std::string indenter(indentlevel, '\t');	
-	clog << indenter << "<statement>" << endl;
-	clog << indenter << "\t<type>opcode</type>" << endl;
-	clog << indenter << "\t<opcode>" << getContent() << "</opcode>" << endl;
-		clog << indenter << "\t<id>" << m_id << "</id>" << endl;
+ostream& OpNode::repr(ostream& stream){
+	stream << Indent << "<statement>" << endl;
+	stream << IncreaseIndent;
+	stream << Indent << "<type>opcode</type>" << endl;
 
-	clog << indenter << "\t<params>" << endl;
+
+	stream << Indent <<  "<opcode>" << getContent() << "</opcode>" << endl;
+	stream << Indent << "<id>" << m_id << "</id>" << endl;
+
+	stream << Indent << "<params>" << endl;
+	stream << IncreaseIndent;
 	for (unsigned int i = 0; i < ops.size();i++)
 	{
 		if (ops[i])
-			ops[i]->repr(indentlevel + 2);
+			stream << *ops[i];
 	}
-	clog << indenter << "\t</params>" << endl;
-	clog << indenter << "</statement>" << endl;
+	stream << DecreaseIndent;
+	stream << Indent << "</params>" << endl;
+	stream << DecreaseIndent;
+	stream << Indent << "</statement>" << endl;
 	
+
+	return stream;
 
 }
 
@@ -124,15 +137,20 @@ ControlNodeType ControlNode::decodeText(std::string& text){
 	return tlm[text];
 }
 
-void ControlNode::repr(int indentlevel){
-	std::string indenter(indentlevel, '\t');	
-	clog << indenter << "<control>" << endl;
-	clog << indenter << "\t<name>" << label << "</name>" << endl;
-	clog << indenter << "\t<key>" << m_key << "<key>" << endl;
-	clog << indenter << "\t<value>" << endl;
-	imm->repr(indentlevel + 1);
-		clog << indenter << "\t<value>" << endl;
-	clog << indenter << "<control>" << endl;
+ostream& ControlNode::repr(ostream& stream){
+		
+	stream << Indent << "<control>" << endl;
+	stream << IncreaseIndent;
+	stream << Indent << "<name>" << label << "</name>" << endl;
+	stream << Indent << "<key>" << m_key << "<key>" << endl;
+	stream << Indent << "<value>" << endl;
+	stream << IncreaseIndent;
+	stream << *imm;
+	stream << DecreaseIndent;
+	stream << Indent << "<value>" << endl;
+	stream << DecreaseIndent;
+	stream << Indent << "<control>" << endl;
+	return stream;
 }
 
 void ControlNode::setContent(std::string a){
@@ -174,11 +192,13 @@ void LabelNode::setContent(std::string a){
 	m_label = a;
 }
 
-void LabelNode::repr(int indentlevel){
-	std::string indenter(indentlevel, '\t');	
-	clog << indenter << "<label>" << endl;
-	clog << indenter << "\t<name>" << m_label << "</name>" << endl;
-	clog << indenter << "<label>" << endl;
+ostream& LabelNode::repr(ostream& stream){
+	stream << Indent << "<label>" << endl;
+	stream << IncreaseIndent;
+	stream << Indent << "<name>" << m_label << "</name>" << endl;
+	stream << DecreaseIndent;
+	stream << Indent << "<label>" << endl;
+	return stream;
 }
 
 ExpressionType LabelNode::getType(){

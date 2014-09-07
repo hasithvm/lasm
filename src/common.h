@@ -3,7 +3,8 @@
 #include <string>
 #include <algorithm>
 #include <cstdint>
-
+#include <iostream>
+using namespace std;
 //common utility functions for data manipulation.
 
 
@@ -15,5 +16,10 @@ char convlower(char in);
 char convupper(char in);
 void trim(std::string& in, char toTrim);
 
+
+ostream& Indent(ostream& streamInstance);
+ostream& DecreaseIndent(ostream& ostreamInstance);
+ostream& IncreaseIndent(ostream& ostreamInstance);
+ostream& setIndent(ostream& ostreamInstance, unsigned int indentlevel);
 
 #endif

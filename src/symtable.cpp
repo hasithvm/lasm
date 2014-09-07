@@ -2,6 +2,9 @@
 #include <iostream>
 #include <iomanip>
 #include "assert.h"
+#include "symtable-generated.hpp"
+
+
 namespace SymTable{
 void repr(){
 

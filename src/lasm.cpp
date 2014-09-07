@@ -5,46 +5,65 @@
 
 
 #include "lasm.hpp"	
-
+#include "Logger.hpp"
+#include <sstream>
 int main(int argc, char **argv)
 {
 
 
-	cout << "Lasm -- assembler for the Libra-8086 Emulator\
-			Compiled on " << __DATE__  << " : " << __TIME__  << endl;
+	cout << "Lasm -- assembler for the Libra-8086 Emulator" << endl;
+	cout << "Compiled on " << __DATE__  << " : " << __TIME__  << endl;
+
 	setExpressionList(&list);
+	std::string sourceFile = "";
+	std::string outFile = "";
 
-	streambuf *psbuf, *backup;
-	ofstream toFile;
-	int argIdx = 1;
-	if (argc == 4) {
-		if (!strncmp(argv[argIdx], "-d", 3)) {
-			toFile.open("debug.log");
+	for (int i=1; i < argc - 1; i++)
+	{
+		if (!strncmp(argv[i], "-d", 2)) 
+		{
+			Logger::Instance().SetOutput(Logger::OUTPUT_FILE);
 		}
-		argIdx++;
-		argc--;
-	}
-	backup = clog.rdbuf();
-	psbuf = toFile.rdbuf();
-	clog.rdbuf(psbuf);
+		else if (!strncmp(argv[i], "-o", 2))
+		{
+			if ((int)i+1 >= argc)
+			{
+				cout << "ERROR: output filename expected" << endl;
+				return 0;
+			}
+			outFile = argv[i++];
+		}
 
+	}
+	sourceFile = argv[argc - 1];
+	if (outFile == "")
+	{
+		cout << "WARNING: no output file specified, defaulting to a.obj" << endl;
+		outFile = "a.obj";
+	}
+
+	if (sourceFile == "" || outFile == "")
+	{
+		cout << "Something went wrong!" << endl;
+		return 1;
+	}
+
+
+
+	if (argc > 2)
+	{
 	list.reserve(80);
-	if (argc == 3){
-		FILE *myfile = fopen(argv[argIdx], "r");
+	FILE *myfile = fopen(sourceFile.c_str(), "r");
 
 
 		yyin = myfile;
-		strOutputFile = string(argv[argIdx + 1]);
-
-
-
 		if (!myfile) {
 
 			cout << "Invalid inputfile specified\
 					Switching to interactive mode...." << endl;
 			
 			yyin = stdin;
-			strOutputFile = "a.obj";
+			outFile = "a.obj";
 			cout << "========================\
 					Interactive Mode"<< endl;
 		}
@@ -59,14 +78,17 @@ int main(int argc, char **argv)
 
 
 
+		stringstream ss;
 
 		preprocess(list);
-
 		for (unsigned int i = 0; i< list.size();i++)
 		{
-			list[i]->repr(0);
+			ss << *(list[i]);
 		}
-		clog << "assembly started!" << endl;
+
+
+		Logger::Instance() << ss.str();
+		Logger::Instance() << "assembly started!" << endl;
 		p86Assembler asmgen;
 
 		unsigned int err_count;
@@ -74,13 +96,13 @@ int main(int argc, char **argv)
 		if (err_count > 0)
 			cerr << err_count << " error(s) encountered during assembly!" << endl;
 		else{
-			VirgoWriter::writeFile(asmgen.getSegments(), strOutputFile, asmgen.getStartingAddress());
+			VirgoWriter::writeFile(asmgen.getSegments(), outFile, asmgen.getStartingAddress());
 			cout << "Output file " << strOutputFile << " created" << endl;
 		}
 
-		strOutputFile += ".lst";
+		outFile.append(".lst");
 		if (myfile)
-			ListingWriter::writeFile(asmgen.getSegments(), strOutputFile, string(argv[1]));
+			ListingWriter::writeFile(asmgen.getSegments(), outFile, sourceFile);
 
 
 		for (unsigned int i = 0; i< list.size();i++)
@@ -88,17 +110,13 @@ int main(int argc, char **argv)
 			delete list[i];
 		}
 
-		clog.rdbuf(backup);  
-		toFile.close();
 		return 0;
-
-
 	}
+
+	
 	else{
 
-		cout << "Usage: lasm [-d] infile outfile" << endl;
-		clog.rdbuf(backup);
-		toFile.close();
+		cout << "Usage: lasm [-d] [-o output-file] input-file" << endl;
 		return 0;
 	}
 }

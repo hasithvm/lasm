@@ -28,12 +28,14 @@ SOURCES += symtable.cpp \
 		preprocessor.cpp \
 		lasm.cpp \
 		VirgoWriter.cpp \
-		ListingWriter.cpp
+		ListingWriter.cpp \
+		Logger.cpp
 
 win32-msvc* {
     SOURCES += opcodes.dat
 }
 HEADERS  += TextSegment.hpp \
+        Logger.hpp \
 		IWriter.hpp \
 		lasm.hpp \
 		ListingWriter.hpp \

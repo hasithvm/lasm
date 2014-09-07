@@ -19,11 +19,17 @@ EXPR_COMMENT=5,
 class BaseExpressionNode{
 		public:
 					virtual ExpressionType getType()=0;
-					virtual void repr(int indentlevel)=0;
 					int getLineNumber();
 					void setLineNumber(int lineno);
 					BaseExpressionNode* getNextExpr();
 					void setNextExpr(BaseExpressionNode* ptr);
+					virtual ostream& repr(ostream& stream)
+					{
+						return stream << "<BaseExpressionNode/>";
+					}
+					virtual ~BaseExpressionNode() {};
+					friend ostream& operator<<(ostream& stream, BaseExpressionNode& node);
+
 		private:
 				int m_line;
 				BaseExpressionNode* m_nextptr;
@@ -51,8 +57,7 @@ class ControlNode : public BaseExpressionNode{
 				Operand* getValue();
 				void setKey(char* a);
 				std::string& getKey();
-				void repr(int indentlevel);
-				
+				virtual ostream& repr(ostream& stream);				
 		private:
 				typedef std::map<std::string, ControlNodeType>  CtrlTypeLookupMap;
 				Operand* imm;
@@ -82,7 +87,7 @@ class LabelNode : public BaseExpressionNode{
 				ExpressionType getType();
 				void setContent(std::string a);
 				std::string& getContent();
-				void repr(int indentlevel);
+				virtual ostream& repr(ostream& stream);				
 		private:
 				std::string m_label;
 
@@ -98,7 +103,7 @@ class OpNode : public BaseExpressionNode{
 					Operands& getOperands();
 					void setExplicitAccessModifier(AccessWidth aw);
 					AccessWidth getExplicitAccessModifier();
-					void repr(int indentlevel);
+					virtual ostream& repr(ostream& stream);				
 					std::string getSourceRepr();
 					void setID(int ID);
 					int getID() {return m_id;}

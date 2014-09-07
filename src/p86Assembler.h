@@ -11,7 +11,7 @@ inline void decodeOperands(Operands& ops, Register** rs, Immediate** imms, Const
 
 inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, AccessWidth* aw_disp,bool* dispIsImmediate, bool* hasDisp, bool* zeroDisp, Immediate** dispSrc, Constant** constSrc);
 
-static std::string getSourceRepr(OpNode* ptr);
+std::string getSourceRepr(OpNode* ptr);
 
 
 class p86Assembler{

@@ -34,16 +34,26 @@ Immediate::Immediate(char* pValue, ImmediateEncoding base, AccessMode am)
 	}
 }
 
-void Immediate::repr(int indentlevel)
+ostream& Immediate::repr(ostream& stream)
 {
-	std::string indenter(indentlevel, '\t');
-	clog << indenter << "<Immediate>" << endl;
+
+	stream << Indent << "<Immediate>" << endl;
+	stream << IncreaseIndent;
 	if (m_data.size() == 0)
-		clog << indenter << "\t<value>uninitialized</value>" << endl;
+		stream << Indent << "<value>uninitialized</value>" << endl;
 	else
-		clog << indenter << "\t<value>" << hex2str(&m_data[0], m_data.size()) << "</value>" << endl;
-	//		clog << indenter << "\t<accessmode>" << accessmodeLUT[(uint8_t)Operand::getAccessMode() >> 2] << "</accessmode>" <<  endl;
-	clog << indenter << "</Immediate>" << endl;
+		stream << Indent << "<value>";
+
+		for (std::vector<uint8_t>::const_reverse_iterator ri = m_data.rbegin();
+			 ri != m_data.rend(); ri++)
+			{
+				stream << std::hex << *ri;		
+			} 
+		stream << "</value>" << endl;
+
+	stream << DecreaseIndent;
+	stream << Indent << "</Immediate>" << endl;
+	return stream;
 }
 
 
