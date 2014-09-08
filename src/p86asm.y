@@ -112,10 +112,13 @@
 					
 					free($<pStr>2);
 					if ($<pStr>1)
-				 	pControl->setKey($<pStr>1);
+					{
+						pControl->setKey($<pStr>1);
+						free($<pStr>1);		
+					}
+					free($<pListOperands>3);
 					pControl->setLineNumber(yylineno);
 					$<pExpr>$ = pControl;
-
 					
 				}
 				;
@@ -183,6 +186,7 @@
 					Operands* p2 =$<pListOperands>3;
 					if (p2->at(0) && (p2->size() == 1))
 						p1->push_back(p2->at(0));
+					free(p2);
 					$<pListOperands>$ = p1;
 				}
 				|
@@ -231,8 +235,9 @@
 					pOffsetList->push_back(pList->at(1));
 					((Register*) pList->at(0))->setOffsetPtr(pOffsetList);
 					pList->pop_back();
-					
+					free(pOffsetList);
 					$<pListOperands>$ = pList;
+
 				}
  				|
 				LSQBR operand PLUS operand PLUS operand RSQBR

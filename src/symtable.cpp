@@ -57,9 +57,9 @@ int OpVars::size(){
 }
 
 auto_ptr<OpType> OpVars::get(int index){
-	auto_ptr<OpType> o(new OpType());
-	o->realign((instr[m_index].ptr + index));
-	return o;
+	auto_ptr<OpType> opvar(new OpType());
+	opvar->realign((instr[m_index].ptr + index));
+	return opvar;
 }
 
 OpType::OpType(){

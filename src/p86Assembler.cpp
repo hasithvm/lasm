@@ -161,7 +161,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
 {
 
     int retval = 0;
-    auto_ptr<TextSegment> binseg = auto_ptr<TextSegment>(new TextSegment());
+    auto_ptr<TextSegment> binseg(new TextSegment());
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
     binseg->setSourceNode(ctrl);
@@ -268,7 +268,8 @@ int p86Assembler::_handleOpNode(OpNode* op)
         else if (match ==-1)
             ERROR_RESUME("Assembly failed on " << op->getContent()\
                          << " at line " << op->getLineNumber())
-            return match;
+    return match;
+    opv.release();
 }
 
 /**
@@ -279,7 +280,6 @@ int p86Assembler::_handleOpNode(OpNode* op)
 */
 int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops)
 {
-    //auto_ptr to clean up if the pointer goes out of scope.
     Register  *reg[3] = {NULL,NULL,NULL};
     Immediate* imm[3]= {NULL};
     Constant* consts[3] = {NULL};
@@ -689,7 +689,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
     }
 
     if (isValidInstr) {
-       auto_ptr<TextSegment> binseg = auto_ptr<TextSegment>(new TextSegment());
+       auto_ptr<TextSegment> binseg(new TextSegment());
        binseg->setSourceNode(op);
         if (copyPattern) {
 
@@ -876,7 +876,7 @@ inline int _generateIndexedRegisterEncoding(Register* regSrc, uint8_t* modrm, Ac
                 uint8_t auxModRM = 0;
                 Operands* offsets;
                 uint8_t binEnc = regSrc->getBinEncoding();
-                bool twoOffsetRegs;
+                bool twoOffsetRegs = false;
                 Immediate* pDisp;
                 switch (regSrc->getBinEncoding()) {
                 case (ENC_REG_BP):
