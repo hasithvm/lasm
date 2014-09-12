@@ -2,7 +2,13 @@
 #define _COMMON_H
 #include <string>
 #include <algorithm>
+
+#ifndef _MSC_VER
+#include <stdint.h>
+#else
 #include <cstdint>
+#endif
+
 #include <iostream>
 using namespace std;
 //common utility functions for data manipulation.

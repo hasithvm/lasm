@@ -17,7 +17,13 @@
 
 #include <iostream>
 #include <iomanip>
+
+#ifdef _MSC_VER
 #include <cstdbool>
+#else
+#include <stdbool.h>
+#endif
+
 #include <stdexcept>
 
 class Logger

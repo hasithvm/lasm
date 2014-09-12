@@ -10,7 +10,7 @@ UI_DIR = $$OBJDIR/ui
 RCC_DIR = $$OBJDIR/rcc
 TARGET = lasm
 CONFIG += console
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS +=
 
 TEMPLATE = app
 

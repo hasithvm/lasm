@@ -9,76 +9,73 @@
 using namespace std;
 
 typedef struct {
-	int szVariant; //size of the opcode byte array
-	unsigned char* pStart; // pointer to the start of the array
+    int szVariant; //size of the opcode byte array
+    unsigned char* pStart; // pointer to the start of the array
 } inst_variant;
 
 typedef struct {
-	int varCount; //number of variants
-	inst_variant* ptr; //pointer to first element
+    int varCount; //number of variants
+    inst_variant* ptr; //pointer to first element
 } inst_t;
 
 
-
-#define OPCODE(op,bin)	ret[std::string(op)] = bin
-
 //Constants for operand types.
-#define OP_8BIT		0
-#define	OP_16BIT	1
+#define OP_8BIT         0
+#define OP_16BIT        1
 
-#define OPERAND_WIDTH 1
-#define REG			2
-#define MEM			4
-#define IMM			8
+#define OPERAND_WIDTH   1
+#define REG             2
+#define MEM             4
+#define IMM             8
 
-#define REG8		REG | OP_8BIT
-#define REG16		REG | OP_16BIT
+#define REG8    REG | OP_8BIT
+#define REG16   REG | OP_16BIT
 
-#define MEM8		MEM | OP_8BIT
-#define MEM16		MEM | OP_16BIT
+#define MEM8    MEM | OP_8BIT
+#define MEM16   MEM | OP_16BIT
 
-#define IMM8	IMM | OP_8BIT
-#define IMM16	IMM | OP_16BIT
+#define IMM8    IMM | OP_8BIT
+#define IMM16   IMM | OP_16BIT
 
 
-#define REG_PRESET	16
-#define ENC_REG_AX	0x00
-#define ENC_REG_CX	0x01
-#define ENC_REG_DX	0x02
-#define ENC_REG_BX	0x03
+#define REG_PRESET  16
+#define ENC_REG_AX  0x00
+#define ENC_REG_CX  0x01
+#define ENC_REG_DX  0x02
+#define ENC_REG_BX  0x03
 
-#define ENC_REG_SP	0x04
-#define ENC_REG_BP	0x05
-#define ENC_REG_SI	0x06
-#define ENC_REG_DI	0x07
+#define ENC_REG_SP  0x04
+#define ENC_REG_BP  0x05
+#define ENC_REG_SI  0x06
+#define ENC_REG_DI  0x07
 
-#define ENC_REG_AL	0x00
-#define ENC_REG_CL	0x01
-#define ENC_REG_DL	0x02
-#define ENC_REG_BL	0x03
-#define ENC_REG_AH	0x04
-#define ENC_REG_CH	0x05
-#define ENC_REG_DH	0x06
-#define ENC_REG_BH	0x07
+#define ENC_REG_AL  0x00
+#define ENC_REG_CL  0x01
+#define ENC_REG_DL  0x02
+#define ENC_REG_BL  0x03
+#define ENC_REG_AH  0x04
+#define ENC_REG_CH  0x05
+#define ENC_REG_DH  0x06
+#define ENC_REG_BH  0x07
 
-#define REG_AX	0x00 << 5
-#define REG_CX	0x01 << 5
-#define REG_DX	0x02 << 5
-#define REG_BX	0x03 << 5
+#define REG_AX  0x00 << 5
+#define REG_CX  0x01 << 5
+#define REG_DX  0x02 << 5
+#define REG_BX  0x03 << 5
 
-#define REG_SP	0x04 << 5
-#define REG_BP	0x05 << 5
-#define REG_SI	0x06 << 5
-#define REG_DI	0x07 << 5
+#define REG_SP  0x04 << 5
+#define REG_BP  0x05 << 5
+#define REG_SI  0x06 << 5
+#define REG_DI  0x07 << 5
 
-#define REG_AL	0x00 << 5
-#define REG_CL	0x01 << 5
-#define REG_DL	0x02 << 5
-#define REG_BL	0x03 << 5
-#define REG_AH	0x04 << 5
-#define REG_CH	0x05 << 5
-#define REG_DH	0x06 << 5
-#define REG_BH	0x07 << 5
+#define REG_AL  0x00 << 5
+#define REG_CL  0x01 << 5
+#define REG_DL  0x02 << 5
+#define REG_BL  0x03 << 5
+#define REG_AH  0x04 << 5
+#define REG_CH  0x05 << 5
+#define REG_DH  0x06 << 5
+#define REG_BH  0x07 << 5
 
 #define isset(o, m) (m & o == m)
 
@@ -112,45 +109,41 @@ typedef struct {
 
 
 
-
-
-
-//typedef std::vector<uint8_t> 	OpType;
-//typedef std::vector< OpType > 	OpVars;
-
-
-
 //single byte opcodes supported only!
 //OpType format: [future implementation, 0x00] opcode modRM (optional) operand1 operand2
-class OpType{
-public:
-		OpType();
-		unsigned char& operator[](int index);
-		int size();
-		void realign(inst_variant* ptr);
-private:
-		inst_variant* m_ptr;
-};	
+class OpType
+{
+    public:
+        OpType();
+        unsigned char& operator[](int index);
+        int size();
+        void realign(inst_variant* ptr);
 
-class OpVars{
-	public:		
-				OpVars();
-				auto_ptr<OpType> get (int index);
-				int size();
-				void realign(int index);
-	private:
-			int m_index;
+    private:
+        inst_variant* m_ptr;
+};  
 
+class OpVars
+{
+    public:     
+        OpVars();
+        auto_ptr<OpType> get (int index);
+        int size();
+        void realign(int index);
+    
+    private:
+        int m_index;
 };
 
 
 
 
-namespace SymTable{
-						void repr();
-						auto_ptr<OpVars> getVariants(int index); 
-						const char* translateIDToName(unsigned int nID);
-		};
+namespace SymTable
+{
+    void repr();
+    auto_ptr<OpVars> getVariants(int index); 
+    const char* translateIDToName(unsigned int nID);
+};
 
 
 

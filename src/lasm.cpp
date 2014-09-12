@@ -3,14 +3,11 @@
 //
 //
 
-
 #include "lasm.hpp"	
 #include "Logger.hpp"
 #include <sstream>
 int main(int argc, char ** argv)
 {
-
-
 	cout << "Lasm -- assembler for the Libra-8086 Emulator" << endl;
 	cout << "Compiled on " << __DATE__  << " : " << __TIME__  << endl;
 
