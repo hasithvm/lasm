@@ -10,27 +10,27 @@
 
 *Builds across multiple platforms with QMake* 
 
-**Usage**
+## Usage
 ```bash
     lasm [-o outputfile] <input-file>
 ```
-**Building**
+## Building
 The following instructions summarize the build process for lasm and lasm-gui (optional)
 
-***Prerequisites***
+### Prerequisites
 
-***Windows***
+#### Windows
 
 Qt 4.8+ should be installed, and QTDIR should point to a QT4.x directory to run qmake.
 Install flex and bison either throgh Git for Windows or Cygwin, and the binaries should be runnable through PATH.
 
 PATH should also include a Python 2/3 environment for running some of the build scripts. 
 
-***Linux***
+#### Linux
 
 lasm depends on flex, bison, and lasm-gui adds dependencies on qt4. Installing qt4-defaults should pull in the required dependencies.
 
-***Running QMake***
+### Running QMake
 
 QMake generates the necessary VCxx/Xcode/Makefile projects.
 
@@ -38,12 +38,12 @@ QMake generates the necessary VCxx/Xcode/Makefile projects.
 qmake lasm.pro
 ```
 
-****Linux/Debian****
+#### Linux/Debian
 
 It's recommended that you run ```make``` followed by ```checkinstall``` to generate a .deb file that's easily installable.
 
 
-##License
+## License
 Copyright (C) 2013 Hasith Vidanamadura, Robert Nelson, and Darren Stahl.
 
 Original p86asm specification (C) Trevor Pearce (2001)
