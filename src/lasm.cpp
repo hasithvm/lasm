@@ -15,8 +15,8 @@ int main(int argc, char ** argv)
 	cout << "Compiled on " << __DATE__  << " : " << __TIME__  << endl;
 
 	setExpressionList(&list);
-	std::string sourceFile = "";
-	std::string outFile = "";
+	std::string sourceFile;
+	std::string outFile;
 
 	for (int i=1; i < argc - 1; i++)
 	{
@@ -37,13 +37,13 @@ int main(int argc, char ** argv)
 
 	}
 	sourceFile = argv[argc - 1];
-	if (outFile == "")
+	if (outFile.empty())
 	{
 		cout << "WARNING: no output file specified, defaulting to a.obj" << endl;
 		outFile = "a.obj";
 	}
 
-	if (sourceFile == "" || outFile == "")
+	if (sourceFile.empty() || outFile.empty())
 	{
 		cout << "Something went wrong!" << endl;
 		return 1;

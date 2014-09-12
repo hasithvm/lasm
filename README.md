@@ -8,24 +8,35 @@
 * Generates listing file for each source file with start addresses and encodings
 * Fast flex/bison powered parser with support for multiple immediate formats.
 
-*Builds with both msvc10/msbuild and gcc/make environments* 
+*Builds across multiple platforms with QMake* 
 
 **Usage**
 ```bash
-    lasm [filename] [outputfile]
+    lasm [-o outputfile] <input-file>
 ```
 **Building**
-
+The following instructions summarize the build process for lasm and lasm-gui (optional)
+***Prerequisites***
 ***Windows***
-The msvc10 build environment currently requires an environment variable GNUBINDIR, pointing to a bin folder with flex and bison >= 2.7.1 (preferably GnuWin32), and a variable FLEXINCLUDE pointing to /usr/include to pull in unistd.h for flex. QTDIR should point to a QT4.x directory to run qmake for lasm-gui.
-PATH should include a Python 2/3 environment for running some of the build scripts. 
+Qt 4.8+ should be installed, and QTDIR should point to a QT4.x directory to run qmake.
+Install flex and bison either throgh Git for Windows or Cygwin, and the binaries should be runnable through PATH.
+
+PATH should also include a Python 2/3 environment for running some of the build scripts. 
 
 ***Linux***
 lasm depends on flex, bison, and lasm-gui adds dependencies on qt4. Installing qt4-defaults should pull in the required dependencies.
 
+***Running QMake***
+
+QMake generates the necessary VCxx/Xcode/Makefile projects.
+
 ```bash
-	make
+qmake lasm.pro
 ```
+
+****Linux/Debian****
+It's recommended that you run ```make``` followed by ```checkinstall``` to generate a .deb file that's easily installable.
+
 
 ##License
 Copyright (C) 2013 Hasith Vidanamadura, Robert Nelson, and Darren Stahl.

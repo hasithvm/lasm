@@ -26,3 +26,6 @@ src/lex.yy.c
 log.txt
 *.obj
 build/*
+src/bin/*
+Makefile
+*.log
