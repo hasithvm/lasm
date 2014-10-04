@@ -43,6 +43,7 @@ int p86Assembler::parse(ExpressionList& pExprList)
 // skip to control|label|opcode node.
     BaseExpressionNode* currentExpr;
     int retcode;
+    bool entrySet = false;
     int errCount = 0;
 
     for (unsigned int i = 0; i < pExprList.size(); i++) {
@@ -62,13 +63,22 @@ int p86Assembler::parse(ExpressionList& pExprList)
             break;
         }
         if (retcode == RV_END_FOUND)
+        {
+            entrySet = true;
             break;
+        }
         else if (retcode)
            errCount++;
 
     }
 
     while (_postpass());
+    if (!entrySet)
+    {
+        ERROR_RESUME("Entry point not set (.end missing?). Defaulting to 0000H");
+        m_codeStart = 0;
+
+    }
     return errCount;
 }
 bool p86Assembler::_postpass()
@@ -704,7 +714,7 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
                 if (zeroDisp){
                     binseg->push_back(0);
                 }
-                if (dispIsImmediate) {
+                else if (dispIsImmediate) {
                     uint16_t tImmediateVal = dispSrc->toWord();
                     binseg->push_back((uint8_t)tImmediateVal & 0x00FF);
                     if (aw_disp == AW_16BIT)

@@ -1,4 +1,4 @@
-make#Instruction listing for lasm -- please run 'update-opcodes.py' after changing this file!
+#Instruction listing for lasm -- please run 'update-opcodes.py' after changing this file!
 #Hasith Vidanamadura, h@vidanamadura.net
 #
 
