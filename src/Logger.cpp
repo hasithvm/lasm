@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include "Logger.hpp"
-#include <stdbool.h>
-
 
 Logger::Logger() :
 m_out(new NullStream()),

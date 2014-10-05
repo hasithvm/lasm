@@ -25,15 +25,15 @@ parser_opcode p;
 %option nodefault
 %option nounistd
 
-NEWLN    "\n"|"\r\n"|"\r"
+NEWLN    \x0d\x0a|\0d
 
 %%
 %{/*
 This block takes care of removing comments from the input stream*/
 %}
 ";"                         {BEGIN(CMT);}
-<CMT>[^"\n"]+               /*eat comment text*/
-<CMT>"\n"                   {BEGIN(INITIAL);}
+<CMT>[^{NEWLN}]+               /*eat comment text*/
+<CMT>{NEWLN}                   {BEGIN(INITIAL);}
 <CMT><<EOF>>                {BEGIN(INITIAL); yyterminate();}
 
 
