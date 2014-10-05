@@ -1,14 +1,18 @@
 #include "qwmain.h"
 #include "ui_qwmain.h"
+#include <QDateTime>
 
 QWMain::QWMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::QWMain)
 {
     ui->setupUi(this);
+    sFilename.clear();
+    lastUpdatedTimeStamp = 0;
     connect(&pRunnable, SIGNAL(readyReadStandardOutput()), this, SLOT(sigStdOutReady()));
     connect(&pRunnable, SIGNAL(readyReadStandardError()), this, SLOT(sigStdErrReady()));
 	connect(&pRunnable, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(sigProcessFinished(int, QProcess::ExitStatus)));
+    connect(&watcher, SIGNAL(fileChanged(QString)),this, SLOT(sigWatchedFileChanged(QString)));
     loadSettings();
 	statusBar()->showMessage(tr("Ready"));
 }
@@ -21,30 +25,25 @@ QWMain::~QWMain()
 
 void QWMain::on_pbLoad_clicked()
 {
-    sFilename = QFileDialog::getOpenFileName(this, tr("Select File"),
-                                                    sDefaultPath,
+    QString loadedFilename = QFileDialog::getOpenFileName(this, tr("Select File"),
+                                                                       sDefaultPath,
                                                     tr("Assembler listing (*.asm)"));
-    if (!sFilename.isNull()){
+    if (!loadedFilename.isNull())
+    {
         //update MRU path only if file is selected.
-        sDefaultPath= QFileInfo(sFilename).absoluteDir().absolutePath();
-        
+        sDefaultPath= QFileInfo(loadedFilename).absoluteDir().absolutePath();
         ui->pbAssemble->setEnabled(true);
         ui->taConsole->clear();
         ui->taConsole->setFontWeight(63);
         ui->taConsole->append("Selected file ");
-        ui->taConsole->insertPlainText(sFilename);
+        ui->taConsole->insertPlainText(loadedFilename);
         ui->cbDebug->setEnabled(true);
-
-    }
-    else{
-        ui->pbAssemble->setEnabled(false);
-        ui->taConsole->clear();
-        ui->taConsole->setFontWeight(63);
-        ui->taConsole->append("No file selected");
-		
-        ui->cbDebug->setEnabled(false);
-
-
+        if (!sFilename.isEmpty())
+        {
+            watcher.removePath(sFilename);
+        }
+        watcher.addPath(loadedFilename);
+        sFilename = loadedFilename;
     }
 
 }
@@ -120,10 +119,26 @@ void QWMain::sigProcessFinished(int exitcode, QProcess::ExitStatus e){
 	}
 	else{
 		ui->taConsole->setTextColor(QColor("Red"));
-		ui->taConsole->append("The assembler encountered an unknown error");
+        ui->taConsole->append("The assembler encountered an unknown error");
 		ui->taConsole->setTextColor(QColor("Black"));
 		statusBar()->showMessage("Finished");
 	}
+}
+
+void QWMain::sigWatchedFileChanged(const QString &path)
+{
+    // debounce the file notification. Some editors delete and then recreates the file.
+    QDateTime currentTime = QDateTime::currentDateTimeUtc();
+    unsigned int currentTimeStamp = currentTime.toTime_t();
+    if (currentTimeStamp - lastUpdatedTimeStamp > 2)
+    {
+        ui->taConsole->setFontItalic(true);
+        ui->taConsole->setTextColor(QColor("Black"));
+        ui->taConsole->append(QFileInfo(path).fileName() + " has changed. Click Assemble to update the object file.");
+        lastUpdatedTimeStamp = currentTimeStamp;
+        ui->taConsole->setFontItalic(false);
+    }
+
 }
 
 void QWMain::on_bClear_clicked()

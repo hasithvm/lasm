@@ -55,14 +55,14 @@ This block takes care of removing comments from the input stream*/
                                 }
 <PARAM>
 {
-    [a-z][a-z0-9\_]*            {yylval.pStr=strdup(yytext);            return TEXT;}
-    "0x"[a-f0-9]{1,}            yylval.pStr=strdup(yytext);             return HEX_PRE;
-    [0-9][a-f0-9]{1,}/"h"       yylval.pStr=strdup(yytext);             return HEX_SUFF;
-    "0b"[0-1]{1,}               yylval.pStr=strdup(yytext);             return BIN_PRE;
-    [0-1]{1,}/"b"               yylval.pStr=strdup(yytext);             return BIN_SUFF;
-    "-"*[0-9]{1,}               yylval.pStr=strdup(yytext);             return DEC;
-    \"(\\.|[^\\"])*\"           yylval.pStr=strdup(yytext);             return LITERAL;
-    \'(\\.|[^\\'])*\'           yylval.pStr=strdup(yytext);             return LITERAL; 
+    [a-z][a-z0-9\_]*            { yylval.pStr=strdup(yytext);           return TEXT;        }
+    "0x"[a-f0-9]{1,}            { yylval.pStr=strdup(yytext);           return HEX_PRE;     }
+    [0-9][a-f0-9]{1,}/"h"       { yylval.pStr=strdup(yytext);           return HEX_SUFF;    }
+    "0b"[0-1]{1,}               { yylval.pStr=strdup(yytext);           return BIN_PRE;     }
+    [0-1]{1,}/"b"               { yylval.pStr=strdup(yytext);           return BIN_SUFF;    }
+    "-"*[0-9]{1,}               { yylval.pStr=strdup(yytext);           return DEC;         }
+    \"(\\.|[^\\"])*\"           { yylval.pStr=strdup(yytext);           return LITERAL;     }
+    \'(\\.|[^\\'])*\'           { yylval.pStr=strdup(yytext);           return LITERAL;     }
 {NEWLN}                         BEGIN(INITIAL);
 }
 [a-z][a-z0-9\_]+                yylval.pStr=strdup(yytext);             return DIRECTIVE_KEY;

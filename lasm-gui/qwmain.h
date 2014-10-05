@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QProcess>
+#include <QFileSystemWatcher>
 namespace Ui {
 class QWMain;
 }
@@ -22,13 +23,13 @@ public:
 private slots:
     void on_pbLoad_clicked();
     void on_pbAssemble_clicked();
-
     void on_bClear_clicked();
 
 public slots:
     void sigStdErrReady();
     void sigStdOutReady();
 	void sigProcessFinished(int exitcode, QProcess::ExitStatus e);
+    void sigWatchedFileChanged(const QString& path);
 
 private:
     Ui::QWMain *ui;
@@ -38,6 +39,8 @@ private:
     QString sDefaultPath;
     bool bGenDebug;
     QProcess pRunnable;
+    QFileSystemWatcher watcher;
+    unsigned int lastUpdatedTimeStamp;
 };
 
 #endif // QWMAIN_H
