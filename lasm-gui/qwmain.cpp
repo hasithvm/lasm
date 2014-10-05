@@ -82,6 +82,10 @@ void QWMain::on_pbAssemble_clicked()
     {QStringList args;
     QString sOutName = sFilename;
     sOutName.replace(sOutName.lastIndexOf("."),sOutName.size(),".obj");
+	if (ui->cbDebug->isChecked())
+	{
+		args.append("-d");
+	}
     args.append("-o");
     args.append(sOutName);
     args.append(sFilename);

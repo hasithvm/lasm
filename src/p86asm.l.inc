@@ -18,22 +18,22 @@ parser_opcode p;
 %}
 
 
-%s CMT
+%x CMT
 %s PARAM
 %option yylineno
 %option case-insensitive
 %option nodefault
 %option nounistd
 
-NEWLN    \x0d\x0a|\0d
+NEWLN   \x0d\x0a|\x0a
 
 %%
 %{/*
 This block takes care of removing comments from the input stream*/
 %}
 ";"                         {BEGIN(CMT);}
-<CMT>[^{NEWLN}]+               /*eat comment text*/
-<CMT>{NEWLN}                   {BEGIN(INITIAL);}
+<CMT>[^\x0a\x0d]*               {/*eat comment text*/}
+<CMT>{NEWLN}+                 {BEGIN(INITIAL);}
 <CMT><<EOF>>                {BEGIN(INITIAL); yyterminate();}
 
 

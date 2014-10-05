@@ -28,6 +28,9 @@ HEADERS  += qwmain.h
 
 FORMS    += qwmain.ui
 
+RESOURCES += lasm-gui.qrc
+
+
 unix {
     isEmpty(PREFIX) {
         PREFIX = /usr
@@ -38,3 +41,4 @@ unix {
 
     target.path = $$BINDIR
 }
+win32:RC_FILE += ../res/lasm-gui.rc
