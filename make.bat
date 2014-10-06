@@ -7,3 +7,5 @@ cd msvc10
 msbuild lasm.sln /nologo /verbosity:m /p:Configuration=Debug
 call %SDK_DIR%\bin\SetEnv.cmd /x86 /Release
 msbuild lasm.sln /nologo /verbosity:m /p:Configuration=Release
+copy lasm-gui/bin/* ../bin/
+copy src/bin/* ../bin/
