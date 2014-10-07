@@ -130,7 +130,8 @@ vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 		break;
 	case BASE_ASC:
 		out.resize(in.length() - 2);
-		trim(in, '\'');
+		trim(in, in[0]);
+
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 		{
 			out[bytes_written] = (uint8_t)*it_fwd;
