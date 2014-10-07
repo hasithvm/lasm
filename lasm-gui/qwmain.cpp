@@ -90,7 +90,13 @@ void QWMain::on_pbAssemble_clicked()
     args.append(sOutName);
     args.append(sFilename);
     ui->taConsole->append("===============================");
+#ifdef __APPLE__
+    pRunnable.start(QCoreApplication::applicationDirPath() + "/lasm", args);
+#elif _WIN32
     pRunnable.start("./lasm",args);
+#else
+    pRunnable.start("lasm", args);
+#endif
 	statusBar()->showMessage(tr("Running"));
     }
     else
