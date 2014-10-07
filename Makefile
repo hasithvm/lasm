@@ -2,7 +2,7 @@ QMAKE=qmake
 MKDIR=mkdir -p
 CD=cd
 MAKE=make
-CP=cp
+CP=cp -r
 RM=rm -rf
 
 .PHONY: all clean
