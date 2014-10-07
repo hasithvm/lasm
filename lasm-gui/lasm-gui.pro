@@ -44,3 +44,7 @@ unix {
     target.path = $$BINDIR
 }
 win32:RC_FILE += ../res/lasm-gui.rc
+
+macx:ICON = ../res/Lasm.icns
+macx:QMAKE_POST_LINK += macdeployqt $$DESTDIR/$${TARGET}.app $$escape_expand(\\n\\t)
+
