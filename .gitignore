@@ -18,7 +18,7 @@ lasm-gui/moc_qwmain.cpp
 *.opensdf
 src/p86asm.l
 src/symtable-generated.hpp
-src/lex.yy.c
+src/p86asm.yy.cpp
 *.tab.c
 *.tab.h
 *.ilk

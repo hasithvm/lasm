@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+CONFIG   += debug_and_release
 
 isEmpty(BUILDPREFIX) {
 	BUILDPREFIX=.
@@ -16,7 +17,8 @@ OBJECTS_DIR = $$OBJDIR
 MOC_DIR = $$OBJDIR/moc
 UI_DIR = $$OBJDIR/ui
 RCC_DIR = $$OBJDIR/rcc
-TARGET = lasm-gui
+Debug:TARGET = lasm-gui_debug
+Release:TARGET = lasm-gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

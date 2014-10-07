@@ -8,8 +8,10 @@ OBJECTS_DIR = $$OBJDIR
 MOC_DIR = $$OBJDIR/moc
 UI_DIR = $$OBJDIR/ui
 RCC_DIR = $$OBJDIR/rcc
-TARGET = lasm
-CONFIG += console
+
+CONFIG += console debug_and_release
+Debug:TARGET = lasm_debug
+Release:TARGET = lasm
 QMAKE_CXXFLAGS +=
 
 TEMPLATE = app
@@ -51,36 +53,45 @@ HEADERS  += TextSegment.hpp \
 OPCODESRC = opcodes.dat
 opcode.name = Opcode Processor
 opcode.input = OPCODESRC
-opcode.output = $$PWD/p86asm.l
+opcode.output = p86asm.l
 opcode.commands = python $$PWD/update-opcodes.py ${QMAKE_FILE_IN}
 opcode.variable_out = GENERATED_FILES
 
 symtable.name = Symtable Processor
 symtable.input = OPCODESRC
 symtable.output = symtable-generated.hpp
-symtable.commands = @true
-symtable.depends = $$PWD/p86asm.l
+symtable.commands = echo Generating Symtable Output
+symtable.depends = p86asm.l
 symtable.variable_out = HEADERS
 
-FLEXSRC = $$PWD/p86asm.l
+FLEXSRC = p86asm.l
 flex.name = Flex Compiler
 flex.input = FLEXSRC
-flex.output = ${QMAKE_FILE_BASE}.yy.cpp
-flex.commands = flex -i -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
+flex.output = $$PWD/${QMAKE_FILE_BASE}.yy.cpp
+win32-msvc2010 {
+    flex.commands = flex -i -o ${QMAKE_FILE_OUT} $$PWD/${QMAKE_FILE_IN}
+} else {
+    flex.commands = flex -i -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
+}
 flex.variable_out = GENERATED_SOURCES
-flex.depends = ${QMAKE_FILE_BASE}.tab.hpp
+flex.depends = ${QMAKE_FILE_BASE}.tab.hpp p86asm.l
 
 BISONSRC = p86asm.y
 bison.name = Bison Compiler
 bison.input = BISONSRC
-bison.output = ${QMAKE_FILE_BASE}.tab.cpp
-bison.commands = bison -d -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
+win32-msvc2010 {
+    bison.output = $$PWD/${QMAKE_FILE_BASE}.tab.cpp
+} else {
+    bison.output = ${QMAKE_FILE_BASE}.tab.cpp
+}
+bison.commands = bison -d -o ${QMAKE_FILE_OUT} $$OUT_PWD/${QMAKE_FILE_IN}
 bison.variable_out = GENERATED_SOURCES
+bison.depends = ${QMAKE_FILE_IN}
 
 bisonHeader.name = Bison Header Compiler
 bisonHeader.input = BISONSRC
 bisonHeader.output = ${QMAKE_FILE_BASE}.tab.hpp
-bisonHeader.commands = @true
+bisonHeader.commands = echo Generating Bison Results
 bisonHeader.depends = ${QMAKE_FILE_BASE}.tab.cpp
 bisonHeader.variable_out = GENERATED_HEADERS
 
@@ -96,3 +107,4 @@ unix {
 
     target.path = $$BINDIR
 }
+

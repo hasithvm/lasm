@@ -6,3 +6,4 @@ isEmpty( ISQT4 ) {
 
 TEMPLATE = subdirs
 SUBDIRS = lasm-gui src
+CONFIG += debug_and_release
