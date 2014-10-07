@@ -16,4 +16,7 @@ all: lasm.pro
 	$(CP) build/src/bin/* ./bin
 
 clean:
-	${RM} build
+	$(MAKE) -C build clean
+	$(RM) src/symtable-generated.hpp
+	$(RM) src/p86asm.l
+	${RM} build bin

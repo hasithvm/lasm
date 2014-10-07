@@ -68,11 +68,7 @@ FLEXSRC = p86asm.l
 flex.name = Flex Compiler
 flex.input = FLEXSRC
 flex.output = $$PWD/${QMAKE_FILE_BASE}.yy.cpp
-win32-msvc2010 {
-    flex.commands = flex -i -o ${QMAKE_FILE_OUT} $$PWD/${QMAKE_FILE_IN}
-} else {
-    flex.commands = flex -i -o ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
-}
+flex.commands = flex -i -o ${QMAKE_FILE_OUT} $$PWD/${QMAKE_FILE_IN}
 flex.variable_out = GENERATED_SOURCES
 flex.depends = ${QMAKE_FILE_BASE}.tab.hpp p86asm.l
 
