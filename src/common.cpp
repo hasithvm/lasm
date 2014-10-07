@@ -21,7 +21,10 @@ void strToUpperCase(std::string& in)
 
 void trim(std::string& in, char toTrim){
 		 
-   		 std::remove( in.begin(), in.end(), toTrim );
+	in.erase(
+		remove(in.begin(), in.end(), toTrim),
+		in.end()
+		);
 }
 char convlower(char in)
 {

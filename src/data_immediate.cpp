@@ -86,7 +86,9 @@ vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 	unsigned int tmp = 0;
 	int counter = 1;
 	std::string intermediate;
-
+	
+	
+	out.clear();
 	//pad with zero if not an even mult
 
 	switch (base)
@@ -134,7 +136,7 @@ vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 		{
-			out[bytes_written] = (uint8_t)*it_fwd;
+			out.push_back((uint8_t)*it_fwd);
 			bytes_written++;
 		}
 
