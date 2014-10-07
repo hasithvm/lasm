@@ -1,3 +1,11 @@
+@echo off
+if NOT "%FLEXDIR%" == "" (
+    set "PATH=%PATH%;%FLEXDIR%"
+)
+if NOT "%BISONDIR%" == "" (
+    set "PATH=%PATH%;%BISONDIR%"
+)
+
 mkdir bin
 mkdir msvc10
 del /Q bin\*
@@ -16,4 +24,3 @@ msbuild src\src.vcxproj /nologo /verbosity:m /p:Configuration=Release
 
 copy lasm-gui\bin\*.exe ..\bin\
 copy src\bin\*.exe ..\bin\
-
