@@ -175,8 +175,7 @@
 					uint8_t* p = (uint8_t*)malloc(sizeof(uint8_t));
 					*p = (uint8_t)AW_8BIT;
 					$<pAccessWidth>$ = p;
-					clog << "byte ptr" << endl;
-				
+			
 				}
 				;
 

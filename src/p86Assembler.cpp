@@ -186,7 +186,7 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
         constVal = (Constant*) ctrl->getValue();
     else
         return -1;
-    
+
     switch(ctrl->getControlType()) {
 
 
@@ -603,8 +603,10 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             dispIsRel = false;
             hasDisp = true;
             aw_disp = AW_16BIT;            
+            if (operandCount == 1)
+                isValidInstr = true;
 
-            if (reg[1]) {
+            else if (reg[1]) {
                 modrm |= reg[1]->getBinEncoding() << 3;
                 isValidInstr = true;
 
@@ -635,6 +637,8 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             hasImm = false;
             int retcode = _generateIndexedRegisterEncoding(reg[0],&modrm,&aw_disp,
                  &dispIsImmediate, &hasDisp, &zeroDisp,&dispSrc, &constSrc);
+            if (operandCount == 1)
+                isValidInstr = true;
 
             if (retcode != 0)
                     return retcode;
@@ -675,18 +679,18 @@ int p86Assembler::_construct(auto_ptr<OpType> pPattern,OpNode* op, Operands& ops
             dispIsRel = false;
             aw_disp = AW_16BIT;
 
-            if (ops.size() == 1){
+            if (operandCount == 1){
                 hasImm = false;
                 isValidInstr = true;
             }
 
-            if (reg[1]){
+            else if (reg[1]){
 
                 modrm |= reg[1]->getBinEncoding() << 3;
                 isValidInstr = true;
             }
 
-            if (imm[1]){
+            else if (imm[1]){
                 if (op->getExplicitAccessModifier() == AW_UNSPECIFIED)
                     ERROR("Ambiguous operand size for operation" << op->getContent())
                 
