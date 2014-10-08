@@ -116,7 +116,7 @@
 						pControl->setKey($<pStr>1);
 						free($<pStr>1);		
 					}
-					free($<pListOperands>3);
+					delete $<pListOperands>3;
 					pControl->setLineNumber(yylineno);
 					$<pExpr>$ = pControl;
 					
@@ -134,6 +134,10 @@
 				}
 				;
 	directive_value:reg_and_lookup_type
+					{
+						if ($<pListOperands>1->at(0)->getAccessMode() == REG_DIRECT)
+						yyerror("Register cannot be the rvalue for a control statement");
+					}
 					|
 					immediate_type
 					;
@@ -227,17 +231,15 @@
 
 					vector<Operand*>* pList = 	sortOperands(op1, op2);
 					vector<Operand*>* pOffsetList = new vector<Operand*>();
-					free($<pListOperands>2);
-					free($<pListOperands>4);
+					delete $<pListOperands>2;
+					delete $<pListOperands>4;
 					if (pList->at(0)->getAccessMode() == REG_DIRECT)
 						pList->at(0)->setAccessMode(REG_OFFSET);
 					
 					pOffsetList->push_back(pList->at(1));
 					((Register*) pList->at(0))->setOffsetPtr(pOffsetList);
 					pList->pop_back();
-					free(pOffsetList);
 					$<pListOperands>$ = pList;
-
 				}
  				|
 				LSQBR operand PLUS operand PLUS operand RSQBR
@@ -248,9 +250,9 @@
 					
 					vector<Operand*>* pList = 	sortOperands(op1, op2, op3);
 					vector<Operand*>* pOffsetList = new vector<Operand*>();
-					free($<pListOperands>2);
-					free($<pListOperands>4);
-					free($<pListOperands>6);
+					delete $<pListOperands>2;
+					delete $<pListOperands>4;
+					delete $<pListOperands>6;
 
 					if (pList->at(0)->getAccessMode() == REG_DIRECT)
 						pList->at(0)->setAccessMode(REG_OFFSET);
@@ -282,7 +284,7 @@
 							if (Register::exists($<pStr>1)){
 							Register *reg = new Register($1, REG_DIRECT);
 							free ($<pStr>1);
-							Operands* ptr = new std::vector<Operand*>;
+							Operands* ptr = new std::vector<Operand*>();
 							ptr->push_back(reg);
 							$<pListOperands>$ = ptr;
 							}

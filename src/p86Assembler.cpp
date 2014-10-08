@@ -175,12 +175,18 @@ int p86Assembler::_handleControlNode(ControlNode* ctrl)
     Immediate* immVal = NULL;
     Constant* constVal = NULL;
     binseg->setSourceNode(ctrl);
+    if (NULL == ctrl->getValue())
+    {
+        return -1;
+    }
     if (ctrl->getValue()->getAccessMode() == IMMEDIATE)
         immVal = (Immediate*) ctrl->getValue();
 
     else if (ctrl->getValue()->getAccessMode() == CONST)
         constVal = (Constant*) ctrl->getValue();
-
+    else
+        return -1;
+    
     switch(ctrl->getControlType()) {
 
 

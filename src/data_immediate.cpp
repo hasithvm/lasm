@@ -82,7 +82,7 @@ vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 	string::reverse_iterator it;
 	vector<uint8_t> out;
 	int padding = 0;
-	int bytes_written = 0;
+	unsigned int bytes_written = 0;
 	unsigned int tmp = 0;
 	int counter = 1;
 	std::string intermediate;
@@ -131,9 +131,7 @@ vector<uint8_t> Immediate::parse(std::string& in, ImmediateEncoding base)
 			out.pop_back();
 		break;
 	case BASE_ASC:
-		out.resize(in.length() - 2);
 		trim(in, in[0]);
-
 		for (it_fwd = in.begin(); it_fwd < in.end();it_fwd++)
 		{
 			out.push_back((uint8_t)*it_fwd);

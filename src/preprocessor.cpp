@@ -11,6 +11,8 @@ void preprocess(ExpressionList& pExprList){
 
     vector<ControlNode*> equ_defs;
     vector<Constant**> pConstants;
+    pConstants.clear();
+    equ_defs.clear();
     for (unsigned int i =0;i < pExprList.size();i++)
     {
         if (pExprList[i]->getType() == EXPR_OP)
@@ -23,7 +25,7 @@ void preprocess(ExpressionList& pExprList){
                     pConstants.push_back((Constant**)&op[j]);
                 }
 
-                if (op[j]->getAccessMode() == REG_OFFSET)
+                else if (op[j]->getAccessMode() == REG_OFFSET)
                 {
                     Operands* p = ((Register*)op[j])->getOffsetPtr();
                     for (unsigned int k =0;k < p->size();k++)
