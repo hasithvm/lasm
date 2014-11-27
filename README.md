@@ -1,7 +1,6 @@
 #lasm -- replacement assembler for the p8086 virtual machine
 
 
-
 ##Features
 * Generates p8086-compatible assembly file.
 * Mostly backward-compatible syntax with virgo-assembler.
